@@ -104,7 +104,7 @@ public class SnakeBodySpan : ISnakePart
     }
 
     public GameObject AsGameObject()
-    {
+    {        
         return _snakeBody;
     }
 }

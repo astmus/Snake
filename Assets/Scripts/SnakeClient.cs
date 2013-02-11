@@ -6,6 +6,7 @@ using System;
 using Assets.Scripts;
 using System.Collections.Generic;
 using Assets.Scripts.Responses;
+using Assets.Scripts.SendDataModel;
 
 public enum ConnectionStatus
 {
@@ -128,11 +129,12 @@ public class SnakeClient : MonoBehaviour, IPhotonPeerListener
         }
     }
 
-    public void SendRotateAngle(float angle, float syncCoord)
+    public void SendRotateAngle(ISnakePart head,List<ISnakePart>body)
     {
+        SnakeSyncData syncData = new SnakeSyncData(head);
+        syncData.Add(body);
         parameters.Clear();
-        parameters.Add((Byte)ParameterKey.RotateAngle, angle);
-        parameters.Add((Byte)ParameterKey.SyncCoord, syncCoord);
+        syncData.DictionaryForSend(ref parameters);
         _peer.OpCustom((byte)GameCode.RotateHead, parameters, true);
     }
 

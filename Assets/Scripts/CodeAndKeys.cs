@@ -103,9 +103,9 @@ public enum ParameterKey : byte
 
     RotateAngle = 239,
 
-    FruitNewX = 238,
+    CoordX = 238,
 
-    FruitNewY = 237,
+    CoordY = 237,
 
     FruitPoints = 236,
 

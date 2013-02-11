@@ -11,8 +11,8 @@ public struct FruitInfo
     public int ID;
     public FruitInfo(Dictionary<byte, object> data)
     {
-        X = (float)data[(byte)ParameterKey.FruitNewX];
-        Y = (float)data[(byte)ParameterKey.FruitNewY];
+        X = (float)data[(byte)ParameterKey.CoordX];
+        Y = (float)data[(byte)ParameterKey.CoordY];
         Points = (int)data[(byte)ParameterKey.FruitPoints];
         ID = (int)data[(byte)ParameterKey.FruitID];
     }

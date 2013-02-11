@@ -33,7 +33,6 @@ public class SnakeController : OTSprite, ISnakePart
     public SnakeClient _snakeClient;
     List<SnakeBodySpan> snake;
     KeyController _directionData;
-    object lockObj = new object();
     //static float maxDist = 0;
     public OnGuiWriter _writer;
 
@@ -85,50 +84,19 @@ public class SnakeController : OTSprite, ISnakePart
     void OnRotateHead(RotateHeadData data)
     {
         if (!IsEnemyInstance()) return;
-        switch ((int)data.RotateAngle)
-        {
-            case 0: RotateHeadTo(BasicDirections.Right);
-                break;
-            case 90: RotateHeadTo(BasicDirections.Up);
-                break;
-            case 180: RotateHeadTo(BasicDirections.Left);
-                break;
-            case 270: RotateHeadTo(BasicDirections.Down);
-                break;
-        }
-        Debug.Log(data.RotateAngle);
-        // now sync snake head
-        float syncX = transform.position.x;
-        float syncY = transform.position.y;
+        Debug.Log("OnRotoateHead");
+        Rotation = data.RotateAngle[0];
+        transform.position = new Vector3(data.CoordX[0], data.CoordY[0], 0);
+        string str = data.RotateAngle[0] + ";" + data.CoordX[0] + ";" + data.CoordY[0] + "|"+Environment.NewLine;
 
-        if ((int)data.RotateAngle == 0 || (int)data.RotateAngle == 180)
+        for (int i = 1; i < data.CoordX.Length; i++)
         {
-            //diffDist = Math.Abs(syncY - data.SyncCoord) * -1;
-            syncY = data.SyncCoord;
+            SnakeBodySpan span = snake[i-1];
+            span.Rotation = data.RotateAngle[i];
+            span.Position = new Vector2(data.CoordX[i],data.CoordY[i]);
+            str += data.RotateAngle[i] + ";" + data.CoordX[i] + ";" + data.CoordY[i] + "|"+Environment.NewLine;
         }
-        else
-        {
-            //diffDist = Math.Abs(syncX - data.SyncCoord) * -1;
-            syncX = data.SyncCoord;
-        }
-
-        Vector3 newHeadPos = new Vector3(syncX, syncY, 0);
-        float diffDist = Vector3.Distance(transform.position, newHeadPos) * -1;
-        _writer.DebugString("dif dist = " + diffDist);
-
-        /*for (int i = snake.Count - 1; i > 1; i--)
-        //foreach (SnakeBodySpan obj in snake.Reverse<SnakeBodySpan>())
-        {
-            SnakeBodySpan obj = snake[i];
-            //float rotate = obj.Rotation;
-            //obj.Rotation = 0;
-            //if ((int)data.RotateAngle == 0 || (int)data.RotateAngle == 180)
-            //    obj.Translate(0, diffDist, 0);
-            //else
-            obj.Translate(diffDist, 0, 0,_writer);
-            //obj.Rotation = rotate;
-        }*/
-        transform.position = newHeadPos;
+        _writer.DebugString(str);
     }
 
     public bool IsEnemyInstance()
@@ -200,7 +168,7 @@ public class SnakeController : OTSprite, ISnakePart
             if (sendAngle >= 0 && headIsRotated)
             {
                 float syncCoord = (sendAngle == 0 || sendAngle == 180) ? this.transform.position.y : this.transform.position.x;
-                _snakeClient.SendRotateAngle(sendAngle, syncCoord);
+                _snakeClient.SendRotateAngle(this,snake.Select(e => e as ISnakePart).ToList());
             }
         }
 
