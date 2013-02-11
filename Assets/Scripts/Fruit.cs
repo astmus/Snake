@@ -64,9 +64,13 @@ public class Fruit : MonoBehaviour {
         //if (points < 10) points = 10; // но менее 10 быть не может
         pointsNumber.GetComponent<TextMesh>().text = _points.ToString();
         UpdatePointsCountOnLabel(_points, colliderInfo.gameObject);
-        _client.SendCatchFruit(Id);
+        SnakeController colideSnake = colliderInfo.gameObject.GetComponent<SnakeController>();
+        if (!colideSnake.IsEnemyInstance())
+            _client.SendCatchFruit(Id);
         //Debug.Log("counttries = " + Counttries);
     }
+
+    
 
     void UpdatePointsCountOnLabel(int points, GameObject colideGameObject)
     {

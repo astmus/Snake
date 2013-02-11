@@ -42,7 +42,9 @@ public enum GameCode : byte
     /// </summary>
     RotateHead = 247,
 
-    CatchFruit = 246
+    CatchFruit = 246,
+
+    UpdatedEnemyPosition = 245
 }
 
 public enum GameMessageCodes : byte
@@ -84,7 +86,9 @@ public enum EventCode : byte
 
     RotateHead = 247,
 
-    FruitReposition = 246
+    FruitReposition = 246,
+
+    NewEnemySnakeSize = 245
 }
 
 public enum ParameterKey : byte
@@ -107,5 +111,9 @@ public enum ParameterKey : byte
 
     FruitID = 235,
 
-    FruitCatched = 234
+    FruitCatched = 234,
+
+    UpdatedEnemyPosition = 233,
+
+    SyncCoord = 232
 }

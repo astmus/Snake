@@ -24,7 +24,7 @@ public class SnakeController : OTSprite, ISnakePart
     static int numberCounter = 1;
     int _playerNumber;
 
-    
+
     float speed;
     float rotateSpeed;
     bool _isRemoteControling;
@@ -33,7 +33,9 @@ public class SnakeController : OTSprite, ISnakePart
     public SnakeClient _snakeClient;
     List<SnakeBodySpan> snake;
     KeyController _directionData;
-    static float maxDist = 0;
+    object lockObj = new object();
+    //static float maxDist = 0;
+    public OnGuiWriter _writer;
 
     public List<SnakeBodySpan> SnakeBody
     {
@@ -49,19 +51,27 @@ public class SnakeController : OTSprite, ISnakePart
         speed = 6;
         rotateSpeed = speed * 0.5f;
         _playerNumber = numberCounter++;
-        
+
         // позже перенести этот код в класс настроек и оттуда по номеру игрока получать настройки управления
         //if (_playerNumber != 0)
-            _directionData = new KeyController();
+        _directionData = new KeyController();
         //else
         //_directionData = new KeyController(KeyCode.A, KeyCode.D, KeyCode.W, KeyCode.S);
-        _snakeClient.RotateHead += _snakeClient_RotateHead;
+        _snakeClient.RotateHead += OnRotateHead;
         _snakeClient.CatchFruitAnswer += OnCatchFruitAnswer;
+        _snakeClient.EnemySnakeGrooveUp += OnEnemySnakeGrooveUp;
         //
+    }
+
+    void OnEnemySnakeGrooveUp()
+    {
+        if (IsEnemyInstance())
+            AddBody();
     }
 
     void OnCatchFruitAnswer(CatchFruitResponse answer)
     {
+        if (IsEnemyInstance()) return;
         if (answer.Catched)
             AddBody();
     }
@@ -72,17 +82,58 @@ public class SnakeController : OTSprite, ISnakePart
         set { _playerNumber = value; }
     }
 
-    void _snakeClient_RotateHead(float rotateAngle)
+    void OnRotateHead(RotateHeadData data)
     {
-        if (_snakeClient.ActorNumber == _playerNumber) return;
-        if ((int)rotateAngle == 180)
-            RotateHeadTo(BasicDirections.Left);
-        if ((int)rotateAngle == 0)
-            RotateHeadTo(BasicDirections.Right);
-        if ((int)rotateAngle == 90)
-            RotateHeadTo(BasicDirections.Up);
-        if ((int)rotateAngle == 270)
-            RotateHeadTo(BasicDirections.Down);
+        if (!IsEnemyInstance()) return;
+        switch ((int)data.RotateAngle)
+        {
+            case 0: RotateHeadTo(BasicDirections.Right);
+                break;
+            case 90: RotateHeadTo(BasicDirections.Up);
+                break;
+            case 180: RotateHeadTo(BasicDirections.Left);
+                break;
+            case 270: RotateHeadTo(BasicDirections.Down);
+                break;
+        }
+        Debug.Log(data.RotateAngle);
+        // now sync snake head
+        float syncX = transform.position.x;
+        float syncY = transform.position.y;
+
+        if ((int)data.RotateAngle == 0 || (int)data.RotateAngle == 180)
+        {
+            //diffDist = Math.Abs(syncY - data.SyncCoord) * -1;
+            syncY = data.SyncCoord;
+        }
+        else
+        {
+            //diffDist = Math.Abs(syncX - data.SyncCoord) * -1;
+            syncX = data.SyncCoord;
+        }
+
+        Vector3 newHeadPos = new Vector3(syncX, syncY, 0);
+        float diffDist = Vector3.Distance(transform.position, newHeadPos) * -1;
+        _writer.DebugString("dif dist = " + diffDist);
+
+        /*for (int i = snake.Count - 1; i > 1; i--)
+        //foreach (SnakeBodySpan obj in snake.Reverse<SnakeBodySpan>())
+        {
+            SnakeBodySpan obj = snake[i];
+            //float rotate = obj.Rotation;
+            //obj.Rotation = 0;
+            //if ((int)data.RotateAngle == 0 || (int)data.RotateAngle == 180)
+            //    obj.Translate(0, diffDist, 0);
+            //else
+            obj.Translate(diffDist, 0, 0,_writer);
+            //obj.Rotation = rotate;
+        }*/
+        transform.position = newHeadPos;
+    }
+
+    public bool IsEnemyInstance()
+    {
+        return _snakeClient.ActorNumber != _playerNumber;
     }
 
     void OnTriggerEnter(Collider colliderInfo)
@@ -93,12 +144,13 @@ public class SnakeController : OTSprite, ISnakePart
         else
             if (colliderInfo.gameObject.tag == "Fruit")
             {
-            }            
+            }
             else
-                if (snake.Count > 0 && colliderInfo.gameObject != snake[0].AsGameObject() /*&& colliderInfo.gameObject != snake[1].AsGameObject()*/)
+                if (snake.Count > 0 && colliderInfo.gameObject != snake[0].AsGameObject()/* && colliderInfo.gameObject != snake[1].AsGameObject()*/)
                 {
                     ResetSnake(false);
                     Time.timeScale = 0f;
+                    _writer.DebugString("OnTrigger");
                 }
     }
 
@@ -110,11 +162,9 @@ public class SnakeController : OTSprite, ISnakePart
         speed = 6;
         //Camera.main.audio.Stop();
         //Camera.main.audio.Play();
-        if (_snakeClient.ActorNumber == _playerNumber)
-        {
-            TextMesh label = GameObject.FindGameObjectsWithTag("PointLabel")[LabelPosForCurrentSnake()].GetComponent<TextMesh>();
-            label.text = "0";
-        }        
+        GameObject[] labels = GameObject.FindGameObjectsWithTag("PointLabel");
+        TextMesh label = labels[LabelPosForCurrentSnake()].GetComponent<TextMesh>();
+        label.text = "0";
     }
 
     public int LabelPosForCurrentSnake()
@@ -129,7 +179,7 @@ public class SnakeController : OTSprite, ISnakePart
         //if (_isRemoteControling) return;
         //Debug.Log("actor num = "+_snakeClient.ActorNumber);
         //Debug.Log("player number = "+_playerNumber);
-        
+
         if (_snakeClient.ConnetionStatus != ConnectionStatus.InGame) return;
 #if UNITY_EDITOR
         if (_directionData == null) return;
@@ -142,29 +192,32 @@ public class SnakeController : OTSprite, ISnakePart
             if (Input.GetKey(_directionData.Right))
                 rotateAngle = BasicDirections.Right;
             if (Input.GetKey(_directionData.Up))
-                rotateAngle =  BasicDirections.Up;
+                rotateAngle = BasicDirections.Up;
             if (Input.GetKey(_directionData.Down))
                 rotateAngle = BasicDirections.Down;
-            RotateHeadTo(rotateAngle);
+            bool headIsRotated = RotateHeadTo(rotateAngle);
             int sendAngle = (int)rotateAngle;
-            if (sendAngle >= 0)
-                _snakeClient.SendRotateAngle(sendAngle);
+            if (sendAngle >= 0 && headIsRotated)
+            {
+                float syncCoord = (sendAngle == 0 || sendAngle == 180) ? this.transform.position.y : this.transform.position.x;
+                _snakeClient.SendRotateAngle(sendAngle, syncCoord);
+            }
         }
-        
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
-           AddBody();
-           Time.timeScale = 1f;
+            AddBody();
+            Time.timeScale = 1f;
         }
         if (Input.GetKeyDown(KeyCode.Escape))
             speed = 2;
 
         float dist = Time.deltaTime * speed; // расстояние на которое надо передвинуть змейку с последнего момента ее отрисовки 
-        if (dist > maxDist)
-        {            
+        /*if (dist > maxDist)
+        {
             maxDist = dist;
-        }
-        
+        }*/
+
         //Debug.Log(dist);
         if (dist < 0.4)
             MoveSnake(dist);
@@ -174,13 +227,20 @@ public class SnakeController : OTSprite, ISnakePart
 
     }
 
-    void RotateHeadTo(float angle)
+
+    /// <summary>
+    /// return true is head is rotated
+    /// </summary>
+    /// <param name="angle"></param>
+    /// <returns></returns>
+    bool RotateHeadTo(float angle)
     {
-        if (angle < 0) return;
-        if (Vector2.Distance(Position, lastTurn.Position) < 1.3) return;
-        if ((int)rotation == angle || (int)Math.Abs(rotation - angle) == 180) return;
+        if (angle < 0) return false;
+        if (Vector2.Distance(Position, lastTurn.Position) < 1.3) return false;
+        if ((int)rotation == angle || (int)Math.Abs(rotation - angle) == 180) return false;
         rotation = angle;
         lastTurn = new TargetPoint(angle, position);
+        return true;
         //Debug.Log("Send code = " + sendCode);
         //_snakeClient.SendTextMessage(sendCode);
         //if (PartRotate != null)
@@ -189,11 +249,10 @@ public class SnakeController : OTSprite, ISnakePart
 
     void MoveSnake(float distance)
     {
-
         transform.Translate(distance, 0, 0);
 #if UNITY_EDITOR
         if (snake == null) return;
-#endif        
+#endif
         foreach (SnakeBodySpan obj in snake)
             obj.Translate(distance, 0, 0);
         /*foreach (distance obj in snake)

@@ -19,10 +19,11 @@ public class SnakeClient : MonoBehaviour, IPhotonPeerListener
 {
     LitePeer _peer;
     ConnectionStatus _connetionStatus;
-    public event Action<float> RotateHead;
+    public event Action<RotateHeadData> RotateHead;
     public event Action<string> OpponentSendMessage;
     public event Action<FruitInfo> FruitRepositioned;
     public event Action<CatchFruitResponse> CatchFruitAnswer;
+    public event Action EnemySnakeGrooveUp;
 
     public ConnectionStatus ConnetionStatus
     {
@@ -85,18 +86,21 @@ public class SnakeClient : MonoBehaviour, IPhotonPeerListener
                 int[] actors = (int[])eventData.Parameters[(byte)ParameterKey.Actors]; 
                 if (actors.Length == 2)
                     _connetionStatus = ConnectionStatus.InGame;
-                Debug.Log("actors count = " + actors.Length);
+                //Debug.Log("actors count = " + actors.Length);
                 break;
             case (byte)EventCode.Leave:
                 break;
             case (byte)EventCode.RotateHead:
-                if (RotateHead != null) RotateHead((float)eventData.Parameters[(byte)ParameterKey.RotateAngle]);
+                if (RotateHead != null) RotateHead(new RotateHeadData(eventData.Parameters));
                 break;
             case (byte)EventCode.SendMessage:
                 if (OpponentSendMessage != null) OpponentSendMessage((string)eventData.Parameters[(byte)ParameterKey.TextMessage]);
                 break;
             case (byte)EventCode.FruitReposition:
                 if (FruitRepositioned != null) FruitRepositioned(new FruitInfo(eventData.Parameters));
+                break;
+            case (byte)EventCode.NewEnemySnakeSize:
+                if (EnemySnakeGrooveUp != null) EnemySnakeGrooveUp();
                 break;                
         }
     }
@@ -124,10 +128,11 @@ public class SnakeClient : MonoBehaviour, IPhotonPeerListener
         }
     }
 
-    public void SendRotateAngle(float angle)
+    public void SendRotateAngle(float angle, float syncCoord)
     {
         parameters.Clear();
         parameters.Add((Byte)ParameterKey.RotateAngle, angle);
+        parameters.Add((Byte)ParameterKey.SyncCoord, syncCoord);
         _peer.OpCustom((byte)GameCode.RotateHead, parameters, true);
     }
 

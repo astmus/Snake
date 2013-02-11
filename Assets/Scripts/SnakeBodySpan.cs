@@ -25,20 +25,20 @@ public class SnakeBodySpan : ISnakePart
     GameObject _snakeBody;
     List<TargetPoint> _pointList;
     OTSprite _sprite;
-    ISnakePart previousPart;
+    ISnakePart _previousPart;
     //float dist = float.MaxValue;
     public event System.Action<TargetPoint> PartRotate;
-    public SnakeBodySpan(GameObject span, ISnakePart part)
+    public SnakeBodySpan(GameObject span, ISnakePart previousPart)
     {
         _pointList = new List<TargetPoint>();
         _snakeBody = span;
         _sprite = span.GetComponent<OTSprite>();
-        _sprite.rotation = part.Rotation;
+        _sprite.rotation = previousPart.Rotation;
         //_sprite.position = new Vector2(part.Position.x - _sprite.size.x, part.Position.y);
-        _sprite.position = part.Position;
+        _sprite.position = previousPart.Position;
         _sprite.transform.Translate(-_snakeBody.transform.lossyScale.x, 0, 0);
-        previousPart = part;
-        part.PartRotate += new System.Action<TargetPoint>(OnPartRotate);
+        _previousPart = previousPart;
+        previousPart.PartRotate += new System.Action<TargetPoint>(OnPartRotate);
     }
 
     void OnPartRotate(TargetPoint target)
@@ -51,7 +51,12 @@ public class SnakeBodySpan : ISnakePart
         _pointList.Add(point);
     }
 
-    public void Translate(float x, float y, float z)
+    public Transform Transform
+    {
+        get { return _sprite.transform; }
+    }
+
+    public void Translate(float x, float y, float z,params OnGuiWriter [] wr)
     {
         //Vector2 v = Position + new Vector2(x,y);
         _sprite.transform.Translate(x, y, z);
@@ -59,22 +64,27 @@ public class SnakeBodySpan : ISnakePart
         //Debug.Log("local"+_snakeBody.transform.localScale.x);
         //if (_pointList.Count != 0)
         //{
-        float dist = Vector2.Distance(Position, previousPart.Position);
-        if (dist > _snakeBody.transform.localScale.x)
-        {
-            Rotation = previousPart.Rotation;
-            Position = previousPart.Position;
-            _sprite.transform.Translate(-_snakeBody.transform.localScale.x, 0, 0);
-
-
-
-
-            //Position.Set(previousPart.Position.x - _sprite.size.x, previousPart.Position.y);
-            //dist = float.MaxValue;
-            //if (PartRotate != null)
-            //    PartRotate(_pointList[0]);
-            //_pointList.RemoveAt(0);                
+        float dist = Vector2.Distance(Position, _previousPart.Position);
+        if (x > 0 || y > 0)
+        {            
+            if (dist > _snakeBody.transform.localScale.x)
+            {
+                Rotation = _previousPart.Rotation;
+                Position = _previousPart.Position;
+                _sprite.transform.Translate(-_snakeBody.transform.localScale.x, 0, 0);
+            }
         }
+        else
+        {
+            wr[0].DebugString("subzero change");
+            if (dist > _snakeBody.transform.localScale.x)
+            {
+                _previousPart.Rotation = Rotation;
+                _previousPart.Position = Position;
+                _sprite.transform.Translate(_snakeBody.transform.localScale.x, 0, 0);
+            }
+        }
+        
         //else
         //    dist = newDist;
         //}        

@@ -4,11 +4,17 @@ using System.Collections;
 public class OnGuiWriter : MonoBehaviour {
 
     public SnakeClient _client;
+    string debugString;
 	// Use this for initialization
 	void Start () {
 	
 	}
-	
+
+    public void DebugString(string message)
+    {
+        debugString = message;
+    }
+
 	// Update is called once per frame
 	void OnGUI()
     {
@@ -30,6 +36,7 @@ public class OnGuiWriter : MonoBehaviour {
             default:
                 break;
         }
+        GUILayout.Label(debugString);
         GUILayout.EndArea();
 	}
 }
