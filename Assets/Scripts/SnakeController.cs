@@ -33,6 +33,7 @@ public class SnakeController : OTSprite, ISnakePart
     public SnakeClient _snakeClient;
     List<SnakeBodySpan> snake;
     KeyController _directionData;
+    GameObject[] _labels;
     //static float maxDist = 0;
     public OnGuiWriter _writer;
 
@@ -50,6 +51,7 @@ public class SnakeController : OTSprite, ISnakePart
         speed = 6;
         rotateSpeed = speed * 0.5f;
         _playerNumber = numberCounter++;
+        _labels = GameObject.FindGameObjectsWithTag("PointLabel");
 
         // позже перенести этот код в класс настроек и оттуда по номеру игрока получать настройки управления
         //if (_playerNumber != 0)
@@ -59,7 +61,15 @@ public class SnakeController : OTSprite, ISnakePart
         _snakeClient.RotateHead += OnRotateHead;
         _snakeClient.CatchFruitAnswer += OnCatchFruitAnswer;
         _snakeClient.EnemySnakeGrooveUp += OnEnemySnakeGrooveUp;
+        _snakeClient.EnemyPointsCountUpdated += OnEnemyPointsCountUpdated;
         //
+    }
+
+    void OnEnemyPointsCountUpdated(int enemyPoints)
+    {
+        if (!IsEnemyInstance()) return;
+        TextMesh label = _labels[LabelPosForThisSnake()].GetComponent<TextMesh>();
+        label.text = enemyPoints.ToString();
     }
 
     void OnEnemySnakeGrooveUp(EnemySnakeSizeChangeData sizeData)
@@ -136,11 +146,11 @@ public class SnakeController : OTSprite, ISnakePart
         //Camera.main.audio.Stop();
         //Camera.main.audio.Play();
         GameObject[] labels = GameObject.FindGameObjectsWithTag("PointLabel");
-        TextMesh label = labels[LabelPosForCurrentSnake()].GetComponent<TextMesh>();
+        TextMesh label = labels[LabelPosForThisSnake()].GetComponent<TextMesh>();
         label.text = "0";
     }
 
-    public int LabelPosForCurrentSnake()
+    public int LabelPosForThisSnake()
     {
         return System.Convert.ToInt32(!(_playerNumber != _snakeClient.ActorNumber));// знаю это трудночитаемое условие, но оп сути здесь только определение какой лейбл с очками изменять
         // в зависимости от того каким червяком он был взят, для того что бы очки игрока всегда были в левом верхнем углу а противника в правом независимо первым игрок зашел в игру или вторым

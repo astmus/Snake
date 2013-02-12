@@ -77,7 +77,7 @@ public class Fruit : MonoBehaviour {
         GameObject[] labels = GameObject.FindGameObjectsWithTag("PointLabel");
         SnakeController colideSnake = colideGameObject.GetComponent<SnakeController>();
         if (colideSnake.IsEnemyInstance()) return;
-        TextMesh label = labels[colideSnake.LabelPosForCurrentSnake()].GetComponent<TextMesh>();
+        TextMesh label = labels[colideSnake.LabelPosForThisSnake()].GetComponent<TextMesh>();
         
         //Debug.Log("update point cv = " + label.text);
         int currentVal = System.Convert.ToInt32(label.text);
