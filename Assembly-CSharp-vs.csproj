@@ -149,6 +149,7 @@
      <Compile Include="Assets\Scripts\Number.cs" />
      <Compile Include="Assets\Scripts\OnGuiWriter.cs" />
      <Compile Include="Assets\Scripts\Responses\CatchFruitResponse.cs" />
+     <Compile Include="Assets\Scripts\Responses\EnemySnakeSizeChangeData.cs" />
      <Compile Include="Assets\Scripts\Responses\RotateHeadData.cs" />
      <Compile Include="Assets\Scripts\SendDataModel\SnakeSyncData.cs" />
      <Compile Include="Assets\Scripts\SnakeBodySpan.cs" />

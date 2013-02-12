@@ -88,7 +88,9 @@ public enum EventCode : byte
 
     FruitReposition = 246,
 
-    NewEnemySnakeSize = 245
+    NewEnemySnakeSize = 245,
+
+    EnemyPointsUpdated = 244
 }
 
 public enum ParameterKey : byte
@@ -115,5 +117,9 @@ public enum ParameterKey : byte
 
     UpdatedEnemyPosition = 233,
 
-    SyncCoord = 232
+    SyncCoord = 232,
+
+    SnakeLength = 231,
+
+    PointsCount = 230
 }

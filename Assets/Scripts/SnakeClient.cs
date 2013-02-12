@@ -24,7 +24,8 @@ public class SnakeClient : MonoBehaviour, IPhotonPeerListener
     public event Action<string> OpponentSendMessage;
     public event Action<FruitInfo> FruitRepositioned;
     public event Action<CatchFruitResponse> CatchFruitAnswer;
-    public event Action EnemySnakeGrooveUp;
+    public event Action<EnemySnakeSizeChangeData> EnemySnakeGrooveUp;
+    public event Action<int> EnemyPointsCountUpdated;
 
     public ConnectionStatus ConnetionStatus
     {
@@ -101,8 +102,11 @@ public class SnakeClient : MonoBehaviour, IPhotonPeerListener
                 if (FruitRepositioned != null) FruitRepositioned(new FruitInfo(eventData.Parameters));
                 break;
             case (byte)EventCode.NewEnemySnakeSize:
-                if (EnemySnakeGrooveUp != null) EnemySnakeGrooveUp();
+                if (EnemySnakeGrooveUp != null) EnemySnakeGrooveUp(new EnemySnakeSizeChangeData(eventData.Parameters));                
                 break;                
+            case (byte)EventCode.EnemyPointsUpdated:
+                if (EnemyPointsCountUpdated != null) EnemyPointsCountUpdated((int)eventData.Parameters[(byte)ParameterKey.PointsCount]);
+                break;
         }
     }
 

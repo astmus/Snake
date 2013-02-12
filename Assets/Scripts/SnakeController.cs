@@ -62,10 +62,14 @@ public class SnakeController : OTSprite, ISnakePart
         //
     }
 
-    void OnEnemySnakeGrooveUp()
+    void OnEnemySnakeGrooveUp(EnemySnakeSizeChangeData sizeData)
     {
-        if (IsEnemyInstance())
+        if (!IsEnemyInstance()) return;
+        Debug.Log("OnEnemySnakeGrooveUp = " + sizeData.NewSize);
+        if (sizeData.NewSize > snake.Count)
             AddBody();
+        else
+            ResetSnake(false);
     }
 
     void OnCatchFruitAnswer(CatchFruitResponse answer)
@@ -87,16 +91,17 @@ public class SnakeController : OTSprite, ISnakePart
         Debug.Log("OnRotoateHead");
         Rotation = data.RotateAngle[0];
         transform.position = new Vector3(data.CoordX[0], data.CoordY[0], 0);
-        string str = data.RotateAngle[0] + ";" + data.CoordX[0] + ";" + data.CoordY[0] + "|"+Environment.NewLine;
+        //string str = data.RotateAngle[0] + ";" + data.CoordX[0] + ";" + data.CoordY[0] + "|"+Environment.NewLine;
 
-        for (int i = 1; i < data.CoordX.Length; i++)
+        for (int i = 0; i < snake.Count; i++)
         {
-            SnakeBodySpan span = snake[i-1];
-            span.Rotation = data.RotateAngle[i];
-            span.Position = new Vector2(data.CoordX[i],data.CoordY[i]);
-            str += data.RotateAngle[i] + ";" + data.CoordX[i] + ";" + data.CoordY[i] + "|"+Environment.NewLine;
+            SnakeBodySpan span = snake[i];            
+            span.Rotation = data.RotateAngle[i+1];
+            span.Position = new Vector2(data.CoordX[i+1],data.CoordY[i+1]);
+            //str += data.RotateAngle[i+1] + ";" + data.CoordX[i+1] + ";" + data.CoordY[i+1] + "|"+Environment.NewLine;
+
         }
-        _writer.DebugString(str);
+        //_writer.DebugString(str);
     }
 
     public bool IsEnemyInstance()
