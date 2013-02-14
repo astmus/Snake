@@ -90,7 +90,11 @@ public enum EventCode : byte
 
     NewEnemySnakeSize = 245,
 
-    EnemyPointsUpdated = 244
+    EnemyPointsUpdated = 244,
+
+    CountDownTick = 243,
+
+    GameOver = 242
 }
 
 public enum ParameterKey : byte
@@ -121,5 +125,9 @@ public enum ParameterKey : byte
 
     SnakeLength = 231,
 
-    PointsCount = 230
+    PointsCount = 230,
+
+    CountDownSec = 229,
+
+    WinResult = 228
 }

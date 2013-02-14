@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using Assets.Scripts.Responses;
+using Assets.Scripts.SendDataModel;
 public interface ISnakePart
 {
     float Rotation { set; get; }
@@ -23,8 +24,6 @@ public class SnakeController : OTSprite, ISnakePart
 {
     static int numberCounter = 1;
     int _playerNumber;
-
-
     float speed;
     float rotateSpeed;
     bool _isRemoteControling;
@@ -51,8 +50,7 @@ public class SnakeController : OTSprite, ISnakePart
         speed = 6;
         rotateSpeed = speed * 0.5f;
         _playerNumber = numberCounter++;
-        _labels = GameObject.FindGameObjectsWithTag("PointLabel");
-
+        _labels = GameObject.FindGameObjectsWithTag("PointLabel");        
         // позже перенести этот код в класс настроек и оттуда по номеру игрока получать настройки управления
         //if (_playerNumber != 0)
         _directionData = new KeyController();
@@ -68,6 +66,7 @@ public class SnakeController : OTSprite, ISnakePart
     void OnEnemyPointsCountUpdated(int enemyPoints)
     {
         if (!IsEnemyInstance()) return;
+        //GameObject[] _labels = GameObject.FindGameObjectsWithTag("PointLabel");
         TextMesh label = _labels[LabelPosForThisSnake()].GetComponent<TextMesh>();
         label.text = enemyPoints.ToString();
     }
@@ -75,7 +74,6 @@ public class SnakeController : OTSprite, ISnakePart
     void OnEnemySnakeGrooveUp(EnemySnakeSizeChangeData sizeData)
     {
         if (!IsEnemyInstance()) return;
-        Debug.Log("OnEnemySnakeGrooveUp = " + sizeData.NewSize);
         if (sizeData.NewSize > snake.Count)
             AddBody();
         else
@@ -98,16 +96,18 @@ public class SnakeController : OTSprite, ISnakePart
     void OnRotateHead(RotateHeadData data)
     {
         if (!IsEnemyInstance()) return;
-        Debug.Log("OnRotoateHead");
         Rotation = data.RotateAngle[0];
         transform.position = new Vector3(data.CoordX[0], data.CoordY[0], 0);
         //string str = data.RotateAngle[0] + ";" + data.CoordX[0] + ";" + data.CoordY[0] + "|"+Environment.NewLine;
 
+        if (snake.Count >= data.CoordX.Length)
+            ResetSnake(false);
+
         for (int i = 0; i < snake.Count; i++)
         {
-            SnakeBodySpan span = snake[i];            
-            span.Rotation = data.RotateAngle[i+1];
-            span.Position = new Vector2(data.CoordX[i+1],data.CoordY[i+1]);
+            SnakeBodySpan span = snake[i];
+            span.Rotation = data.RotateAngle[i + 1];
+            span.Position = new Vector2(data.CoordX[i + 1], data.CoordY[i + 1]);
             //str += data.RotateAngle[i+1] + ";" + data.CoordX[i+1] + ";" + data.CoordY[i+1] + "|"+Environment.NewLine;
 
         }
@@ -121,9 +121,14 @@ public class SnakeController : OTSprite, ISnakePart
 
     void OnTriggerEnter(Collider colliderInfo)
     {
+        if (IsEnemyInstance()) return;
         if (colliderInfo.gameObject.tag == "SnakeHead") return;
         if (colliderInfo.gameObject.tag == "Wall")
+        {
             ResetSnake(true);
+            _snakeClient.SendSyncData(this, snake.Select(e => e as ISnakePart).ToList());
+            // 
+        }
         else
             if (colliderInfo.gameObject.tag == "Fruit")
             {
@@ -132,7 +137,8 @@ public class SnakeController : OTSprite, ISnakePart
                 if (snake.Count > 0 && colliderInfo.gameObject != snake[0].AsGameObject()/* && colliderInfo.gameObject != snake[1].AsGameObject()*/)
                 {
                     ResetSnake(false);
-                    Time.timeScale = 0f;
+                    _snakeClient.SendSyncData(this, snake.Select(e => e as ISnakePart).ToList());
+                    //Time.timeScale = 0f;
                     _writer.DebugString("OnTrigger");
                 }
     }
@@ -145,14 +151,15 @@ public class SnakeController : OTSprite, ISnakePart
         speed = 6;
         //Camera.main.audio.Stop();
         //Camera.main.audio.Play();
-        GameObject[] labels = GameObject.FindGameObjectsWithTag("PointLabel");
-        TextMesh label = labels[LabelPosForThisSnake()].GetComponent<TextMesh>();
-        label.text = "0";
+        //GameObject[] labels = GameObject.FindGameObjectsWithTag("PointLabel");
+        
+        //TextMesh label = _labels[LabelPosForThisSnake()].GetComponent<TextMesh>();
+        //label.text = "0";
     }
 
     public int LabelPosForThisSnake()
     {
-        return System.Convert.ToInt32(!(_playerNumber != _snakeClient.ActorNumber));// знаю это трудночитаемое условие, но оп сути здесь только определение какой лейбл с очками изменять
+        return System.Convert.ToInt32((_playerNumber != _snakeClient.ActorNumber));// знаю это трудночитаемое условие, но оп сути здесь только определение какой лейбл с очками изменять
         // в зависимости от того каким червяком он был взят, для того что бы очки игрока всегда были в левом верхнем углу а противника в правом независимо первым игрок зашел в игру или вторым
     }
 
@@ -183,7 +190,7 @@ public class SnakeController : OTSprite, ISnakePart
             if (sendAngle >= 0 && headIsRotated)
             {
                 float syncCoord = (sendAngle == 0 || sendAngle == 180) ? this.transform.position.y : this.transform.position.x;
-                _snakeClient.SendRotateAngle(this,snake.Select(e => e as ISnakePart).ToList());
+                _snakeClient.SendSyncData(this, snake.Select(e => e as ISnakePart).ToList());
             }
         }
 
@@ -207,7 +214,6 @@ public class SnakeController : OTSprite, ISnakePart
         else
             for (int i = 0; i < 4; i++)
                 MoveSnake(dist * 0.25f);
-
     }
 
 

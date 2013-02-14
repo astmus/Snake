@@ -10,7 +10,6 @@ public class Number : MonoBehaviour {
         Debug.Log("static const");
     }
 	void Start () {
-        
         iTween.MoveBy(gameObject, iTween.Hash("y", 2, "easeType", iTween.EaseType.easeInBack, "loopType", iTween.LoopType.none, "time", .5));
         iTween.ScaleBy(gameObject, iTween.Hash("amount", amountSize, "easeType", iTween.EaseType.linear, "loopType", iTween.LoopType.none, "time", .5));
         iTween.ColorTo(gameObject, iTween.Hash("color", new Color(255, 0, 0, 0), "time", .5, "oncomplete", "OnAnimationComplete"));

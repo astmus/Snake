@@ -13,24 +13,33 @@ public enum ConnectionStatus
     Disconnect = 0,
     Connect = 1,
     InRoom = 2,
-    InGame = 3
+    InGame = 3,
+    GameOver = 4
 }
 
 public class SnakeClient : MonoBehaviour, IPhotonPeerListener
 {
     LitePeer _peer;
     ConnectionStatus _connetionStatus;
+    
     public event Action<RotateHeadData> RotateHead;
     public event Action<string> OpponentSendMessage;
     public event Action<FruitInfo> FruitRepositioned;
     public event Action<CatchFruitResponse> CatchFruitAnswer;
     public event Action<EnemySnakeSizeChangeData> EnemySnakeGrooveUp;
     public event Action<int> EnemyPointsCountUpdated;
+    public event Action<ConnectionStatus> StatusConnectionChanged;
+    public event Action<int> CountDownTick;
+    public event Action<bool> GameOver;
 
     public ConnectionStatus ConnetionStatus
     {
         get { return _connetionStatus; }
-        private set { _connetionStatus = value; }
+        private set 
+        { 
+            _connetionStatus = value;
+            if (StatusConnectionChanged != null) StatusConnectionChanged(value);
+        }
     }
 
     protected string ServerApplication = "ServerTest";
@@ -69,7 +78,6 @@ public class SnakeClient : MonoBehaviour, IPhotonPeerListener
     {        
         // PhotonPeer.Connect() is described in the client reference doc: Photon-DotNet-Client-Documentation_v6-1-0.pdf
         Debug.Log("Connecting " + ServerAddress + ServerApplication);
-
         _peer.Connect(ServerAddress, ServerApplication);
     }
 
@@ -86,8 +94,8 @@ public class SnakeClient : MonoBehaviour, IPhotonPeerListener
         {
             case (byte)EventCode.Join:                
                 int[] actors = (int[])eventData.Parameters[(byte)ParameterKey.Actors]; 
-                if (actors.Length == 2)
-                    _connetionStatus = ConnectionStatus.InGame;
+                /*if (actors.Length == 2)
+                    ConnetionStatus = ConnectionStatus.InGame;*/
                 //Debug.Log("actors count = " + actors.Length);
                 break;
             case (byte)EventCode.Leave:
@@ -104,8 +112,17 @@ public class SnakeClient : MonoBehaviour, IPhotonPeerListener
             case (byte)EventCode.NewEnemySnakeSize:
                 if (EnemySnakeGrooveUp != null) EnemySnakeGrooveUp(new EnemySnakeSizeChangeData(eventData.Parameters));                
                 break;                
-            case (byte)EventCode.EnemyPointsUpdated:
+            case (byte)EventCode.EnemyPointsUpdated:                
                 if (EnemyPointsCountUpdated != null) EnemyPointsCountUpdated((int)eventData.Parameters[(byte)ParameterKey.PointsCount]);
+                break;
+            case (byte)EventCode.CountDownTick:
+                int seconds = (int)eventData.Parameters[(byte)ParameterKey.CountDownSec];
+                if (seconds == 0) ConnetionStatus = ConnectionStatus.InGame;
+                if (CountDownTick != null) CountDownTick(seconds);                
+                break;
+            case (byte)EventCode.GameOver:
+                ConnetionStatus = ConnectionStatus.GameOver;
+                if (GameOver != null) GameOver((bool)eventData.Parameters[(byte)ParameterKey.WinResult]);
                 break;
         }
     }
@@ -117,7 +134,7 @@ public class SnakeClient : MonoBehaviour, IPhotonPeerListener
         {
             case (byte)LiteOpCode.Join:
                 //Debug.Log("OnOperationResponse == Join");
-                _connetionStatus = ConnectionStatus.InRoom;
+                ConnetionStatus = ConnectionStatus.InRoom;
                 JoinResponse response = new JoinResponse(operationResponse.Parameters);
                 ActorNumber = response.ActorNumber;
                 //this.ActorNumber = (int)operationResponse[(byte)LiteOpKey.ActorNr];
@@ -133,7 +150,7 @@ public class SnakeClient : MonoBehaviour, IPhotonPeerListener
         }
     }
 
-    public void SendRotateAngle(ISnakePart head,List<ISnakePart>body)
+    public void SendSyncData(ISnakePart head,List<ISnakePart>body)
     {
         SnakeSyncData syncData = new SnakeSyncData(head);
         syncData.Add(body);
@@ -163,13 +180,13 @@ public class SnakeClient : MonoBehaviour, IPhotonPeerListener
         switch (statusCode)
         {
             case StatusCode.Connect:
-                _connetionStatus = ConnectionStatus.Connect;
+                ConnetionStatus = ConnectionStatus.Connect;
                 DebugReturn(DebugLevel.INFO, "Connected");
                 _peer.OpJoin("");// комнату выдадут на сервере независимо от того что передадим параметром
                 break;
             case StatusCode.Disconnect:
                 DebugReturn(DebugLevel.INFO, "Discobbected");
-                _connetionStatus = ConnectionStatus.Disconnect;
+                ConnetionStatus = ConnectionStatus.Disconnect;
                 this.ActorNumber = 0;
                 break;
             case StatusCode.ExceptionOnConnect:

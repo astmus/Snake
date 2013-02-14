@@ -23,8 +23,7 @@ public class Fruit : MonoBehaviour {
 	}
 
     void SwitchVisible(bool visible)
-    {
-        Debug.Log("-----------------switch = "+visible);
+    {        
         renderer.enabled = visible;
         enabled = visible;
         _sprite.rigidbody.detectCollisions = visible;
