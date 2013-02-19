@@ -134,9 +134,9 @@ public class SnakeClient : MonoBehaviour, IPhotonPeerListener
         {
             case (byte)LiteOpCode.Join:
                 //Debug.Log("OnOperationResponse == Join");
-                ConnetionStatus = ConnectionStatus.InRoom;
                 JoinResponse response = new JoinResponse(operationResponse.Parameters);
                 ActorNumber = response.ActorNumber;
+                ConnetionStatus = ConnectionStatus.InRoom;                
                 //this.ActorNumber = (int)operationResponse[(byte)LiteOpKey.ActorNr];
                 break;
             case (byte)LiteOpCode.Leave:

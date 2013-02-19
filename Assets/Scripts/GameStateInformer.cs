@@ -42,7 +42,7 @@ public class GameStateInformer : MonoBehaviour {
 
     void OnGameOver(bool winResult)
     {
-        Debug.Log("------------------ win result = "+winResult);
+        //Debug.Log("------------------ win result = "+winResult);
         string res = winResult == true ? "YOU WIN!!!" : "YOU LOSE";
         _messages.Enqueue(new InformerMessage(res, true));
         Run();

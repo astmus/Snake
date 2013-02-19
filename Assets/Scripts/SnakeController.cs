@@ -60,7 +60,14 @@ public class SnakeController : OTSprite, ISnakePart
         _snakeClient.CatchFruitAnswer += OnCatchFruitAnswer;
         _snakeClient.EnemySnakeGrooveUp += OnEnemySnakeGrooveUp;
         _snakeClient.EnemyPointsCountUpdated += OnEnemyPointsCountUpdated;
+        _snakeClient.StatusConnectionChanged += OnStatusConnectionChanged;
         //
+    }
+
+    void OnStatusConnectionChanged(ConnectionStatus status)
+    {        
+        if (status == ConnectionStatus.InRoom && IsEnemyInstance())
+            gameObject.GetComponent<OTSprite>().tintColor = Color.red;
     }
 
     void OnEnemyPointsCountUpdated(int enemyPoints)
