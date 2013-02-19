@@ -60,6 +60,11 @@ public class SnakeClient : MonoBehaviour, IPhotonPeerListener
         this.Connect();
 	}
 
+    public string ConnectionString()
+    {
+        return GameSettings.Instance.ServerAddress + ":" + GameSettings.Instance.Port;
+    }
+
     public virtual void OnApplicationQuit()
     {        
         _peer.Disconnect();
@@ -67,18 +72,16 @@ public class SnakeClient : MonoBehaviour, IPhotonPeerListener
 
 	// Update is called once per frame
 	void Update () {
-        if (Environment.TickCount > _nextSendTickCount)
-        {
-            _peer.Service();
-            _nextSendTickCount = Environment.TickCount + this.SendIntervalMs;
-        }	
+	    if (Environment.TickCount <= _nextSendTickCount) return;
+	    _peer.Service();
+	    _nextSendTickCount = Environment.TickCount + this.SendIntervalMs;
 	}
 
     internal virtual void Connect()
     {        
         // PhotonPeer.Connect() is described in the client reference doc: Photon-DotNet-Client-Documentation_v6-1-0.pdf
-        Debug.Log("Connecting " + ServerAddress + ServerApplication);
-        _peer.Connect(ServerAddress, ServerApplication);
+        Debug.Log("Connecting =" + ConnectionString());
+        _peer.Connect(ConnectionString(), ServerApplication);
     }
 
     public void DebugReturn(DebugLevel level, string message)

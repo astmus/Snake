@@ -12,7 +12,7 @@ public class Fruit : MonoBehaviour {
     OTSprite _sprite;
 
 	void Start () {
-        Debug.Log("/////////////////////////fruit start");
+        //Debug.Log("/////////////////////////fruit start");
         //var snakes = GameObject.FindObjectsOfType(typeof(SnakeController));
         //_snake = (SnakeController)snakes[0];
         _client.FruitRepositioned += OnFruitRepositioned;                
@@ -45,6 +45,8 @@ public class Fruit : MonoBehaviour {
     {
         //Debug.Log("colide");
         if (colliderInfo.gameObject.tag != "SnakeHead") return;
+        SnakeController colideSnake = colliderInfo.gameObject.GetComponent<SnakeController>();
+        if (colideSnake.IsEnemyInstance()) return;
         SwitchVisible(false);
         //Vector2 newPos;
         Number pointsNumber = (Number)Instantiate(NumberPrefab, new Vector3(this.transform.position.x,this.transform.position.y,-18), Quaternion.identity);
@@ -63,9 +65,7 @@ public class Fruit : MonoBehaviour {
         //if (points < 10) points = 10; // но менее 10 быть не может
         pointsNumber.GetComponent<TextMesh>().text = _points.ToString();
         UpdatePointsCountOnLabel(_points, colliderInfo.gameObject);
-        SnakeController colideSnake = colliderInfo.gameObject.GetComponent<SnakeController>();
-        if (!colideSnake.IsEnemyInstance())
-            _client.SendCatchFruit(Id);
+        _client.SendCatchFruit(Id);
         //Debug.Log("counttries = " + Counttries);
     }
 

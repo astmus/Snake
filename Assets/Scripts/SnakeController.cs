@@ -81,7 +81,7 @@ public class SnakeController : OTSprite, ISnakePart
     void OnEnemySnakeGrooveUp(EnemySnakeSizeChangeData sizeData)
     {
         if (!IsEnemyInstance()) return;
-        if (sizeData.NewSize > snake.Count)
+        if (sizeData.NewSize >= snake.Count)
             AddBody();
         else
             ResetSnake(false);
@@ -143,7 +143,7 @@ public class SnakeController : OTSprite, ISnakePart
             else
                 if (snake.Count > 0 && colliderInfo.gameObject != snake[0].AsGameObject()/* && colliderInfo.gameObject != snake[1].AsGameObject()*/)
                 {
-                    ResetSnake(false);
+                    //ResetSnake(false);
                     _snakeClient.SendSyncData(this, snake.Select(e => e as ISnakePart).ToList());
                     //Time.timeScale = 0f;
                     _writer.DebugString("OnTrigger");
