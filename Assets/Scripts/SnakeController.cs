@@ -106,9 +106,13 @@ public class SnakeController : OTSprite, ISnakePart
         Rotation = data.RotateAngle[0];
         transform.position = new Vector3(data.CoordX[0], data.CoordY[0], 0);
         //string str = data.RotateAngle[0] + ";" + data.CoordX[0] + ";" + data.CoordY[0] + "|"+Environment.NewLine;
-
+        
         if (snake.Count >= data.CoordX.Length)
+        {
+            _writer.DebugString("OnRotateHead");
             ResetSnake(false);
+        }
+            
 
         for (int i = 0; i < snake.Count; i++)
         {
@@ -130,17 +134,15 @@ public class SnakeController : OTSprite, ISnakePart
     {
         if (IsEnemyInstance()) return;
         if (colliderInfo.gameObject.tag == "SnakeHead") return;
-        if (colliderInfo.gameObject.tag == "Wall")
+        switch (colliderInfo.gameObject.tag)
         {
-            ResetSnake(true);
-            _snakeClient.SendSyncData(this, snake.Select(e => e as ISnakePart).ToList());
-            // 
-        }
-        else
-            if (colliderInfo.gameObject.tag == "Fruit")
-            {
-            }
-            else
+            case "Wall":
+                ResetSnake(true);
+                _snakeClient.SendSyncData(this, snake.Select(e => e as ISnakePart).ToList());
+                break;
+            case "Fruit":
+                break;
+            default:
                 if (snake.Count > 0 && colliderInfo.gameObject != snake[0].AsGameObject()/* && colliderInfo.gameObject != snake[1].AsGameObject()*/)
                 {
                     //ResetSnake(false);
@@ -148,6 +150,8 @@ public class SnakeController : OTSprite, ISnakePart
                     //Time.timeScale = 0f;
                     _writer.DebugString("OnTrigger");
                 }
+                break;
+        }
     }
 
     void ResetSnake(bool colideWithWall)

@@ -149,8 +149,15 @@ public class SnakeClient : MonoBehaviour, IPhotonPeerListener
                 Debug.Log("OnOperationResponse == CatchFruit");
                 CatchFruitResponse catchResponse = new CatchFruitResponse(operationResponse.Parameters);
                 if (CatchFruitAnswer != null) CatchFruitAnswer(catchResponse);
+                SendSnakeGroweUp();
                 break;
         }
+    }
+
+    void SendSnakeGroweUp()
+    {
+        parameters.Clear();
+        _peer.OpCustom((byte)GameCode.SnakeGroweUp, parameters, true);
     }
 
     public void SendSyncData(ISnakePart head,List<ISnakePart>body)
@@ -178,7 +185,7 @@ public class SnakeClient : MonoBehaviour, IPhotonPeerListener
 
     public void OnStatusChanged(StatusCode statusCode)
     {
-        this.DebugReturn(DebugLevel.INFO,String.Format("OnStatusChanged: {0}", statusCode));
+        DebugReturn(DebugLevel.INFO,String.Format("OnStatusChanged: {0}", statusCode));
 
         switch (statusCode)
         {
@@ -190,7 +197,7 @@ public class SnakeClient : MonoBehaviour, IPhotonPeerListener
             case StatusCode.Disconnect:
                 DebugReturn(DebugLevel.INFO, "Discobbected");
                 ConnetionStatus = ConnectionStatus.Disconnect;
-                this.ActorNumber = 0;
+                ActorNumber = 0;
                 break;
             case StatusCode.ExceptionOnConnect:
                 DebugReturn(DebugLevel.ERROR,"Connection failed.\nIs the server online? Firewall open?");
@@ -214,7 +221,7 @@ public class SnakeClient : MonoBehaviour, IPhotonPeerListener
                 DebugReturn(DebugLevel.ERROR,"Server reached it's user limit.\nThe server is currently not accepting connections.\nThe license does not allow it.");
                 break;
             default:
-                this.DebugReturn(DebugLevel.INFO,"StatusCode not handled: " + statusCode);
+                DebugReturn(DebugLevel.INFO,"StatusCode not handled: " + statusCode);
                 break;
         }
         

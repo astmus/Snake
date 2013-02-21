@@ -9,7 +9,8 @@ namespace Assets.Scripts
     {
         GameSettings()
         {
-            ServerAddress = "54.228.214.178";
+            //ServerAddress = "54.228.214.178";
+            ServerAddress = "localhost";
             Port = "5055";
         }
 

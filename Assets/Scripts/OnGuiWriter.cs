@@ -18,9 +18,9 @@ public class OnGuiWriter : MonoBehaviour {
 	// Update is called once per frame
 	void OnGUI()
     {
-        /*GUILayout.BeginArea(new Rect(Screen.width *0.25f, Screen.height * 0.25f, Screen.width * 0.5f, Screen.height * 0.5f));
-        switch (_client.ConnetionStatus)
-        {
+        GUILayout.BeginArea(new Rect(Screen.width *0.25f, Screen.height * 0.25f, Screen.width * 0.5f, Screen.height * 0.5f));
+        /*switch (_client.ConnetionStatus)
+        {**************
             case ConnectionStatus.Disconnect:
                 GUILayout.Label("User Disconnected");
                 break;
@@ -35,8 +35,8 @@ public class OnGuiWriter : MonoBehaviour {
                 break;
             default:
                 break;
-        }
+        }*/
         GUILayout.Label(debugString);
-        GUILayout.EndArea();*/
+        GUILayout.EndArea();
 	}
 }

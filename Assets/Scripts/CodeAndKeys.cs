@@ -44,7 +44,9 @@ public enum GameCode : byte
 
     CatchFruit = 246,
 
-    UpdatedEnemyPosition = 245
+    UpdatedEnemyPosition = 245,
+
+    SnakeGroweUp = 244
 }
 
 public enum GameMessageCodes : byte
