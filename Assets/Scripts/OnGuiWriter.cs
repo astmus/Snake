@@ -1,3 +1,4 @@
+using Assets.Scripts;
 using UnityEngine;
 using System.Collections;
 
@@ -21,16 +22,16 @@ public class OnGuiWriter : MonoBehaviour {
         GUILayout.BeginArea(new Rect(Screen.width *0.25f, Screen.height * 0.25f, Screen.width * 0.5f, Screen.height * 0.5f));
         /*switch (_client.ConnetionStatus)
         {**************
-            case ConnectionStatus.Disconnect:
+            case GameStatus.Disconnect:
                 GUILayout.Label("User Disconnected");
                 break;
-            case ConnectionStatus.Connect:                
+            case GameStatus.Connect:                
                 GUILayout.Label("User connected");                                
                 break;
-            case ConnectionStatus.InRoom:
+            case GameStatus.InRoom:
                 GUILayout.Label("In room wait for apponent");
                 break;
-            case ConnectionStatus.InGame:
+            case GameStatus.InGame:
                 GUILayout.Label("game started");
                 break;
             default:

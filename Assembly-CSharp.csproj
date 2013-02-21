@@ -147,6 +147,7 @@
      <Compile Include="Assets\Scripts\FruitInfo.cs" />
      <Compile Include="Assets\Scripts\GameSettings.cs" />
      <Compile Include="Assets\Scripts\GameStateInformer.cs" />
+     <Compile Include="Assets\Scripts\GameStatusListener.cs" />
      <Compile Include="Assets\Scripts\JoinResponse.cs" />
      <Compile Include="Assets\Scripts\KeyController.cs" />
      <Compile Include="Assets\Scripts\MenuItem.cs" />

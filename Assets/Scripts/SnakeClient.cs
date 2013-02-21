@@ -1,229 +1,231 @@
 using UnityEngine;
-using System.Collections;
 using ExitGames.Client.Photon;
 using ExitGames.Client.Photon.Lite;
 using System;
-using Assets.Scripts;
 using System.Collections.Generic;
 using Assets.Scripts.Responses;
 using Assets.Scripts.SendDataModel;
 
-public enum ConnectionStatus
+namespace Assets.Scripts
 {
-    Disconnect = 0,
-    Connect = 1,
-    InRoom = 2,
-    InGame = 3,
-    GameOver = 4
-}
+    public enum GameStatus
+    {
+        Disconnect = 0,
+        Connect = 1,
+        InRoom = 2,
+        InGame = 3,
+        GameOver = 4
+    }
 
-public class SnakeClient : MonoBehaviour, IPhotonPeerListener
-{
-    LitePeer _peer;
-    ConnectionStatus _connetionStatus;
+    public class SnakeClient : MonoBehaviour, IPhotonPeerListener
+    {
+        LitePeer _peer;
+        GameStatus _connetionStatus;
     
-    public event Action<RotateHeadData> RotateHead;
-    public event Action<string> OpponentSendMessage;
-    public event Action<FruitInfo> FruitRepositioned;
-    public event Action<CatchFruitResponse> CatchFruitAnswer;
-    public event Action<EnemySnakeSizeChangeData> EnemySnakeGrooveUp;
-    public event Action<int> EnemyPointsCountUpdated;
-    public event Action<ConnectionStatus> StatusConnectionChanged;
-    public event Action<int> CountDownTick;
-    public event Action<bool> GameOver;
+        public event Action<RotateHeadData> RotateHead;
+        public event Action<string> OpponentSendMessage;
+        public event Action<FruitInfo> FruitRepositioned;
+        public event Action<CatchFruitResponse> CatchFruitAnswer;
+        public event Action<EnemySnakeSizeChangeData> EnemySnakeGrooveUp;
+        public event Action<int> EnemyPointsCountUpdated;
+        public event Action<GameStatus> GameStatusChanged;
+        public event Action<int> CountDownTick;
+        public event Action<bool> GameOver;
 
-    public ConnectionStatus ConnetionStatus
-    {
-        get { return _connetionStatus; }
-        private set 
-        { 
-            _connetionStatus = value;
-            if (StatusConnectionChanged != null) StatusConnectionChanged(value);
-        }
-    }
-
-    protected string ServerApplication = "ServerTest";
-    private int _nextSendTickCount = Environment.TickCount;
-    private bool _gameIsStarted = false;
-    private static Dictionary<byte, object> parameters = new Dictionary<byte, object>();
-
-    public int SendIntervalMs = 10;
-    public string ServerAddress = "localhost:5055";
-    public int ActorNumber;
-    public bool _isDebugMode;
-
-	// Use this for initialization
-	void Start () {
-        Application.runInBackground = true;
-        _peer = new LitePeer(this, ConnectionProtocol.Udp);
-        _isDebugMode = true;
-        this.Connect();
-	}
-
-    public string ConnectionString()
-    {
-        return GameSettings.Instance.ServerAddress + ":" + GameSettings.Instance.Port;
-    }
-
-    public virtual void OnApplicationQuit()
-    {        
-        _peer.Disconnect();
-    }
-
-	// Update is called once per frame
-	void Update () {
-	    if (Environment.TickCount <= _nextSendTickCount) return;
-	    _peer.Service();
-	    _nextSendTickCount = Environment.TickCount + this.SendIntervalMs;
-	}
-
-    internal virtual void Connect()
-    {        
-        // PhotonPeer.Connect() is described in the client reference doc: Photon-DotNet-Client-Documentation_v6-1-0.pdf
-        Debug.Log("Connecting =" + ConnectionString());
-        _peer.Connect(ConnectionString(), ServerApplication);
-    }
-
-    public void DebugReturn(DebugLevel level, string message)
-    {
-        if (_isDebugMode == false) return;
-        Debug.Log(message);
-    }
-
-    public void OnEvent(EventData eventData)
-    {
-        DebugReturn(DebugLevel.INFO, String.Format("OnEvent: {0}", eventData.ToStringFull()));
-        switch (eventData.Code)
+        public GameStatus ConnetionStatus
         {
-            case (byte)EventCode.Join:                
-                int[] actors = (int[])eventData.Parameters[(byte)ParameterKey.Actors]; 
-                /*if (actors.Length == 2)
-                    ConnetionStatus = ConnectionStatus.InGame;*/
-                //Debug.Log("actors count = " + actors.Length);
-                break;
-            case (byte)EventCode.Leave:
-                break;
-            case (byte)EventCode.RotateHead:
-                if (RotateHead != null) RotateHead(new RotateHeadData(eventData.Parameters));
-                break;
-            case (byte)EventCode.SendMessage:
-                if (OpponentSendMessage != null) OpponentSendMessage((string)eventData.Parameters[(byte)ParameterKey.TextMessage]);
-                break;
-            case (byte)EventCode.FruitReposition:
-                if (FruitRepositioned != null) FruitRepositioned(new FruitInfo(eventData.Parameters));
-                break;
-            case (byte)EventCode.NewEnemySnakeSize:
-                if (EnemySnakeGrooveUp != null) EnemySnakeGrooveUp(new EnemySnakeSizeChangeData(eventData.Parameters));                
-                break;                
-            case (byte)EventCode.EnemyPointsUpdated:                
-                if (EnemyPointsCountUpdated != null) EnemyPointsCountUpdated((int)eventData.Parameters[(byte)ParameterKey.PointsCount]);
-                break;
-            case (byte)EventCode.CountDownTick:
-                int seconds = (int)eventData.Parameters[(byte)ParameterKey.CountDownSec];
-                if (seconds == 0) ConnetionStatus = ConnectionStatus.InGame;
-                if (CountDownTick != null) CountDownTick(seconds);                
-                break;
-            case (byte)EventCode.GameOver:
-                ConnetionStatus = ConnectionStatus.GameOver;
-                if (GameOver != null) GameOver((bool)eventData.Parameters[(byte)ParameterKey.WinResult]);
-                break;
+            get { return _connetionStatus; }
+            private set 
+            { 
+                _connetionStatus = value;
+                if (GameStatusChanged != null) GameStatusChanged(value);
+            }
         }
-    }
 
-    public void OnOperationResponse(OperationResponse operationResponse)
-    {
-        DebugReturn(DebugLevel.INFO,String.Format("OnOperationResponse: {0}", operationResponse.ToStringFull()));
-        switch (operationResponse.OperationCode)
+        protected string ServerApplication = "ServerTest";
+        private int _nextSendTickCount = Environment.TickCount;
+        private bool _gameIsStarted = false;
+        private static Dictionary<byte, object> parameters = new Dictionary<byte, object>();
+
+        public int SendIntervalMs = 10;
+        public string ServerAddress = "localhost:5055";
+        public int ActorNumber;
+        public bool _isDebugMode;
+
+        // Use this for initialization
+        void Start () {
+            Application.runInBackground = true;
+            _peer = new LitePeer(this, ConnectionProtocol.Udp);
+            _isDebugMode = true;
+            Connect();
+        }
+
+        public string ConnectionString()
         {
-            case (byte)LiteOpCode.Join:
-                //Debug.Log("OnOperationResponse == Join");
-                JoinResponse response = new JoinResponse(operationResponse.Parameters);
-                ActorNumber = response.ActorNumber;
-                ConnetionStatus = ConnectionStatus.InRoom;                
-                //this.ActorNumber = (int)operationResponse[(byte)LiteOpKey.ActorNr];
-                break;
-            case (byte)LiteOpCode.Leave:
-                //this.State = ClientState.Connected;
-                break;
-            case (byte)GameCode.CatchFruit:
-                Debug.Log("OnOperationResponse == CatchFruit");
-                CatchFruitResponse catchResponse = new CatchFruitResponse(operationResponse.Parameters);
-                if (CatchFruitAnswer != null) CatchFruitAnswer(catchResponse);
-                SendSnakeGroweUp();
-                break;
+            return GameSettings.Instance.ServerAddress + ":" + GameSettings.Instance.Port;
         }
-    }
 
-    void SendSnakeGroweUp()
-    {
-        parameters.Clear();
-        _peer.OpCustom((byte)GameCode.SnakeGroweUp, parameters, true);
-    }
+        public virtual void OnApplicationQuit()
+        {        
+            _peer.Disconnect();
+        }
 
-    public void SendSyncData(ISnakePart head,List<ISnakePart>body)
-    {
-        SnakeSyncData syncData = new SnakeSyncData(head);
-        syncData.Add(body);
-        parameters.Clear();
-        syncData.DictionaryForSend(ref parameters);
-        _peer.OpCustom((byte)GameCode.RotateHead, parameters, true);
-    }
+        // Update is called once per frame
+        void Update () {
+            if (Environment.TickCount <= _nextSendTickCount) return;
+            _peer.Service();
+            _nextSendTickCount = Environment.TickCount + this.SendIntervalMs;
+        }
 
-    public void SendTextMessage(string message)
-    {
-        parameters.Clear();
-        parameters.Add((Byte)ParameterKey.TextMessage, message);
-        _peer.OpCustom((byte)GameCode.SendMessage, parameters, true);
-    }
+        internal virtual void Connect()
+        {        
+            // PhotonPeer.Connect() is described in the client reference doc: Photon-DotNet-Client-Documentation_v6-1-0.pdf
+            Debug.Log("Connecting =" + ConnectionString());
+            _peer.Connect(ConnectionString(), ServerApplication);
+        }
 
-    public void SendCatchFruit(int fruitId)
-    {
-        parameters.Clear();
-        parameters.Add((Byte)ParameterKey.FruitID, fruitId);
-        _peer.OpCustom((byte)GameCode.CatchFruit, parameters, true);
-    }
-
-    public void OnStatusChanged(StatusCode statusCode)
-    {
-        DebugReturn(DebugLevel.INFO,String.Format("OnStatusChanged: {0}", statusCode));
-
-        switch (statusCode)
+        public void DebugReturn(DebugLevel level, string message)
         {
-            case StatusCode.Connect:
-                ConnetionStatus = ConnectionStatus.Connect;
-                DebugReturn(DebugLevel.INFO, "Connected");
-                _peer.OpJoin("");// комнату выдадут на сервере независимо от того что передадим параметром
-                break;
-            case StatusCode.Disconnect:
-                DebugReturn(DebugLevel.INFO, "Discobbected");
-                ConnetionStatus = ConnectionStatus.Disconnect;
-                ActorNumber = 0;
-                break;
-            case StatusCode.ExceptionOnConnect:
-                DebugReturn(DebugLevel.ERROR,"Connection failed.\nIs the server online? Firewall open?");
-                break;
-            case StatusCode.SecurityExceptionOnConnect:
-                DebugReturn(DebugLevel.ERROR,"Security Exception on connect.\nMost likely, the policy request failed.\nIs Photon and the Policy App running?");
-                break;
-            case StatusCode.Exception:
-                DebugReturn(DebugLevel.ERROR,"Communication terminated by Exception.\nProbably the server shutdown locally.\nOr the network connection terminated.");
-                break;
-            case StatusCode.TimeoutDisconnect:
-                DebugReturn(DebugLevel.INFO,"Disconnect due to timeout.\nProbably the server shutdown locally.\nOr the network connection terminated.");
-                break;
-            case StatusCode.DisconnectByServer:
-                DebugReturn(DebugLevel.ERROR,"Timeout Disconnect by server.\nThe server did not get responses in time.");
-                break;
-            case StatusCode.DisconnectByServerLogic:
-                DebugReturn(DebugLevel.ERROR,"Disconnect by server.\nThe servers logic (application) disconnected this client for some reason.");
-                break;
-            case StatusCode.DisconnectByServerUserLimit:
-                DebugReturn(DebugLevel.ERROR,"Server reached it's user limit.\nThe server is currently not accepting connections.\nThe license does not allow it.");
-                break;
-            default:
-                DebugReturn(DebugLevel.INFO,"StatusCode not handled: " + statusCode);
-                break;
+            if (_isDebugMode == false) return;
+            Debug.Log(message);
         }
+
+        public void OnEvent(EventData eventData)
+        {
+            //DebugReturn(DebugLevel.INFO, String.Format("OnEvent: {0}", eventData.ToStringFull()));
+            switch (eventData.Code)
+            {
+                case (byte)EventCode.Join:                
+                    int[] actors = (int[])eventData.Parameters[(byte)ParameterKey.Actors]; 
+                    /*if (actors.Length == 2)
+                    ConnetionStatus = GameStatus.InGame;*/
+                    //Debug.Log("actors count = " + actors.Length);
+                    break;
+                case (byte)EventCode.Leave:
+                    break;
+                case (byte)EventCode.RotateHead:
+                    if (RotateHead != null) RotateHead(new RotateHeadData(eventData.Parameters));
+                    break;
+                case (byte)EventCode.SendMessage:
+                    if (OpponentSendMessage != null) OpponentSendMessage((string)eventData.Parameters[(byte)ParameterKey.TextMessage]);
+                    break;
+                case (byte)EventCode.FruitReposition:
+                    if (FruitRepositioned != null) FruitRepositioned(new FruitInfo(eventData.Parameters));
+                    break;
+                case (byte)EventCode.NewEnemySnakeSize:
+                    if (EnemySnakeGrooveUp != null) EnemySnakeGrooveUp(new EnemySnakeSizeChangeData(eventData.Parameters));                
+                    break;                
+                case (byte)EventCode.EnemyPointsUpdated:                
+                    if (EnemyPointsCountUpdated != null) EnemyPointsCountUpdated((int)eventData.Parameters[(byte)ParameterKey.PointsCount]);
+                    break;
+                case (byte)EventCode.CountDownTick:
+                    int seconds = (int)eventData.Parameters[(byte)ParameterKey.CountDownSec];
+                    if (seconds == 0) ConnetionStatus = GameStatus.InGame;
+                    if (CountDownTick != null) CountDownTick(seconds);                
+                    break;
+                case (byte)EventCode.GameOver:
+                    ConnetionStatus = GameStatus.GameOver;
+                    if (GameOver != null) GameOver((bool)eventData.Parameters[(byte)ParameterKey.WinResult]);
+                    break;
+            }
+        }
+
+        public void OnOperationResponse(OperationResponse operationResponse)
+        {
+            DebugReturn(DebugLevel.INFO,String.Format("OnOperationResponse: {0}", operationResponse.ToStringFull()));
+            switch (operationResponse.OperationCode)
+            {
+                case (byte)LiteOpCode.Join:
+                    //Debug.Log("OnOperationResponse == Join");
+                    JoinResponse response = new JoinResponse(operationResponse.Parameters);
+                    ActorNumber = response.ActorNumber;
+                    ConnetionStatus = GameStatus.InRoom;                
+                    //this.ActorNumber = (int)operationResponse[(byte)LiteOpKey.ActorNr];
+                    break;
+                case (byte)LiteOpCode.Leave:
+                    //this.State = ClientState.Connected;
+                    break;
+                case (byte)GameCode.CatchFruit:
+                    Debug.Log("OnOperationResponse == CatchFruit");
+                    CatchFruitResponse catchResponse = new CatchFruitResponse(operationResponse.Parameters);
+                    if (CatchFruitAnswer != null) CatchFruitAnswer(catchResponse);
+                    SendSnakeGroweUp();
+                    break;
+            }
+        }
+
+        void SendSnakeGroweUp()
+        {
+            Debug.Log("SnakeClient SendSnakeGroweUp");
+            parameters.Clear();
+            _peer.OpCustom((byte)GameCode.SnakeGroweUp, parameters, true);
+        }
+
+        public void SendSyncData(ISnakePart head,List<ISnakePart>body)
+        {
+            SnakeSyncData syncData = new SnakeSyncData(head);
+            syncData.Add(body);
+            parameters.Clear();
+            syncData.DictionaryForSend(ref parameters);
+            _peer.OpCustom((byte)GameCode.RotateHead, parameters, true);
+        }
+
+        public void SendTextMessage(string message)
+        {
+            parameters.Clear();
+            parameters.Add((Byte)ParameterKey.TextMessage, message);
+            _peer.OpCustom((byte)GameCode.SendMessage, parameters, true);
+        }
+
+        public void SendCatchFruit(int fruitId)
+        {
+            parameters.Clear();
+            parameters.Add((Byte)ParameterKey.FruitID, fruitId);
+            _peer.OpCustom((byte)GameCode.CatchFruit, parameters, true);
+        }
+
+        public void OnStatusChanged(StatusCode statusCode)
+        {
+            DebugReturn(DebugLevel.INFO,String.Format("OnStatusChanged: {0}", statusCode));
+
+            switch (statusCode)
+            {
+                case StatusCode.Connect:
+                    ConnetionStatus = GameStatus.Connect;
+                    DebugReturn(DebugLevel.INFO, "Connected");
+                    _peer.OpJoin("");// комнату выдадут на сервере независимо от того что передадим параметром
+                    break;
+                case StatusCode.Disconnect:
+                    DebugReturn(DebugLevel.INFO, "Discobbected");
+                    ConnetionStatus = GameStatus.Disconnect;
+                    ActorNumber = 0;
+                    break;
+                case StatusCode.ExceptionOnConnect:
+                    DebugReturn(DebugLevel.ERROR,"Connection failed.\nIs the server online? Firewall open?");
+                    break;
+                case StatusCode.SecurityExceptionOnConnect:
+                    DebugReturn(DebugLevel.ERROR,"Security Exception on connect.\nMost likely, the policy request failed.\nIs Photon and the Policy App running?");
+                    break;
+                case StatusCode.Exception:
+                    DebugReturn(DebugLevel.ERROR,"Communication terminated by Exception.\nProbably the server shutdown locally.\nOr the network connection terminated.");
+                    break;
+                case StatusCode.TimeoutDisconnect:
+                    DebugReturn(DebugLevel.INFO,"Disconnect due to timeout.\nProbably the server shutdown locally.\nOr the network connection terminated.");
+                    break;
+                case StatusCode.DisconnectByServer:
+                    DebugReturn(DebugLevel.ERROR,"Timeout Disconnect by server.\nThe server did not get responses in time.");
+                    break;
+                case StatusCode.DisconnectByServerLogic:
+                    DebugReturn(DebugLevel.ERROR,"Disconnect by server.\nThe servers logic (application) disconnected this client for some reason.");
+                    break;
+                case StatusCode.DisconnectByServerUserLimit:
+                    DebugReturn(DebugLevel.ERROR,"Server reached it's user limit.\nThe server is currently not accepting connections.\nThe license does not allow it.");
+                    break;
+                default:
+                    DebugReturn(DebugLevel.INFO,"StatusCode not handled: " + statusCode);
+                    break;
+            }
         
+        }
     }
 }

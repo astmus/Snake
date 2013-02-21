@@ -1,3 +1,4 @@
+using Assets.Scripts;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -60,13 +61,13 @@ public class SnakeController : OTSprite, ISnakePart
         _snakeClient.CatchFruitAnswer += OnCatchFruitAnswer;
         _snakeClient.EnemySnakeGrooveUp += OnEnemySnakeGrooveUp;
         _snakeClient.EnemyPointsCountUpdated += OnEnemyPointsCountUpdated;
-        _snakeClient.StatusConnectionChanged += OnStatusConnectionChanged;
+        _snakeClient.GameStatusChanged += OnGameStatusChanged;
         //
     }
 
-    void OnStatusConnectionChanged(ConnectionStatus status)
+    void OnGameStatusChanged(GameStatus status)
     {        
-        if (status == ConnectionStatus.InRoom && IsEnemyInstance())
+        if (status == GameStatus.InRoom && IsEnemyInstance())
             gameObject.GetComponent<OTSprite>().tintColor = Color.red;
     }
 
@@ -181,7 +182,7 @@ public class SnakeController : OTSprite, ISnakePart
         //Debug.Log("actor num = "+_snakeClient.ActorNumber);
         //Debug.Log("player number = "+_playerNumber);
 
-        if (_snakeClient.ConnetionStatus != ConnectionStatus.InGame) return;
+        if (_snakeClient.ConnetionStatus != GameStatus.InGame) return;
 #if UNITY_EDITOR
         if (_directionData == null) return;
 #endif

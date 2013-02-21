@@ -1,3 +1,4 @@
+using Assets.Scripts;
 using UnityEngine;
 using System.Collections.Generic;
 using ExitGames.Client.Photon;
@@ -35,7 +36,7 @@ public class GameStateInformer : MonoBehaviour {
         _invisible = new Color(255, 255, 255, 0);
         renderer.material.color = _invisible;
         transform.localScale = _maxSize;
-        _snakeClient.StatusConnectionChanged += OnStatusConnectionChanged;
+        _snakeClient.GameStatusChanged += OnGameStatusChanged;
         _snakeClient.CountDownTick += OnCountDownTick;
         _snakeClient.GameOver += OnGameOver;
 	}
@@ -50,7 +51,7 @@ public class GameStateInformer : MonoBehaviour {
 
     void OnCountDownTick(int seconds)
     {
-        if (_countDownPriority == true)
+        if (_countDownPriority)
         {
             _messages.Clear();
             _isRunning = false;
@@ -69,20 +70,20 @@ public class GameStateInformer : MonoBehaviour {
         Run();
     }
 
-    void OnStatusConnectionChanged(ConnectionStatus statusCode)
+    void OnGameStatusChanged(GameStatus statusCode)
     {
         switch (statusCode)
         {
-            case ConnectionStatus.Connect:
+            case GameStatus.Connect:
                 _messages.Enqueue(new InformerMessage("connected",true));                
                 break;
-            case ConnectionStatus.Disconnect:
+            case GameStatus.Disconnect:
                 _messages.Enqueue(new InformerMessage("disconnected",true));
                 break;           
-            case ConnectionStatus.InRoom:
-                _messages.Enqueue(new InformerMessage("search opponent",true));
+            case GameStatus.InRoom:
+                _messages.Enqueue(new InformerMessage("waiting for opponent", true));
                 break;
-            case ConnectionStatus.InGame:
+            case GameStatus.InGame:
                 //_messages.Enqueue(new InformerMessage("", false));
                 break;
         }        
