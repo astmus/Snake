@@ -16,7 +16,8 @@ public class Fruit : MonoBehaviour {
         //Debug.Log("/////////////////////////fruit start");
         //var snakes = GameObject.FindObjectsOfType(typeof(SnakeController));
         //_snake = (SnakeController)snakes[0];
-        _client.FruitRepositioned += OnFruitRepositioned;                
+        _client.FruitRepositioned += OnFruitRepositioned;
+	    audio.volume = GameSettings.Instance.SoundsVolume;     
         _sprite = this.transform.gameObject.GetComponent<OTSprite>();// поучаем компонент родителя через него будем отключать столкновения
         SwitchVisible(false);
         

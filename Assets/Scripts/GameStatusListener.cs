@@ -8,10 +8,12 @@ public class GameStatusListener : MonoBehaviour {
     public SnakeClient _client;
 	void Start () {
         _client.GameStatusChanged += OnGameStatusChanged;
+	    audio.volume = GameSettings.Instance.MusicVolume;
 	}
 
     void OnGameStatusChanged(GameStatus status)
     {
+        
         switch (status)
         {
             case GameStatus.InGame:

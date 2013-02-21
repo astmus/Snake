@@ -18,6 +18,7 @@ public class MenuItem : MonoBehaviour
 	{
         var list = GameObject.FindGameObjectsWithTag("MenuItem").ToList();
 	    int delay = list.IndexOf(this.gameObject);
+	    audio.volume = GameSettings.Instance.SoundsVolume;
 	    StartCoroutine(StartAnimation(delay));
 	}
 	
