@@ -30,7 +30,7 @@ public class Fruit : MonoBehaviour {
         enabled = visible;
         _sprite.rigidbody.detectCollisions = visible;
     }
-    
+
     void OnFruitRepositioned(FruitInfo fruitInfo)
     {
         Id = fruitInfo.ID;

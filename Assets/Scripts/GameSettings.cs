@@ -9,8 +9,8 @@ namespace Assets.Scripts
     {
         GameSettings()
         {
-            //ServerAddress = "54.228.214.178";
-            ServerAddress = "localhost";
+            ServerAddress = "54.228.214.178";
+            //ServerAddress = "localhost";
             Port = "5055";
             MusicVolume = 0.8f;
             SoundsVolume = 0.8f;

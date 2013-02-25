@@ -23,7 +23,7 @@ static class BasicDirections
 
 public class SnakeController : OTSprite, ISnakePart
 {
-    static int numberCounter = 1;
+    private static IntRange _numberCounter = new IntRange(1,2);
     int _playerNumber;
     float speed;
     float rotateSpeed;
@@ -50,10 +50,10 @@ public class SnakeController : OTSprite, ISnakePart
         snake = new List<SnakeBodySpan>();
         speed = 6;
         rotateSpeed = speed * 0.5f;
-        _playerNumber = numberCounter++;
+        _playerNumber = _numberCounter++;
         _labels = GameObject.FindGameObjectsWithTag("PointLabel");        
         // позже перенести этот код в класс настроек и оттуда по номеру игрока получать настройки управления
-        //if (_playerNumber != 0)
+        //if (_playerNumber != 0)  
         _directionData = new KeyController();
         //else
         //_directionData = new KeyController(KeyCode.A, KeyCode.D, KeyCode.W, KeyCode.S);
@@ -67,8 +67,10 @@ public class SnakeController : OTSprite, ISnakePart
 
     void OnGameStatusChanged(GameStatus status)
     {        
-        if (status == GameStatus.InRoom && IsEnemyInstance())
-            gameObject.GetComponent<OTSprite>().tintColor = Color.red;
+        if (status != GameStatus.InRoom) return;
+        gameObject.GetComponent<OTSprite>().tintColor = IsEnemyInstance() ? Color.red : Color.white;
+        //Debug.Log("GameStatus == " + gameObject.GetComponent<OTSprite>().tintColor);
+        //Debug.Log("SnakeClient number == "+_snakeClient.ActorNumber);
     }
 
     void OnEnemyPointsCountUpdated(int enemyPoints)
@@ -101,14 +103,14 @@ public class SnakeController : OTSprite, ISnakePart
         set { _playerNumber = value; }
     }
 
-    void OnRotateHead(RotateHeadData data)
+    void OnRotateHead(RotateHeadData rotateData)
     {
         if (!IsEnemyInstance()) return;
-        Rotation = data.RotateAngle[0];
-        transform.position = new Vector3(data.CoordX[0], data.CoordY[0], 0);
-        //string str = data.RotateAngle[0] + ";" + data.CoordX[0] + ";" + data.CoordY[0] + "|"+Environment.NewLine;
+        Rotation = rotateData.RotateAngle[0];
+        transform.position = new Vector3(rotateData.CoordX[0], rotateData.CoordY[0], 0);
+        //string str = rotateData.RotateAngle[0] + ";" + rotateData.CoordX[0] + ";" + rotateData.CoordY[0] + "|"+Environment.NewLine;
         
-        if (snake.Count >= data.CoordX.Length)
+        if (snake.Count >= rotateData.CoordX.Length)
         {
             _writer.DebugString("OnRotateHead");
             ResetSnake(false);
@@ -118,9 +120,9 @@ public class SnakeController : OTSprite, ISnakePart
         for (int i = 0; i < snake.Count; i++)
         {
             SnakeBodySpan span = snake[i];
-            span.Rotation = data.RotateAngle[i + 1];
-            span.Position = new Vector2(data.CoordX[i + 1], data.CoordY[i + 1]);
-            //str += data.RotateAngle[i+1] + ";" + data.CoordX[i+1] + ";" + data.CoordY[i+1] + "|"+Environment.NewLine;
+            span.Rotation = rotateData.RotateAngle[i + 1];
+            span.Position = new Vector2(rotateData.CoordX[i + 1], rotateData.CoordY[i + 1]);
+            //str += rotateData.RotateAngle[i+1] + ";" + rotateData.CoordX[i+1] + ";" + rotateData.CoordY[i+1] + "|"+Environment.NewLine;
 
         }
         //_writer.DebugString(str);
@@ -182,7 +184,7 @@ public class SnakeController : OTSprite, ISnakePart
         //Debug.Log("actor num = "+_snakeClient.ActorNumber);
         //Debug.Log("player number = "+_playerNumber);
 
-        if (_snakeClient.ConnetionStatus != GameStatus.InGame) return;
+        if (_snakeClient.ConnectionStatus != GameStatus.InGame) return;
 #if UNITY_EDITOR
         if (_directionData == null) return;
 #endif

@@ -72,6 +72,7 @@ public class GameStateInformer : MonoBehaviour {
 
     void OnGameStatusChanged(GameStatus statusCode)
     {
+        //Debug.Log("GameSatus in GameStatInformr == " + statusCode);
         switch (statusCode)
         {
             case GameStatus.Connect:
@@ -100,6 +101,7 @@ public class GameStateInformer : MonoBehaviour {
 
     void ExecuteAnimation()
     {
+        //Debug.Log("GameStateInformer ExecuteAnimation");
         transform.localScale = _maxSize;
         renderer.material.color = _invisible;
         _currentHandleMessage = _messages.Dequeue();
@@ -107,6 +109,8 @@ public class GameStateInformer : MonoBehaviour {
         iTween.ScaleTo(gameObject,_minSize,.5f);
         iTween.ColorTo(gameObject, Color.white, .5f, "OnAnimationComplete");        
     }
+
+    
 
     void OnAnimationComplete()
     {

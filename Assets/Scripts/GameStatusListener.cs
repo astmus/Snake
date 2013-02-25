@@ -13,7 +13,6 @@ public class GameStatusListener : MonoBehaviour {
 
     void OnGameStatusChanged(GameStatus status)
     {
-        
         switch (status)
         {
             case GameStatus.InGame:
