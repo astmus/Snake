@@ -12,7 +12,7 @@ public class OnGuiWriter : MonoBehaviour {
 	   _areaLayout = new Rect(0,0,Screen.width,Screen.height);
 	}
 
-    public void DebugString(string message)
+    public void DebugString2(string message)
     {
         debugString = message;
     }
@@ -38,7 +38,7 @@ public class OnGuiWriter : MonoBehaviour {
             default:
                 break;
         }
-        //GUILayout.Label(debugString);
+        GUILayout.Label(debugString);
         GUILayout.EndArea();
 	}
 

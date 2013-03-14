@@ -50,6 +50,7 @@ namespace Assets.Scripts
         public event Action<GameStatus> GameStatusChanged;
         public event Action<int> CountDownTick;
         public event Action<bool> GameOver;
+        public event Action<bool> EnemySnakeReset;
 
         public GameStatus ConnectionStatus
         {
@@ -165,6 +166,9 @@ namespace Assets.Scripts
                     ConnectionStatus = GameStatus.GameOver;
                     if (GameOver != null) GameOver((bool)eventData.Parameters[(byte)ParameterKey.WinResult]);
                     break;
+                case (byte)EventCode.EnemySnakeReset:
+                    if (EnemySnakeReset != null) EnemySnakeReset((bool)eventData.Parameters[(byte)ParameterKey.SnakeColideWithWall]);
+                    break;
             }
         }
 
@@ -197,6 +201,13 @@ namespace Assets.Scripts
             //Debug.Log("SnakeClient SendSnakeGroweUp");
             parameters.Clear();
             _connection.OpCustom((byte)GameCode.SnakeGroweUp, parameters, true);
+        }
+
+        public void SendSnakeReset(bool colideWithWall)
+        {
+            parameters.Clear();
+            parameters.Add((byte)ParameterKey.SnakeColideWithWall,colideWithWall);
+            _connection.OpCustom((byte)GameCode.SnakeReset, parameters, true);
         }
 
         public void SendSyncData(ISnakePart head, List<ISnakePart> body)

@@ -46,7 +46,9 @@ public enum GameCode : byte
 
     UpdatedEnemyPosition = 245,
 
-    SnakeGroweUp = 244
+    SnakeGroweUp = 244,
+
+    SnakeReset = 243
 }
 
 public enum GameMessageCodes : byte
@@ -96,7 +98,9 @@ public enum EventCode : byte
 
     CountDownTick = 243,
 
-    GameOver = 242
+    GameOver = 242,
+
+    EnemySnakeReset = 241
 }
 
 public enum ParameterKey : byte
@@ -131,5 +135,7 @@ public enum ParameterKey : byte
 
     CountDownSec = 229,
 
-    WinResult = 228
+    WinResult = 228,
+
+    SnakeColideWithWall = 227
 }

@@ -7,14 +7,17 @@ public class InformerMessage
 {
     public string Message { get; set; }
     public bool LeaveOnScreen { get; set; }
-    public InformerMessage(string message, bool leaveOnScreen)
+    public bool IsReverse { get; set; }
+
+    public InformerMessage(string message, bool leaveOnScreen, bool isReverse = false)
     {
         Message = message;
         LeaveOnScreen = leaveOnScreen;
+        IsReverse = isReverse;
     }
 }
 
-public class GameStateInformer : MonoBehaviour {
+public class GameInformer : MonoBehaviour {
 
 	// Use this for initialization
     TextMesh _label;    
@@ -29,7 +32,7 @@ public class GameStateInformer : MonoBehaviour {
 	void Start () {
         _isRunning = false;
         _minSize = new Vector3(.2f, .2f, .0f);
-        _maxSize = new Vector3(.6f, .6f, .0f);
+        _maxSize = new Vector3(.4f, .4f, .4f);
         _messages = new Queue<InformerMessage>();           
         _label = transform.gameObject.GetComponent<TextMesh>();
         _countDownPriority = true;
@@ -40,6 +43,12 @@ public class GameStateInformer : MonoBehaviour {
         _snakeClient.CountDownTick += OnCountDownTick;
         _snakeClient.GameOver += OnGameOver;
 	}
+
+    public void AddMessage(InformerMessage message)
+    {
+        _messages.Enqueue(message);
+        Run();
+    }
 
     void OnGameOver(bool winResult)
     {
@@ -101,13 +110,17 @@ public class GameStateInformer : MonoBehaviour {
 
     void ExecuteAnimation()
     {
-        //Debug.Log("GameStateInformer ExecuteAnimation");
-        transform.localScale = _maxSize;
-        renderer.material.color = _invisible;
+        //Debug.Log("GameInformer ExecuteAnimation");
         _currentHandleMessage = _messages.Dequeue();
+        Vector3 toSize = _currentHandleMessage.IsReverse ? _maxSize : _minSize;
+        Vector3 fromSize = _currentHandleMessage.IsReverse ? _minSize : _maxSize;
+        Color toColor = _currentHandleMessage.IsReverse ? _invisible : Color.white;
+        Color fromColor = _currentHandleMessage.IsReverse ? Color.white : _invisible;
+        transform.localScale = fromSize;
+        renderer.material.color = fromColor;
         _label.text = _currentHandleMessage.Message;
-        iTween.ScaleTo(gameObject,_minSize,.5f);
-        iTween.ColorTo(gameObject, Color.white, .5f, "OnAnimationComplete");        
+        iTween.ScaleTo(gameObject, toSize, .5f);
+        iTween.ColorTo(gameObject, toColor, .5f, "OnAnimationComplete");        
     }
 
     

@@ -76,7 +76,6 @@ public class SnakeBodySpan : ISnakePart
         }
         else
         {
-            wr[0].DebugString("subzero change");
             if (dist > _snakeBody.transform.localScale.x)
             {
                 _previousPart.Rotation = Rotation;

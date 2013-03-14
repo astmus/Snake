@@ -145,9 +145,10 @@
      <Compile Include="Assets\Scripts\CodeAndKeys.cs" />
      <Compile Include="Assets\Scripts\Fruit.cs" />
      <Compile Include="Assets\Scripts\FruitInfo.cs" />
+     <Compile Include="Assets\Scripts\GameInformer.cs" />
      <Compile Include="Assets\Scripts\GameSettings.cs" />
-     <Compile Include="Assets\Scripts\GameStateInformer.cs" />
      <Compile Include="Assets\Scripts\GameStatusListener.cs" />
+     <Compile Include="Assets\Scripts\Handler.cs" />
      <Compile Include="Assets\Scripts\IntRange.cs" />
      <Compile Include="Assets\Scripts\JoinResponse.cs" />
      <Compile Include="Assets\Scripts\KeyController.cs" />
@@ -165,6 +166,7 @@
      <Compile Include="Assets\Scripts\SnakeClient.cs" />
      <Compile Include="Assets\Scripts\SnakeController.cs" />
      <Compile Include="Assets\Scripts\SnakeScene.cs" />
+     <Compile Include="Assets\Scripts\SoundManager.cs" />
      <Compile Include="Assets\Scripts\itWeenParam.cs" />
      <Compile Include="Assets\iTween\Plugins\iTween.cs" />
      <Compile Include="Assets\iTween\Sample\MoveSample.cs" />
