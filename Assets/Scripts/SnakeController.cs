@@ -32,6 +32,7 @@ public class SnakeController : OTSprite, ISnakePart
     public GameObject SnakeBodyPrefab; // заполняется в редакторе
     public SnakeClient _snakeClient;
     public GameInformer _informer;
+    public TextMesh _WhoIsWhoLabel; // label на котором будет указано изграет этим червыком игрок или противник
     List<SnakeBodySpan> snake;
     KeyController _directionData;
     GameObject[] _labels;
@@ -76,7 +77,18 @@ public class SnakeController : OTSprite, ISnakePart
     void OnGameStatusChanged(GameStatus status)
     {        
         if (status != GameStatus.InRoom) return;
-        gameObject.GetComponent<OTSprite>().tintColor = IsEnemyInstance() ? Color.red : Color.white;
+        if (IsEnemyInstance())
+        {
+            gameObject.GetComponent<OTSprite>().tintColor = Color.red;
+            _WhoIsWhoLabel.text = "< is enemy";
+        }
+        else
+        {
+            gameObject.GetComponent<OTSprite>().tintColor = Color.white;
+            _WhoIsWhoLabel.text = "< is you";
+        }
+
+        
         //Debug.Log("GameStatus == " + gameObject.GetComponent<OTSprite>().tintColor);
         //Debug.Log("SnakeClient number == "+_snakeClient.ActorNumber);
     }
