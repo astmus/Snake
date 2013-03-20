@@ -24,7 +24,6 @@ public class GameStatusListener : MonoBehaviour {
                 _whoIsWhoLabel2.StopAnimation();
                 break;
             case GameStatus.InRoom:
-                Debug.Log("OnGameStatusChanged InRoom");
                 _whoIsWholabel1.StartAnimation();
                 _whoIsWhoLabel2.StartAnimation();
                 break;

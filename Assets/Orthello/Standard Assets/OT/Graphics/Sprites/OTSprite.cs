@@ -156,6 +156,11 @@ public class OTSprite : OTObject
         }
     }
 
+    void OnDestroyCompleted()
+    {
+        Object.Destroy(gameObject);
+    }
+
 	/// <summary>
     /// Index of the frame that is used to get image information from the Sprite Container
     /// </summary>

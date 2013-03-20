@@ -8,7 +8,6 @@ public class WhoIsWhoLabel : MonoBehaviour {
     private Color _default;
     void Awake()
     {
-        Debug.Log("Awake");
         _default = renderer.material.color;
         renderer.material.color = _invisible;
     }

@@ -15,5 +15,8 @@ namespace Assets.Scripts
         public static readonly string Delay = "delay";
         public static readonly string Speed = "speed";
         public static readonly string Color = "color";
+        public static readonly string Amount = "amount";
+        public static readonly string OnComplete = "oncomplete";
+
     }
 }

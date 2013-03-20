@@ -33,9 +33,12 @@ public class SnakeController : OTSprite, ISnakePart
     public SnakeClient _snakeClient;
     public GameInformer _informer;
     public TextMesh _WhoIsWhoLabel; // label на котором будет указано изграет этим червыком игрок или противник
+    public Boom _boomPref; // префаб взыра при столкновении
     List<SnakeBodySpan> snake;
     KeyController _directionData;
     GameObject[] _labels;
+    
+
     public SoundManager _soundManager;
     //static float maxDist = 0;
     public OnGuiWriter _writer;
@@ -57,7 +60,7 @@ public class SnakeController : OTSprite, ISnakePart
         _labels = GameObject.FindGameObjectsWithTag("PointLabel");        
         // позже перенести этот код в класс настроек и оттуда по номеру игрока получать настройки управления
         //if (_playerNumber != 0)  
-        _directionData = new KeyController();
+        _directionData = GameSettings.Instance.Player1Control;
         //else
         //_directionData = new KeyController(KeyCode.A, KeyCode.D, KeyCode.W, KeyCode.S);
         _snakeClient.RotateHead += OnRotateHead;
@@ -87,8 +90,6 @@ public class SnakeController : OTSprite, ISnakePart
             gameObject.GetComponent<OTSprite>().tintColor = Color.white;
             _WhoIsWhoLabel.text = "< is you";
         }
-
-        
         //Debug.Log("GameStatus == " + gameObject.GetComponent<OTSprite>().tintColor);
         //Debug.Log("SnakeClient number == "+_snakeClient.ActorNumber);
     }
@@ -157,7 +158,6 @@ public class SnakeController : OTSprite, ISnakePart
         {
             case "Wall":
                 ResetSnake(true);
-                _snakeClient.SendSnakeReset(true);
                 //_snakeClient.SendSyncData(this, snake.Select(e => e as ISnakePart).ToList());
                 break;
             case "Fruit":
@@ -175,16 +175,37 @@ public class SnakeController : OTSprite, ISnakePart
 
     void ResetSnake(bool colideWithWall)
     {
-        RemoveBody();
-        if (colideWithWall)
-            transform.position = new Vector3(0, 0, 0);
-        speed = 6;
+        _snakeClient.SendSnakeReset(true);
+        Boom boom = (Boom)Instantiate(_boomPref);
+        boom.transform.position = new Vector3(transform.position.x, transform.position.y, boom.transform.position.z);
+        if (colideWithWall) // если врезались в стену то по окончании взрыва переведем червяка в центр игрового поля
+            boom.BoomCompleted += () =>
+                {
+                    transform.position = new Vector3(0, 0, 0);
+                    speed = 6;
+                };
+        boom.StartAnimation(1.5f);
+        RemoveBody(1.5f);
+        
+        speed = 0;
         //Camera.main.audio.Stop();
         //Camera.main.audio.Play();
         //GameObject[] labels = GameObject.FindGameObjectsWithTag("PointLabel");
-        
         //TextMesh label = _labels[LabelPosForThisSnake()].GetComponent<TextMesh>();
         //label.text = "0";
+    }
+
+    
+
+    public void RemoveBody(float scaledTime)
+    {
+        float timeAnimation = scaledTime/snake.Count;
+        int delayFactor = 0;
+        while (snake.Count != 0)
+        {
+            snake[snake.Count-1].AnimationDestroy(timeAnimation,timeAnimation*delayFactor++);
+            snake.RemoveAt(snake.Count - 1);
+        }
     }
 
     public int LabelPosForThisSnake()
@@ -200,7 +221,8 @@ public class SnakeController : OTSprite, ISnakePart
         //Debug.Log("actor num = "+_snakeClient.ActorNumber);
         //Debug.Log("player number = "+_playerNumber);
 
-        if (_snakeClient.ConnectionStatus != GameStatus.InGame) return;
+        //must uncomment
+        //if (_snakeClient.ConnectionStatus != GameStatus.InGame) return;
 #if UNITY_EDITOR
         if (_directionData == null) return;
 #endif
@@ -223,14 +245,24 @@ public class SnakeController : OTSprite, ISnakePart
                 _snakeClient.SendSyncData(this, snake.Select(e => e as ISnakePart).ToList());
             }
         }
-
-        /*if (Input.GetKeyDown(KeyCode.Space))
+        //must comment
+        if (Input.GetKeyUp(KeyCode.Space))
         {
+            if (IsEnemyInstance()) return;
+            //OTSprite headSprite = gameObject.GetComponent<OTSprite>();
+            
+            
+            //OTSprite sprite = (OTSprite)OTSprite.Instantiate(headSprite);
+            //sprite.position = headSprite.position;
+            //sprite.tintColor = Color.red;
+            //iTween.ColorTo(headSprite, new Color(255, 255, 255, 0), 1.5f);
+            //iTween.ColorTo(headSprite, iTween.Hash("color", new Color(200, 0, 0, 0), "time", .5));
+            //iTween.ScaleTo(headSprite, new Vector3(2, 2), 1.5f);
             AddBody();
-            Time.timeScale = 1f;
-        }*/
-        if (Input.GetKeyDown(KeyCode.Escape))
-            speed = 2;
+            //Time.timeScale = 1f;
+        }
+        //if (Input.GetKeyDown(KeyCode.Escape))
+        //    speed = 2;
 
         float dist = Time.deltaTime * speed; // расстояние на которое надо передвинуть змейку с последнего момента ее отрисовки 
         /*if (dist > maxDist)
@@ -289,14 +321,12 @@ public class SnakeController : OTSprite, ISnakePart
     void AddBody()
     {
         speed += 0.25f;
-        
         GameObject bodySpan = (GameObject)Instantiate(SnakeBodyPrefab, Vector3.zero, Quaternion.identity);
         ISnakePart part = snake.Count != 0 ? (ISnakePart)snake.Last() : (ISnakePart)this;
         SnakeBodySpan span = new SnakeBodySpan(bodySpan, part);
         snake.Add(span);
         if (IsEnemyInstance()) return;
         DisplayGrownUpInfo();
-
     }
 
     void DisplayGrownUpInfo()
@@ -335,13 +365,5 @@ public class SnakeController : OTSprite, ISnakePart
         set { position = value; }
     }
 
-    public void RemoveBody()
-    {
-        while (snake.Count > 0)
-        {
-            Destroy(snake[0].AsGameObject());
-            snake.RemoveAt(0);
-        }
-
-    }
+    
 }

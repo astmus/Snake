@@ -5,15 +5,18 @@ using System.Collections;
 
 public enum SoundManagerClip
 {
-    SnakeLevelUp
+    SnakeLevelUp,
+    Boom
 }
 
 public class SoundManager : MonoBehaviour {
 
 	// Use this for initialization
     public AudioClip _snakeLevelUp;
+    public AudioClip _boom;
     void Start () {
         audio.volume = GameSettings.Instance.SoundsVolume;
+        Debug.Log(audio.volume);
 	}
 	
 	// Update is called once per frame
@@ -27,6 +30,9 @@ public class SoundManager : MonoBehaviour {
         {
             case SoundManagerClip.SnakeLevelUp:
                 audio.PlayOneShot(_snakeLevelUp);
+                break;
+            case SoundManagerClip.Boom:
+                audio.PlayOneShot(_boom);
                 break;
         }
         

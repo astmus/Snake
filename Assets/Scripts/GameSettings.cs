@@ -13,8 +13,8 @@ namespace Assets.Scripts
             //ServerAddress = "54.228.214.178";
             ServerAddress = "localhost";
             Port = "5055";
-            MusicVolume = 0.8f;
-            SoundsVolume = 0.8f;
+            MusicVolume = 0.02f;
+            SoundsVolume = 0.02f;
             Player1Control = new KeyController();
             Player2Control = new KeyController(KeyCode.A, KeyCode.D, KeyCode.W, KeyCode.S);
         }

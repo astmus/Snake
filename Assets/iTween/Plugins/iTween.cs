@@ -1867,6 +1867,17 @@ public class iTween : MonoBehaviour{
 	public static void ScaleTo(GameObject target, Vector3 scale, float time){
 		ScaleTo(target,Hash("scale",scale,"time",time));
 	}
+    /// <summary>
+    /// Changes a GameObject's scale over time with MINIMUM customization options.
+    /// </summary>
+    /// <param name="target"></param>
+    /// <param name="scale"></param>
+    /// <param name="time"></param>
+    /// <param name="callback"></param>
+    public static void ScaleTo(GameObject target, Vector3 scale, float time, string callback)
+    {
+        ScaleTo(target, Hash("scale", scale, "time", time, "oncomplete",callback));
+    }
 	
 	/// <summary>
 	/// Changes a GameObject's scale over time with FULL customization options.
@@ -2074,6 +2085,17 @@ public class iTween : MonoBehaviour{
 	/// </param>
 	public static void ScaleAdd(GameObject target, Vector3 amount, float time){
 		ScaleAdd(target,Hash("amount",amount,"time",time));
+	}
+    
+    /// <summary>
+    /// Adds to a GameObject's scale over time with FULL customization options.
+    /// </summary>
+    /// <param name="target"></param>
+    /// <param name="amount"></param>
+    /// <param name="time"></param>
+    /// <param name="callback"></param>
+    public static void ScaleAdd(GameObject target, Vector3 amount, float time, string callback){
+        ScaleAdd(target, Hash("amount", amount, "time", time, "oncomplete", callback));
 	}
 	
 	/// <summary>

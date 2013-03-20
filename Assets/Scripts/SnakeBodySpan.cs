@@ -1,3 +1,4 @@
+using Assets.Scripts;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -26,6 +27,7 @@ public class SnakeBodySpan : ISnakePart
     List<TargetPoint> _pointList;
     OTSprite _sprite;
     ISnakePart _previousPart;
+    static Vector3 _amountDestroy = new Vector3(.5f, .5f); //размер который будте добавлен части червяка при уничтожении
     //float dist = float.MaxValue;
     public event System.Action<TargetPoint> PartRotate;
     public SnakeBodySpan(GameObject span, ISnakePart previousPart)
@@ -83,12 +85,30 @@ public class SnakeBodySpan : ISnakePart
                 _sprite.transform.Translate(_snakeBody.transform.localScale.x, 0, 0);
             }
         }
-        
         //else
         //    dist = newDist;
         //}        
         //else dis = 100;   
     }
+
+    public void AnimationDestroy(float time,float delay)
+    {
+        //itWeenParam.
+        //OTSprite
+        Hashtable args = new Hashtable();
+        args[itWeenParam.Amount] = _amountDestroy;
+        args[itWeenParam.Time] = time;
+        args[itWeenParam.OnComplete] = "OnDestroyCompleted"; //этот метод вызывается у OTSprite там же он и описан
+        args[itWeenParam.Delay] = delay;
+        iTween.ScaleAdd(_snakeBody, args);
+        _snakeBody.AddComponent(typeof (OTSpriteAlphaChanger));
+    }
+
+    /*public void OnComplete()
+    {
+        Debug.Log("OnAmountScaleAddDestroy");
+        Object.Destroy(_snakeBody);
+    }*/
 
     public float Rotation
     {
