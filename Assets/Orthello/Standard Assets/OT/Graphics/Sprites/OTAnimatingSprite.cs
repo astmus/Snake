@@ -289,7 +289,23 @@ public class OTAnimatingSprite : OTSprite
     OTAnimationFrameset frameset = null;
     float frDuration;
     int frCount;
-
+	
+	
+	public override void PassiveUpdate()
+	{
+		base.PassiveUpdate();
+		if (isPlaying)
+			Update();
+	}
+	
+	protected new void Awake()
+	{
+		passiveControl = true;
+		if (GetComponent<OTAnimatingSpritePassive>()!=null)
+			DestroyImmediate(GetComponent<OTAnimatingSpritePassive>());
+		base.Awake();
+	}
+	
     //-----------------------------------------------------------------------------
     // public methods
     //-----------------------------------------------------------------------------
@@ -696,21 +712,21 @@ public class OTAnimatingSprite : OTSprite
     }
 
     /// <summary>
-    /// Show a specific animation frame.
+    /// Shows a specific animation frame.
     /// </summary>
-    /// <param name="frameIndex">Container index of the frame to show.</param>
-    public void ShowFrame(int frameIndex)
+    /// <param name="frameNumber">number of the animation frame to show.</param>
+    public void ShowFrame(int frameNumber)
     {
         if (animation != null && animation.isReady)
         {
-            if (frameIndex >= 0 && frameIndex < animation.frameCount)
-            {
+            if (frameNumber >= 0 && frameNumber < animation.frameCount)
+            {				
+				SetAnimationFrame(frames[frameNumber]);				
                 if (isPlaying)
                     Pauze();
-                this.frameIndex = frameIndex;
             }
             else
-                throw (new System.IndexOutOfRangeException("Frame index out of range!"));
+                throw (new System.IndexOutOfRangeException("Frame number out of range!"));
         }
     }
 
@@ -767,6 +783,30 @@ public class OTAnimatingSprite : OTSprite
 	float frTime = 0;
 	float frDurationDelta = 0;
 	OTAnimation.Frame[] frames = new OTAnimation.Frame[]{};
+	
+	void SetAnimationFrame(OTAnimation.Frame animationFrame)
+	{
+        if (spriteContainer != animationFrame.container || animationFrame.frameIndex != frameIndex)
+        {	
+			if (passive)
+			{
+	            spriteContainer = animationFrame.container;
+	            frameIndex = animationFrame.frameIndex;
+			}
+			else
+			{
+	            _spriteContainer = animationFrame.container;
+	            _frameIndex = animationFrame.frameIndex;
+			}
+
+            if (onAnimationFrame != null)
+                onAnimationFrame(this);
+            if (!CallBack("onAnimationFrame", callBackParams))
+                CallBack("OnAnimationFrame", callBackParams);
+
+            isDirty = true;
+        }
+	}
 
     void UpdateFrame(float deltaTime)
     {		
@@ -780,27 +820,7 @@ public class OTAnimatingSprite : OTSprite
 			int idx = Mathf.FloorToInt(time/frDurationDelta);
 			if (idx>=frames.Length) idx = 0;
 	        OTAnimation.Frame animationFrame = frames[idx];
-	        if (spriteContainer != animationFrame.container || animationFrame.frameIndex != frameIndex)
-	        {	
-				if (passive)
-				{
-		            spriteContainer = animationFrame.container;
-		            frameIndex = animationFrame.frameIndex;
-				}
-				else
-				{
-		            _spriteContainer = animationFrame.container;
-		            _frameIndex = animationFrame.frameIndex;
-				}
-	
-	            if (onAnimationFrame != null)
-	                onAnimationFrame(this);
-	            if (!CallBack("onAnimationFrame", callBackParams))
-	                CallBack("OnAnimationFrame", callBackParams);
-	
-	            isDirty = true;
-	        }
-	
+			SetAnimationFrame(animationFrame);	
 	        time += (deltaTime * speed);
 	        if (endFrame != -1 && time >= endTime)
 	        {

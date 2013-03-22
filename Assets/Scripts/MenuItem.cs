@@ -55,6 +55,9 @@ public class MenuItem : MonoBehaviour
     {
         switch (_itemAction)
         {
+            case MenuItemAction.PlayOffline:
+                Application.LoadLevel((int)SnakeScene.GameOffline);
+                break;
             case MenuItemAction.Play:
                 Application.LoadLevel((int)SnakeScene.Game);
                 break;

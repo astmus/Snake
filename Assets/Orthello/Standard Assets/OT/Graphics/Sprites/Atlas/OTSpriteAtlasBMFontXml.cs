@@ -27,11 +27,14 @@ public class OTSpriteAtlasBMFontXml : OTSpriteAtlasImportXML
 			XmlNode info = xml.DocumentElement.SelectSingleNode("info");
 			if (info!=null && AttrS(info,"face")!="")
 			{					
-				name = "Font "+AttrS(info,"face")+"-"+AttrS(info,"size");
-				if (AttrS(info,"bold")=="1")
-					name += "b";
-				if (AttrS(info,"italic")=="1")
-					name += "i";
+				if (name.IndexOf("Container (id=")==0)
+				{			
+					name = "Font "+AttrS(info,"face")+"-"+AttrS(info,"size");
+					if (AttrS(info,"bold")=="1")
+						name += "b";
+					if (AttrS(info,"italic")=="1")
+						name += "i";
+				}
 							
 				metaType = "FONT";
             	XmlNode charsNode = xml.DocumentElement.SelectSingleNode("chars");

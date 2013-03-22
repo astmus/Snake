@@ -12,7 +12,7 @@ using System.IO;
 /// </remarks>
 public class OTSpriteAtlasCocos2DFnt : OTSpriteAtlasImportText 
 {
-	
+	int lineHeight = 0;	
     /// <summary>
     /// Import atlasData from sparrow xml
     /// </summary>
@@ -26,13 +26,27 @@ public class OTSpriteAtlasCocos2DFnt : OTSpriteAtlasImportText
 		if (Exists("info") && Exists("face"))
         {
 			metaType = "FONT";
-			name = "Font "+Data("face")+"-"+Data ("size");
-			if (Data ("bold")=="1")
-				name += "b";
-			if (Data ("italic")=="1")
-				name += "i";
+			
+			if (name.IndexOf("Container (id=")==0)
+			{			
+				name = "Font "+Data("face")+"-"+Data ("size");
+				if (Data ("bold")=="1")
+					name += "b";
+				if (Data ("italic")=="1")
+					name += "i";
+			}
+						
 			do
 			{
+				
+				if (Exists ("common"))
+				{
+					if (lineHeight == 0)
+					{
+						lineHeight = System.Convert.ToInt16(Data ("lineHeight"));
+					}					
+				}
+				
 				if (Exists ("char"))
 				{
 		                OTAtlasData ad = new OTAtlasData();
@@ -43,6 +57,7 @@ public class OTSpriteAtlasCocos2DFnt : OTSpriteAtlasImportText
 		                ad.offset = new Vector2(IData("xoffset"), IData("yoffset"));		
 						
 						ad.AddMeta("dx",Data("xadvance"));
+						ad.frameSize = new Vector2(IData("width"), lineHeight);
 						
 		                data.Add(ad);
 		        }	

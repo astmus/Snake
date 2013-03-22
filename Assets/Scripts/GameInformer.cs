@@ -1,3 +1,4 @@
+using System;
 using Assets.Scripts;
 using UnityEngine;
 using System.Collections.Generic;
@@ -8,12 +9,19 @@ public class InformerMessage
     public string Message { get; set; }
     public bool LeaveOnScreen { get; set; }
     public bool IsReverse { get; set; }
-
+    public event Action Completed;
     public InformerMessage(string message, bool leaveOnScreen, bool isReverse = false)
     {
         Message = message;
         LeaveOnScreen = leaveOnScreen;
         IsReverse = isReverse;
+    }
+
+    public void EndUse()
+    {
+        if (Completed == null) return;
+        Completed();
+        Completed = null;
     }
 }
 
@@ -29,24 +37,38 @@ public class GameInformer : MonoBehaviour {
     InformerMessage _currentHandleMessage;
     bool _countDownPriority;
     public SnakeClient _snakeClient;
-	void Start () {
+    public bool Autostart { get; set; }
+    void Awake()
+    {
+        Autostart = true;
+        _messages = new Queue<InformerMessage>();
+        _label = transform.gameObject.GetComponent<TextMesh>();
+    }
+
+	void Start () 
+    {
         _isRunning = false;
         _minSize = new Vector3(.2f, .2f, .0f);
         _maxSize = new Vector3(.4f, .4f, .4f);
-        _messages = new Queue<InformerMessage>();           
-        _label = transform.gameObject.GetComponent<TextMesh>();
         _countDownPriority = true;
         _invisible = new Color(255, 255, 255, 0);
         renderer.material.color = _invisible;
         transform.localScale = _maxSize;
-        _snakeClient.GameStatusChanged += OnGameStatusChanged;
-        _snakeClient.CountDownTick += OnCountDownTick;
-        _snakeClient.GameOver += OnGameOver;
+	    if (_snakeClient == null) return;
+	    _snakeClient.GameStatusChanged += OnGameStatusChanged;
+	    _snakeClient.CountDownTick += OnCountDownTick;
+	    _snakeClient.GameOver += OnGameOver;
 	}
 
     public void AddMessage(InformerMessage message)
     {
         _messages.Enqueue(message);
+        if (Autostart) Run();
+    }
+
+    public void StartDisplayMessages()
+    {
+        if (Autostart) return;
         Run();
     }
 
@@ -89,7 +111,7 @@ public class GameInformer : MonoBehaviour {
                 break;
             case GameStatus.Disconnect:
                 _messages.Enqueue(new InformerMessage("disconnected",true));
-                break;           
+                break;          
             case GameStatus.InRoom:
                 _messages.Enqueue(new InformerMessage("waiting for opponent", true));
                 break;
@@ -110,7 +132,6 @@ public class GameInformer : MonoBehaviour {
 
     void ExecuteAnimation()
     {
-        //Debug.Log("GameInformer ExecuteAnimation");
         _currentHandleMessage = _messages.Dequeue();
         Vector3 toSize = _currentHandleMessage.IsReverse ? _maxSize : _minSize;
         Vector3 fromSize = _currentHandleMessage.IsReverse ? _minSize : _maxSize;
@@ -123,8 +144,6 @@ public class GameInformer : MonoBehaviour {
         iTween.ColorTo(gameObject, toColor, .5f, "OnAnimationComplete");        
     }
 
-    
-
     void OnAnimationComplete()
     {
         if (_messages.Count > 0)
@@ -135,7 +154,7 @@ public class GameInformer : MonoBehaviour {
                 renderer.material.color = _invisible;
             _isRunning = false;
         }
-        //Debug.Log("Animation complete");
+        _currentHandleMessage.EndUse();
     }
 
 	// Update is called once per frame

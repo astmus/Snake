@@ -16,7 +16,6 @@ public class SoundManager : MonoBehaviour {
     public AudioClip _boom;
     void Start () {
         audio.volume = GameSettings.Instance.SoundsVolume;
-        Debug.Log(audio.volume);
 	}
 	
 	// Update is called once per frame

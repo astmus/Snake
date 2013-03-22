@@ -6,11 +6,14 @@ public class GameStatusListener : MonoBehaviour {
 
 	// Use this for initialization
     public SnakeClient _client;
-    public WhoIsWhoLabel _whoIsWholabel1;
-    public WhoIsWhoLabel _whoIsWhoLabel2;
+    public OfflineGameStateController _gameStatusController;
 
-	void Start () {
-        _client.GameStatusChanged += OnGameStatusChanged;
+	void Start ()
+	{
+	    if (_client != null)
+	        _client.GameStatusChanged += OnGameStatusChanged;
+	    else
+	        _gameStatusController.GameStatusChanged += OnGameStatusChanged;
 	    audio.volume = GameSettings.Instance.MusicVolume;
 	}
 
@@ -20,12 +23,8 @@ public class GameStatusListener : MonoBehaviour {
         {
             case GameStatus.InGame:
                 audio.Play();
-                _whoIsWholabel1.StopAnimation();
-                _whoIsWhoLabel2.StopAnimation();
                 break;
             case GameStatus.InRoom:
-                _whoIsWholabel1.StartAnimation();
-                _whoIsWhoLabel2.StartAnimation();
                 break;
             case GameStatus.GameOver:
                 audio.Stop();

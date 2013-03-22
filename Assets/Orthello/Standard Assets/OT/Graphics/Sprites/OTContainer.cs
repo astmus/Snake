@@ -18,12 +18,14 @@ public class OTContainer : MonoBehaviour
     /// </summary>
     public Texture texture;
 	public OTContainerSizeTexture[] sizeTextures;
+	public bool generateSprites = false;
 	        		
     protected bool dirtyContainer = true;    
     protected string _name_ = "";	
 	
     Vector2 _sheetSize_ = Vector2.zero;
 	protected Texture _texture = null;
+	
 	
 	
 
@@ -144,7 +146,12 @@ public class OTContainer : MonoBehaviour
         return texture;
     }
 	
-	
+	public void SetTexture(Texture tex)
+	{
+		texture = tex;
+		Reset(true);
+	}	
+		
 	Texture _defaultTexture;
 	void CheckSizeFactor()
 	{
@@ -182,13 +189,12 @@ public class OTContainer : MonoBehaviour
     public virtual int GetFrameIndex(string inName)
     {
 		Frame frame = FrameByName(inName);
-		if (frame.name==inName)
+		if (frame.name==inName || frame.name==inName.ToLower())
 			return frame.index;
 		else
 			return -1;		
     }
-	
-	
+		
 	protected void Awake()
 	{		
 #if UNITY_EDITOR
@@ -278,7 +284,43 @@ public class OTContainer : MonoBehaviour
 			return frameByName[frameName+".gif"];
 		if (frameByName.ContainsKey(frameName+".jpg"))
 			return frameByName[frameName+".jpg"];
+		
+		frameName = frameName.ToLower();
+		if (frameByName.ContainsKey(frameName))
+			return frameByName[frameName];
+		if (frameByName.ContainsKey(frameName+".png"))
+			return frameByName[frameName+".png"];
+		if (frameByName.ContainsKey(frameName+".gif"))
+			return frameByName[frameName+".gif"];
+		if (frameByName.ContainsKey(frameName+".jpg"))
+			return frameByName[frameName+".jpg"];
 		return new Frame();
+	}
+	
+	/// <summary>
+	/// Generates sprites for all frames in this container
+	/// </summary>
+	/// <remarks>
+	/// An empty game object will be created at 0,0,0 with a localscale of 1,1,1 that will hold
+	/// all sprites. The sprites will be named according to their frame names.
+	/// </remarks>
+	public void GenerateSprites()
+	{
+		generateSprites = false;
+		GameObject root = new GameObject(name);
+		root.transform.position = Vector3.zero;
+		root.transform.localScale = Vector3.one;
+		root.transform.rotation = Quaternion.identity;
+			
+		for (int i=0; i<frames.Length; i++)
+		{
+			OTSprite sprite = OT.CreateSprite(OTObjectType.Sprite);
+			sprite.spriteContainer = this;
+			sprite.name = frames[i].name;
+			sprite.frameIndex = i;
+			sprite.ForceUpdate();
+			sprite.ChildOf(root);			
+		}
 	}
 	
 	
@@ -286,7 +328,7 @@ public class OTContainer : MonoBehaviour
     
     protected void Update()
     {		
-        if (!OT.isValid) return;
+        if (!OT.isValid) return;		
 
         if (!registered || !Application.isPlaying)
             RegisterContainer();
@@ -328,6 +370,9 @@ public class OTContainer : MonoBehaviour
 			
             dirtyContainer = false;
         }
+		
+		if (isReady && generateSprites)
+			GenerateSprites();		
     }
 
     void OnDestroy()
@@ -336,10 +381,16 @@ public class OTContainer : MonoBehaviour
             OT.RemoveContainer(this);
     }
 	
-	public virtual void Reset()
+	public virtual void Reset(bool doUpdate)
 	{
 		dirtyContainer = true;
-		Update();
+		
+		OTObject[] sprites = OT.ObjectsOfType<OTSprite>();
+		for (int i=0; i<sprites.Length; i++)
+			sprites[i].Reset();		
+		
+		if (doUpdate)
+			Update();
 	}
 
 }

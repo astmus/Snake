@@ -37,7 +37,9 @@ public class OTAnimation : MonoBehaviour
     bool registered = false;
     bool dirtyAnimation = true;
     Frame[] frames = { };
-    List<OTContainer> containers = new List<OTContainer>();
+	
+    List<OTAnimationFramesetCheck> _framesets = new List<OTAnimationFramesetCheck>();
+		
     bool _isReady = false;
     float _fps_ = 30;
     float _duration_ = 1;
@@ -334,22 +336,14 @@ public class OTAnimation : MonoBehaviour
                 OTAnimationFrameset fs = framesets[f];
                 if (fs.container != null)
                 {
-                    if (f <= containers.Count - 1 && containers[f] != fs.container)
+                    if (f <= _framesets.Count - 1)
                     {
-                        dirtyAnimation = true;
-                    }
-
-                    if (f <= containers.Count - 1)
-                    {
-                        if (containers[f] != fs.container)
-                        {
-                            dirtyAnimation = true;
-                        }
-                        containers[f] = fs.container;
+                        dirtyAnimation = _framesets[f].isChanged;
+						_framesets[f].Assign();
                     }
                     else
                     {
-                        containers.Add(fs.container);
+                        _framesets.Add(new OTAnimationFramesetCheck(fs));
                         dirtyAnimation = true;
                     }
 					
@@ -389,8 +383,8 @@ public class OTAnimation : MonoBehaviour
                 }
             }
 
-            while (framesets.Length < containers.Count)
-                containers.RemoveAt(containers.Count - 1);
+            while (framesets.Length < _framesets.Count)
+                _framesets.RemoveAt(_framesets.Count - 1);
 
         }
     }
@@ -403,11 +397,23 @@ public class OTAnimation : MonoBehaviour
         if (!registered || !Application.isPlaying)
             RegisterAnimation();
 
-        if (Application.isEditor || OT.dirtyChecks)
+        if (!Application.isPlaying)
             CheckEditorSettings();
+		else
+		{
+			if (OT.dirtyChecks && framesets.Length > 0)
+	        {
+	            if (_framesetSize != framesets.Length)
+	            {
+	                _framesetSize = framesets.Length;
+	                dirtyAnimation = true;
+	            }
+			}			
+		}
 
         if (dirtyAnimation)
         {
+						
 			bool isOk = true;
             for (int f = 0; f < framesets.Length; f++)
             {
@@ -434,7 +440,7 @@ public class OTAnimation : MonoBehaviour
 			}
         }
 
-        if (Application.isEditor || OT.dirtyChecks)
+        if (!Application.isPlaying || OT.dirtyChecks)
         {
             if (_duration > 0)
             {
@@ -470,4 +476,33 @@ public class OTAnimation : MonoBehaviour
             OT.RemoveAnimation(this);
     }
 
+}
+
+class OTAnimationFramesetCheck
+{
+	OTAnimationFrameset fs;
+	public OTContainer container;
+	public string frameNameMask;
+	public bool nameSort;
+
+	public bool isChanged
+	{
+		get
+		{
+			return (fs.container != container || fs.frameNameMask != frameNameMask || fs.sortFrameNames != nameSort);
+		}
+	}
+	
+	public void Assign()
+	{
+		this.container = fs.container;
+		frameNameMask = fs.frameNameMask;
+		nameSort = fs.sortFrameNames;
+	}
+	
+	public OTAnimationFramesetCheck(OTAnimationFrameset fs)
+	{
+		this.fs = fs;
+		Assign();
+	}	
 }

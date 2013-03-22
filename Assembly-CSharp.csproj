@@ -87,6 +87,8 @@
      <Compile Include="Assets\Orthello\Standard Assets\OT\Graphics\Sprites\OTAnimatingSpritePassive.cs" />
      <Compile Include="Assets\Orthello\Standard Assets\OT\Graphics\Sprites\OTAnimation.cs" />
      <Compile Include="Assets\Orthello\Standard Assets\OT\Graphics\Sprites\OTAnimationFrameset.cs" />
+     <Compile Include="Assets\Orthello\Standard Assets\OT\Graphics\Sprites\OTClipSprite.cs" />
+     <Compile Include="Assets\Orthello\Standard Assets\OT\Graphics\Sprites\OTClippingAreaSprite.cs" />
      <Compile Include="Assets\Orthello\Standard Assets\OT\Graphics\Sprites\OTContainer.cs" />
      <Compile Include="Assets\Orthello\Standard Assets\OT\Graphics\Sprites\OTFilledSprite.cs" />
      <Compile Include="Assets\Orthello\Standard Assets\OT\Graphics\Sprites\OTGradientSprite.cs" />
@@ -135,6 +137,7 @@
      <Compile Include="Assets\Orthello\Standard Assets\OT\_Base\OT.cs" />
      <Compile Include="Assets\Orthello\Standard Assets\OT\_Base\OTController.cs" />
      <Compile Include="Assets\Orthello\Standard Assets\OT\_Base\OTDevTrace.cs" />
+     <Compile Include="Assets\Orthello\Standard Assets\OT\_Base\OTHelper.cs" />
      <Compile Include="Assets\Orthello\Standard Assets\OT\_Base\OTMatRef.cs" />
      <Compile Include="Assets\Orthello\Standard Assets\OT\_Base\OTObject.cs" />
      <Compile Include="Assets\Orthello\Standard Assets\OT\_Base\OTObjectType.cs" />
@@ -157,6 +160,9 @@
      <Compile Include="Assets\Scripts\MenuItemAction.cs" />
      <Compile Include="Assets\Scripts\Number.cs" />
      <Compile Include="Assets\Scripts\OTSpriteAlphaChanger.cs" />
+     <Compile Include="Assets\Scripts\OfflineFruit.cs" />
+     <Compile Include="Assets\Scripts\OfflineGUIWriter.cs" />
+     <Compile Include="Assets\Scripts\OfflineGameStateController.cs" />
      <Compile Include="Assets\Scripts\OnGuiWriter.cs" />
      <Compile Include="Assets\Scripts\OnSettingsGuiWrite.cs" />
      <Compile Include="Assets\Scripts\Responses\CatchFruitResponse.cs" />
@@ -167,6 +173,7 @@
      <Compile Include="Assets\Scripts\SnakeBodySpan.cs" />
      <Compile Include="Assets\Scripts\SnakeClient.cs" />
      <Compile Include="Assets\Scripts\SnakeController.cs" />
+     <Compile Include="Assets\Scripts\SnakeControllerOffline.cs" />
      <Compile Include="Assets\Scripts\SnakeScene.cs" />
      <Compile Include="Assets\Scripts\SoundManager.cs" />
      <Compile Include="Assets\Scripts\WhoIsWhoLabel.cs" />

@@ -15,7 +15,8 @@ namespace Assets.Scripts
         Connect = 1,
         InRoom = 2,
         InGame = 3,
-        GameOver = 4
+        GameOver = 4,
+        CountDown = 5
     }
 
     public class SnakeConnection : LitePeer

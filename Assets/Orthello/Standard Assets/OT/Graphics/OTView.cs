@@ -7,6 +7,10 @@ using System.Collections;
 [ExecuteInEditMode]
 public class OTView : MonoBehaviour
 {
+
+	public delegate void ScreenChangeDelegate();	
+	public ScreenChangeDelegate onScreenChange = null;
+	
     //----------------------------------------------------------------------
     // Public properties
     //----------------------------------------------------------------------
@@ -302,11 +306,17 @@ public class OTView : MonoBehaviour
                 if (alwaysPixelPerfect)
                     return (float)Screen.height / 2f;
                 else
-                    return (float)Screen.height / 2f * (pixelPerfectResolution.y / (float)Screen.height);
+				{
+					float arDef = pixelPerfectResolution.x/pixelPerfectResolution.y;
+					float arCur = (float)Screen.width/(float)Screen.height;					
+					if (arCur < arDef)
+                       return (float)Screen.height / 2f * (pixelPerfectResolution.x / (float)Screen.width);
+					else
+                       return (float)Screen.height / 2f * (pixelPerfectResolution.y / (float)Screen.height);
+				}
             }
             else
-              return customSize;
-        }
+              return customSize;        }
     }
 	
     public void InitView()
@@ -641,6 +651,8 @@ public class OTView : MonoBehaviour
 			_currentScreen = new Vector2(Screen.width,Screen.height);
              camera.orthographicSize = resSize * Mathf.Pow(2, _zoom * -1);			
 			_zoom_ = _zoom;
+			if (onScreenChange!=null)
+				onScreenChange();
 		}
 		
 		

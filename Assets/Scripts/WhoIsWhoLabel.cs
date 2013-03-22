@@ -1,3 +1,4 @@
+using Assets.Scripts;
 using UnityEngine;
 using System.Collections;
 
@@ -6,15 +7,36 @@ public class WhoIsWhoLabel : MonoBehaviour {
 	// Use this for initialization
     private Color _invisible = new Color(255, 255, 255, 0);
     private Color _default;
+
+    public SnakeClient _client;
+    public OfflineGameStateController _gameStateController;
     void Awake()
     {
         _default = renderer.material.color;
         renderer.material.color = _invisible;
+        if (_gameStateController != null)
+            _gameStateController.GameStatusChanged += OnGameStatusChanged;
+        else
+            _client.GameStatusChanged += OnGameStatusChanged;
     }
 
 	void Start () {
         //iTween.EaseType.easeInExpo
+        
 	}
+
+    void OnGameStatusChanged(Assets.Scripts.GameStatus status)
+    {
+        switch (status)
+        {
+            case GameStatus.InGame:
+                StopAnimation();
+                break;
+            case GameStatus.InRoom:
+                StartAnimation();
+                break;
+        }
+    }
 	
     public void StartAnimation()
     {
@@ -29,7 +51,6 @@ public class WhoIsWhoLabel : MonoBehaviour {
 
     void OnColorToComplete()
     {
-        Debug.Log("WhoIsWhoLabel OnColorToComplete run");
         iTween.Stop(gameObject);
     }
 

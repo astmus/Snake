@@ -1,28 +1,25 @@
-using Assets.Scripts;
 using UnityEngine;
 using System.Collections;
 
-public class OnGuiWriter : MonoBehaviour {
-
-    public SnakeClient _client;
+public class OfflineGUIWriter : MonoBehaviour {
     string debugString;
     private Rect _areaLayout;
-	// Use this for initialization
-	void Start () {
-	   _areaLayout = new Rect(0,0,Screen.width,Screen.height);
-	}
+    // Use this for initialization
+    void Start()
+    {
+        _areaLayout = new Rect(0, 0, Screen.width, Screen.height);
+    }
 
     public void DebugString2(string message)
     {
         debugString = message;
     }
 
-	// Update is called once per frame
-	void OnGUI()
-	{
-	    if (_client == null) return;
-	    GUILayout.BeginArea(_areaLayout);
-        switch (_client.ConnectionStatus)
+    // Update is called once per frame
+    void OnGUI()
+    {
+        GUILayout.BeginArea(_areaLayout);
+        //switch (_client.ConnectionStatus)
         {
             //case GameStatus.Disconnect:
             //    GUILayout.Label("User Disconnected");
@@ -33,15 +30,15 @@ public class OnGuiWriter : MonoBehaviour {
             //case GameStatus.InRoom:
             //    GUILayout.Label("In room wait for apponent");
             //    break;
-            case GameStatus.GameOver:
+            /*case GameStatus.GameOver:
                 GameOverMenuDraw();
                 break;
             default:
-                break;
+                break;*/
         }
         GUILayout.Label(debugString);
         GUILayout.EndArea();
-	}
+    }
 
 
     void GameOverMenuDraw()

@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------
-WyrmTale Orthello 2D framework v2.6 (Unity4)
+WyrmTale Orthello 2D framework v2.7 (Unity3+4)
 (C)opyright 2011 WyrmTale Games
 -------------------------------------------------------------------------
 
