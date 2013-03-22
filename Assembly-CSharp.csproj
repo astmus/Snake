@@ -165,6 +165,7 @@
      <Compile Include="Assets\Scripts\OfflineGameStateController.cs" />
      <Compile Include="Assets\Scripts\OnGuiWriter.cs" />
      <Compile Include="Assets\Scripts\OnSettingsGuiWrite.cs" />
+     <Compile Include="Assets\Scripts\PreLoadOfflineScene\OnGuiPreloadWriter.cs" />
      <Compile Include="Assets\Scripts\Responses\CatchFruitResponse.cs" />
      <Compile Include="Assets\Scripts\Responses\EnemySnakeSizeChangeData.cs" />
      <Compile Include="Assets\Scripts\Responses\RotateHeadData.cs" />

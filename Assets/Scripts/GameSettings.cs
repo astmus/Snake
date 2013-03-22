@@ -6,6 +6,32 @@ using UnityEngine;
 
 namespace Assets.Scripts
 {
+    public enum GameType
+    {
+        SinglePlayer,
+        MultyPlayer
+    }
+    public class OfflineGameRules
+    {
+        public OfflineGameRules()
+        {
+            SnakeLengthEnabled = false;
+            SnakeLengthWin = 11;
+            PointsEnabled = false;
+            PointsCountWin = 3000;
+            GameType = GameType.MultyPlayer;
+            WithEnemyBody = false;
+            WithSelfBody = false;
+        }
+        public bool SnakeLengthEnabled { get; set; }
+        public int SnakeLengthWin { get; set; }
+        public bool PointsEnabled { get; set; }
+        public int PointsCountWin { get; set; }
+        public bool WithSelfBody { get; set; }
+        public bool WithEnemyBody { get; set; }
+        public GameType GameType { get; set; }
+    }
+
     public class GameSettings
     {
         GameSettings()
@@ -17,7 +43,10 @@ namespace Assets.Scripts
             SoundsVolume = 0.35f;
             Player1Control = new KeyController();
             Player2Control = new KeyController(KeyCode.A, KeyCode.D, KeyCode.W, KeyCode.S);
+            OfflineRules = new OfflineGameRules();
         }
+
+        public OfflineGameRules OfflineRules { get; set; }
 
         public float MusicVolume { get; set; }
         public float SoundsVolume { get; set; }
