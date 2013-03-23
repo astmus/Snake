@@ -16,8 +16,8 @@ namespace Assets.Scripts
         public OfflineGameRules()
         {
             SnakeLengthEnabled = false;
-            SnakeLengthWin = 11;
-            PointsEnabled = false;
+            SnakeLengthWin = 15;
+            PointsEnabled = true;
             PointsCountWin = 3000;
             GameType = GameType.MultyPlayer;
             WithEnemyBody = false;
