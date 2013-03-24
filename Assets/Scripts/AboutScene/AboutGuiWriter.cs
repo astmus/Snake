@@ -14,7 +14,7 @@ public class AboutGuiWriter : MonoBehaviour {
     {
         if (GUI.Button(_position, "Back"))
         {
-            Application.LoadLevel((int)SnakeScene.Menu);
+            Application.LoadLevel((int)GameScene.Menu);
         }
     }
 

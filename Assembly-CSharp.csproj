@@ -150,6 +150,7 @@
      <Compile Include="Assets\Scripts\Fruit.cs" />
      <Compile Include="Assets\Scripts\FruitInfo.cs" />
      <Compile Include="Assets\Scripts\GameInformer.cs" />
+     <Compile Include="Assets\Scripts\GameScene.cs" />
      <Compile Include="Assets\Scripts\GameSettings.cs" />
      <Compile Include="Assets\Scripts\GameStatusListener.cs" />
      <Compile Include="Assets\Scripts\Handler.cs" />
@@ -175,7 +176,6 @@
      <Compile Include="Assets\Scripts\SnakeClient.cs" />
      <Compile Include="Assets\Scripts\SnakeController.cs" />
      <Compile Include="Assets\Scripts\SnakeControllerOffline.cs" />
-     <Compile Include="Assets\Scripts\SnakeScene.cs" />
      <Compile Include="Assets\Scripts\SoundManager.cs" />
      <Compile Include="Assets\Scripts\WhoIsWhoLabel.cs" />
      <Compile Include="Assets\Scripts\itWeenParam.cs" />

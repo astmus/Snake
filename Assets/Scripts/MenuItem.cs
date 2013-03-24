@@ -56,16 +56,16 @@ public class MenuItem : MonoBehaviour
         switch (_itemAction)
         {
             case MenuItemAction.PlayOffline:
-                Application.LoadLevel((int)SnakeScene.GameOffline);
+                Application.LoadLevel((int)GameScene.GameOffline);
                 break;
             case MenuItemAction.Play:
-                Application.LoadLevel((int)SnakeScene.Game);
+                Application.LoadLevel((int)GameScene.Game);
                 break;
             case MenuItemAction.Settings:
-                Application.LoadLevel((int)SnakeScene.Settings);
+                Application.LoadLevel((int)GameScene.Settings);
                 break;
             case MenuItemAction.About:
-                Application.LoadLevel((int)SnakeScene.About);
+                Application.LoadLevel((int)GameScene.About);
                 break;
             case MenuItemAction.Exit:
                 Application.Quit();

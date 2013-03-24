@@ -62,6 +62,6 @@ public class OnGuiWriter : MonoBehaviour {
 
     void OnToMenuButtonPress()
     {
-        Application.LoadLevel((int)SnakeScene.Menu);
+        Application.LoadLevel((int)GameScene.Menu);
     }
 }

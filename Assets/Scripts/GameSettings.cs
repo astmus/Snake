@@ -9,7 +9,8 @@ namespace Assets.Scripts
     public enum GameType
     {
         SinglePlayer,
-        MultyPlayer
+        MultyPlayer,
+        Survive
     }
     public class OfflineGameRules
     {

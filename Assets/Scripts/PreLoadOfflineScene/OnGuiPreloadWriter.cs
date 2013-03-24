@@ -1,21 +1,21 @@
 using System;
 using Assets.Scripts;
-using UnityEditor;
 using UnityEngine;
-using System.Collections;
 
 public class OnGuiPreloadWriter : MonoBehaviour
 {
 
     // Use this for initialization
     private OfflineGameRules _rules = GameSettings.Instance.OfflineRules;
-    readonly String[] toolBarItems = new String[] { "single player", "multy player" };
-    readonly Rect gameTypeRect = new Rect(Screen.width * 0.07f, Screen.height * 0.2f, Screen.width * 0.3f, Screen.height * 0.08f);
-    readonly Rect gameTypeBoxRect = new Rect(Screen.width * 0.06f, Screen.height * 0.13f, Screen.width * 0.32f, Screen.height * 0.16f);
+    readonly String[] toolBarItems = new String[] { "single player", "multy player","survive mode" };
+    readonly Rect gameTypeRect = new Rect(Screen.width * 0.07f, Screen.height * 0.2f, Screen.width * 0.49f, Screen.height * 0.08f);
+    readonly Rect gameTypeBoxRect = new Rect(Screen.width * 0.06f, Screen.height * 0.13f, Screen.width * 0.51f, Screen.height * 0.16f);
     readonly Rect winRulesBoxRect = new Rect(Screen.width * 0.06f, Screen.height * 0.31f, Screen.width * 0.51f, Screen.height * 0.255f);
     readonly Rect byPointsRect = new Rect(Screen.width * 0.07f, Screen.height * 0.38f, Screen.width * 0.49f, Screen.height * 0.08f);
     readonly Rect bySnakeLengthRect = new Rect(Screen.width * 0.07f, Screen.height * 0.47f, Screen.width * 0.49f, Screen.height * 0.0825f);
-
+    readonly Rect colideBoxRulesRect = new Rect(Screen.width * 0.06f, Screen.height * 0.6f, Screen.width * 0.51f, Screen.height * 0.2f);
+    readonly Rect colideRulesRect = new Rect(Screen.width * 0.06f, Screen.height * 0.7f, Screen.width * 0.51f, Screen.height * 0.1f);
+    readonly Rect buttonToGameRect = new Rect(Screen.width * 0.835f, Screen.height * 0.88f, Screen.width * 0.15f, Screen.height * 0.1f);
     void Start()
     {
 
@@ -39,6 +39,17 @@ public class OnGuiPreloadWriter : MonoBehaviour
         bool snakeLengthEnabled = _rules.SnakeLengthEnabled;
         _rules.SnakeLengthWin = SpinControl(bySnakeLengthRect, _rules.SnakeLengthWin, 5, 60, 1, ref snakeLengthEnabled, "by length");
         _rules.SnakeLengthEnabled = snakeLengthEnabled;
+        GUI.Box(colideBoxRulesRect,"");
+        GUILayout.BeginArea(colideRulesRect);
+        GUILayout.BeginHorizontal();
+        _rules.WithSelfBody = GUILayout.Toggle(_rules.WithSelfBody, "with self body",GUILayout.MinHeight(colideRulesRect.height));
+        _rules.WithEnemyBody = GUILayout.Toggle(_rules.WithEnemyBody, "with enemy body", GUILayout.MinHeight(colideRulesRect.height));
+        GUILayout.EndHorizontal();
+        GUILayout.EndArea();
+        if (GUI.Button(buttonToGameRect, "to game"))
+        {
+            Application.LoadLevel((int) GameScene.GameOffline);
+        }
 
     }
 

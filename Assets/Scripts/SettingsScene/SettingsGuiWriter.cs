@@ -127,12 +127,12 @@ public class SettingsGuiWriter : MonoBehaviour
         GameSettings.Instance.SoundsVolume = _soundsVolume;
         GameSettings.Instance.Player1Control = new KeyController(_player1Left, _player1Right, _player1Up, _player1Down);
         GameSettings.Instance.Player2Control = new KeyController(_player2Left, _player2Right, _player2Up, _player2Down);
-        Application.LoadLevel((int)SnakeScene.Menu);
+        Application.LoadLevel((int)GameScene.Menu);
     }
 
     void OnBackButtonPress()
     {
-        Application.LoadLevel((int)SnakeScene.Menu);
+        Application.LoadLevel((int)GameScene.Menu);
     }
 
     // Update is called once per frame
