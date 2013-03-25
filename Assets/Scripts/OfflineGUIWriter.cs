@@ -1,9 +1,11 @@
+using Assets.Scripts;
 using UnityEngine;
 using System.Collections;
 
 public class OfflineGUIWriter : MonoBehaviour {
     string debugString;
     private Rect _areaLayout;
+    public OfflineGameStateController _gameStateController;
     // Use this for initialization
     void Start()
     {
@@ -19,7 +21,7 @@ public class OfflineGUIWriter : MonoBehaviour {
     void OnGUI()
     {
         GUILayout.BeginArea(_areaLayout);
-        //switch (_client.ConnectionStatus)
+        switch (_gameStateController.GameStatus)
         {
             //case GameStatus.Disconnect:
             //    GUILayout.Label("User Disconnected");
@@ -30,11 +32,11 @@ public class OfflineGUIWriter : MonoBehaviour {
             //case GameStatus.InRoom:
             //    GUILayout.Label("In room wait for apponent");
             //    break;
-            /*case GameStatus.GameOver:
+            case GameStatus.GameOver:
                 GameOverMenuDraw();
                 break;
             default:
-                break;*/
+                break;
         }
         GUILayout.Label(debugString);
         GUILayout.EndArea();
@@ -59,6 +61,7 @@ public class OfflineGUIWriter : MonoBehaviour {
 
     void OnToMenuButtonPress()
     {
+        Time.timeScale = 1f;
         Application.LoadLevel((int)GameScene.Menu);
     }
 }

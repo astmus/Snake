@@ -10,6 +10,7 @@ using Assets.Scripts.SendDataModel;
 public class SnakeControllerOffline : OTSprite, ISnakePart
 {
     private static IntRange _numberCounter = new IntRange(1, 2);
+    public TextMesh PointsLabel;
     int _playerNumber;
     float speed;
     float rotateSpeed;
@@ -29,7 +30,7 @@ public class SnakeControllerOffline : OTSprite, ISnakePart
     //static float maxDist = 0;
 
     //must del if not used
-    public OfflineGUIWriter _writer;
+    //public OfflineGUIWriter _writer;
 
     public List<SnakeBodySpan> SnakeBody
     {
@@ -51,6 +52,12 @@ public class SnakeControllerOffline : OTSprite, ISnakePart
         //
         gameObject.GetComponent<OTSprite>().tintColor = _playerNumber == 1 ? Color.white : Color.red;
         _WhoIsWhoLabel.text = "< player " + _playerNumber;
+    }
+
+    public int PointsCount
+    {
+        get { return System.Convert.ToInt32(PointsLabel.text); }
+        set { PointsLabel.text = value.ToString(); }
     }
 
     void OnGameStatusChanged(GameStatus status)
@@ -218,7 +225,7 @@ public class SnakeControllerOffline : OTSprite, ISnakePart
                 //_snakeClient.SendSyncData(this, snake.Select(e => e as ISnakePart).ToList());
             }
         //}
-        //must comment
+        
         if (Input.GetKeyUp(KeyCode.Space))
         {
             //if (IsEnemyInstance()) return;
@@ -230,7 +237,7 @@ public class SnakeControllerOffline : OTSprite, ISnakePart
             //iTween.ColorTo(headSprite, iTween.Hash("color", new Color(200, 0, 0, 0), "time", .5));
             //iTween.ScaleTo(headSprite, new Vector3(2, 2), 1.5f);
             //AddBody();
-            Time.timeScale = Time.timeScale > 0 ? 0f : 1f;
+            //Time.timeScale = Time.timeScale > 0 ? 0f : 1f;
         }
         //if (Input.GetKeyDown(KeyCode.Escape))
         //    speed = 2;

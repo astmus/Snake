@@ -194,8 +194,6 @@ public class SnakeController : OTSprite, ISnakePart
         //label.text = "0";
     }
 
-    
-
     public void RemoveBody(float scaledTime)
     {
         float timeAnimation = scaledTime/snake.Count;
@@ -219,9 +217,7 @@ public class SnakeController : OTSprite, ISnakePart
         //if (_isRemoteControling) return;
         //Debug.Log("actor num = "+_snakeClient.ActorNumber);
         //Debug.Log("player number = "+_playerNumber);
-
-        //must uncomment
-        //if (_snakeClient.ConnectionStatus != GameStatus.InGame) return;
+        if (_snakeClient.ConnectionStatus != GameStatus.InGame) return;
 #if UNITY_EDITOR
         if (_directionData == null) return;
 #endif
@@ -244,8 +240,8 @@ public class SnakeController : OTSprite, ISnakePart
                 _snakeClient.SendSyncData(this, snake.Select(e => e as ISnakePart).ToList());
             }
         }
-        //must comment
-        if (Input.GetKeyUp(KeyCode.Space))
+        
+        /*if (Input.GetKeyUp(KeyCode.Space))
         {
             if (IsEnemyInstance()) return;
             //OTSprite headSprite = gameObject.GetComponent<OTSprite>();
@@ -259,7 +255,7 @@ public class SnakeController : OTSprite, ISnakePart
             //iTween.ScaleTo(headSprite, new Vector3(2, 2), 1.5f);
             AddBody();
             //Time.timeScale = 1f;
-        }
+        }*/
         //if (Input.GetKeyDown(KeyCode.Escape))
         //    speed = 2;
 

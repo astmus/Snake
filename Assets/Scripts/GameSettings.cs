@@ -19,7 +19,7 @@ namespace Assets.Scripts
             SnakeLengthEnabled = false;
             SnakeLengthWin = 15;
             PointsEnabled = true;
-            PointsCountWin = 3000;
+            PointsCountWin = 300;
             GameType = GameType.MultyPlayer;
             WithEnemyBody = false;
             WithSelfBody = false;
@@ -31,6 +31,18 @@ namespace Assets.Scripts
         public bool WithSelfBody { get; set; }
         public bool WithEnemyBody { get; set; }
         public GameType GameType { get; set; }
+        public bool CheckGameWinSituation(SnakeControllerOffline snake)
+        {
+            if (GameType == GameType.Survive)
+                throw new Exception("this function cant't be called when game type equal to survive");
+            Debug.Log(snake.SnakeBody.Count+ " = " +SnakeLengthWin);
+            if (SnakeLengthEnabled && snake.SnakeBody.Count+1 >= SnakeLengthWin)
+                return true;
+            if (PointsEnabled && snake.PointsCount >= PointsCountWin)
+                return true;
+            return false;
+        }
+
     }
 
     public class GameSettings

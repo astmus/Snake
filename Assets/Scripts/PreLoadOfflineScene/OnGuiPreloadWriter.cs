@@ -46,10 +46,10 @@ public class OnGuiPreloadWriter : MonoBehaviour
         _rules.WithEnemyBody = GUILayout.Toggle(_rules.WithEnemyBody, "with enemy body", GUILayout.MinHeight(colideRulesRect.height));
         GUILayout.EndHorizontal();
         GUILayout.EndArea();
+        GUI.enabled = (_rules.PointsEnabled || _rules.SnakeLengthEnabled);
         if (GUI.Button(buttonToGameRect, "to game"))
-        {
             Application.LoadLevel((int) GameScene.GameOffline);
-        }
+        GUI.enabled = true;
 
     }
 

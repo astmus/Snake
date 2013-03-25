@@ -56,7 +56,7 @@ public class MenuItem : MonoBehaviour
         switch (_itemAction)
         {
             case MenuItemAction.PlayOffline:
-                Application.LoadLevel((int)GameScene.GameOffline);
+                Application.LoadLevel((int)GameScene.PreloadToOffline);
                 break;
             case MenuItemAction.Play:
                 Application.LoadLevel((int)GameScene.Game);

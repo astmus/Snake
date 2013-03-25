@@ -18,6 +18,7 @@ public class WhoIsWhoLabel : MonoBehaviour {
             _gameStateController.GameStatusChanged += OnGameStatusChanged;
         else
             _client.GameStatusChanged += OnGameStatusChanged;
+        DontDestroyOnLoad(gameObject);
     }
 
 	void Start () {

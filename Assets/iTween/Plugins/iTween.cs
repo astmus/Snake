@@ -788,6 +788,27 @@ public class iTween : MonoBehaviour{
         ColorTo(target, Hash("color", color, "time", time, "oncomplete",callback));
     }
 
+    /// <summary>
+    /// Changes a GameObject's color values over time with MINIMUM customization options.  If a GUIText or GUITexture component is attached, they will become the target of the animation.
+    /// </summary>
+    /// <param name="target">
+    /// A <see cref="GameObject"/> to be the target of the animation.
+    /// </param>
+    /// <param name="color">
+    /// A <see cref="Color"/> to change the GameObject's color to.
+    /// </param>
+    /// <param name="time">
+    /// A <see cref="System.Single"/> for the time in seconds the animation will take to complete.
+    /// </param>
+    /// <param name="callback">
+    /// A <see cref="System.String"/> callback function name when animation complete.
+    /// </param>
+    /// <param name="ignoreScaleTime">for ignore scale time</param>
+    public static void ColorTo(GameObject target, Color color, float time, string callback, bool ignoreScaleTime)
+    {
+        ColorTo(target, Hash("color", color, "time", time, "oncomplete", callback, "ignoretimescale",ignoreScaleTime));
+    }
+
 	/// <summary>
 	/// Changes a GameObject's color values over time with FULL customization options.  If a GUIText or GUITexture component is attached, they will become the target of the animation.
 	/// </summary>
@@ -1867,6 +1888,25 @@ public class iTween : MonoBehaviour{
 	public static void ScaleTo(GameObject target, Vector3 scale, float time){
 		ScaleTo(target,Hash("scale",scale,"time",time));
 	}
+
+    /// <summary>
+    /// Changes a GameObject's scale over time with MINIMUM customization options.
+    /// </summary>
+    /// <param name="target">
+    /// A <see cref="GameObject"/> to be the target of the animation.
+    /// </param>
+    /// <param name="scale">
+    /// A <see cref="Vector3"/> for the final scale.
+    /// </param>
+    /// <param name="time">
+    /// A <see cref="System.Single"/> for the time in seconds the animation will take to complete.
+    /// </param>
+    /// <param name="ignoreScaleTime">for ignore scale time</param>
+    public static void ScaleTo(GameObject target, Vector3 scale, float time, bool ignoreScaleTime)
+    {
+        ScaleTo(target, Hash("scale", scale, "time", time, "ignoretimescale",ignoreScaleTime));
+    }
+
     /// <summary>
     /// Changes a GameObject's scale over time with MINIMUM customization options.
     /// </summary>

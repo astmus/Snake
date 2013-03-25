@@ -43,6 +43,7 @@ public class GameInformer : MonoBehaviour {
         Autostart = true;
         _messages = new Queue<InformerMessage>();
         _label = transform.gameObject.GetComponent<TextMesh>();
+        //DontDestroyOnLoad(gameObject);
     }
 
 	void Start () 
@@ -140,8 +141,8 @@ public class GameInformer : MonoBehaviour {
         transform.localScale = fromSize;
         renderer.material.color = fromColor;
         _label.text = _currentHandleMessage.Message;
-        iTween.ScaleTo(gameObject, toSize, .5f);
-        iTween.ColorTo(gameObject, toColor, .5f, "OnAnimationComplete");        
+        iTween.ScaleTo(gameObject, toSize, .5f, true);
+        iTween.ColorTo(gameObject, toColor, .5f, "OnAnimationComplete",true);        
     }
 
     void OnAnimationComplete()

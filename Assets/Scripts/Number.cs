@@ -3,18 +3,28 @@ using System.Collections;
 
 public class Number : MonoBehaviour {
     static public Vector3 amountSize;
-	// Use this for initialization
+    public Vector3 PointLabelPosition { get; set; }
+
+
+    // Use this for initialization
     static Number()
     {
-        amountSize = new Vector3(1.2f, 1.2f, 1.2f);
+        amountSize = new Vector3(2.2f, 2.2f, 0);
         //Debug.Log("static const");
     }
-	void Start () {
+	void Start () {   
+        //iTween.FadeTo(gameObject, iTween.Hash("alpha", 0, "time", .5));
         iTween.MoveBy(gameObject, iTween.Hash("y", 2, "easeType", iTween.EaseType.easeInBack, "loopType", iTween.LoopType.none, "time", .5));
         iTween.ScaleBy(gameObject, iTween.Hash("amount", amountSize, "easeType", iTween.EaseType.linear, "loopType", iTween.LoopType.none, "time", .5));
         iTween.ColorTo(gameObject, iTween.Hash("color", new Color(200, 0, 0, 0), "time", .5, "oncomplete", "OnAnimationComplete"));
-        //iTween.FadeTo(gameObject, iTween.Hash("alpha", 0, "time", .5));
 	}
+
+    public void StartAnimation()
+    {
+        iTween.MoveBy(gameObject, iTween.Hash("y", 2, "easeType", iTween.EaseType.easeInBack, "loopType", iTween.LoopType.none, "time", .5));
+        iTween.ScaleBy(gameObject, iTween.Hash("amount", amountSize, "easeType", iTween.EaseType.linear, "loopType", iTween.LoopType.none, "time", .5));
+        iTween.ColorTo(gameObject, iTween.Hash("color", new Color(200, 0, 0, 0), "time", .5, "oncomplete", "OnAnimationComplete"));
+    }
 
     void OnAnimationComplete()
     {

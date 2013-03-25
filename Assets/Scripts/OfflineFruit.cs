@@ -10,8 +10,6 @@ public class OfflineFruit : MonoBehaviour {
     //SnakeController _snake;
     //SnakeController _snake2;
     public Number NumberPrefab;
-    public TextMesh PointLabel1;
-    public TextMesh PointLabel2;
     int _points = 0;
     public int Id { get; private set; }
     private float _y;
@@ -32,7 +30,7 @@ public class OfflineFruit : MonoBehaviour {
         //Debug.Log("/////////////////////////fruit start");
         //var snakes = GameObject.FindObjectsOfType(typeof(SnakeController));
         //_snake = (SnakeController)snakes[0];
-        _minDistBetweenFruit = 3;
+        _minDistBetweenFruit = 4;
         audio.volume = GameSettings.Instance.SoundsVolume;
         _sprite = transform.gameObject.GetComponent<OTSprite>();// поучаем компонент родителя через него будем отключать столкновения
         SwitchVisible(false);
@@ -79,6 +77,7 @@ public class OfflineFruit : MonoBehaviour {
             _newPos = new Vector3(_x, _y, 0);
         }
         while (Vector3.Distance(_newPos, _oldPos) < _minDistBetweenFruit);
+        _oldPos = _newPos;
         if (_points < 10) _points = 10; // но менее 10 быть не может
         _points = (int)(10 * Vector3.Distance(Vector3.zero, _newPos));
         transform.position = _newPos;
@@ -97,24 +96,13 @@ public class OfflineFruit : MonoBehaviour {
         //Vector2 newPos;
         Number pointsNumber = (Number)Instantiate(NumberPrefab, new Vector3(transform.position.x, transform.position.y, -18), Quaternion.identity);
         audio.Play();
-        
         pointsNumber.GetComponent<TextMesh>().text = _points.ToString();
-        UpdatePointsCountOnLabel(_points, colliderInfo.gameObject);
-        FruitReposition();
+        colideSnake.PointsCount += _points;
+        if (_gameStateController.CheckWinRules(colideSnake) == false)
+            FruitReposition();
         //Debug.Log("counttries = " + Counttries);
     }
-
-
-
-    void UpdatePointsCountOnLabel(int points, GameObject colideGameObject)
-    {
-        SnakeControllerOffline colideSnake = colideGameObject.GetComponent<SnakeControllerOffline>();
-        TextMesh label = colideSnake.PlayerNumber == 1 ? PointLabel1 : PointLabel2;
-        int currentVal = System.Convert.ToInt32(label.text);
-        currentVal += points;
-        label.text = currentVal.ToString();
-    }
-
+   
     bool isColideWithSnake(Vector2 newPos)
     {
         /*if (Vector2.Distance(_snake.transform.position, newPos) < 3)

@@ -18,6 +18,7 @@ public class OfflineGameStateController : MonoBehaviour
 
     void Start()
     {
+        Time.timeScale = 1f;
         GameStatus = GameStatus.InRoom;
         _informer.Autostart = false;
         _informer.AddMessage(new InformerMessage("3",false,false));
@@ -26,6 +27,35 @@ public class OfflineGameStateController : MonoBehaviour
         var message = new InformerMessage("start", false, false);
         message.Completed += OnMessageCompleted;
         _informer.AddMessage(message);
+    }
+
+    void Awake()
+    {
+        DontDestroyOnLoad(gameObject);
+    }
+
+    
+
+    void OnGUI()
+    {
+        /*GUILayout.Label(GameSettings.Instance.OfflineRules.GameType.ToString());
+        GUILayout.Label(GameSettings.Instance.OfflineRules.PointsEnabled.ToString());
+        GUILayout.Label(GameSettings.Instance.OfflineRules.PointsCountWin.ToString());
+        GUILayout.Label(GameSettings.Instance.OfflineRules.SnakeLengthEnabled.ToString());
+        GUILayout.Label(GameSettings.Instance.OfflineRules.SnakeLengthWin.ToString());*/
+    }
+    
+    public bool CheckWinRules(SnakeControllerOffline snake)
+    {
+        if (GameSettings.Instance.OfflineRules.CheckGameWinSituation(snake))
+        {
+            string message = "player " + snake.PlayerNumber+" winner";
+            _informer.AddMessage(new InformerMessage(message,true));
+            GameStatus = GameStatus.GameOver;
+            Time.timeScale = 0f;
+            return true;
+        }
+        return false;
     }
 
     void OnMessageCompleted()
