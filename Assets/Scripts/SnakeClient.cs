@@ -66,7 +66,7 @@ namespace Assets.Scripts
 
         protected string ServerApplication = "ServerTest";
         private int _nextSendTickCount = Environment.TickCount;
-        private bool _gameIsStarted = false;
+        //private bool _gameIsStarted = false;
         private static Dictionary<byte, object> parameters = new Dictionary<byte, object>();
 
         public int SendIntervalMs = 10;

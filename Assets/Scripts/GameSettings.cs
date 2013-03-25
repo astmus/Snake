@@ -35,7 +35,6 @@ namespace Assets.Scripts
         {
             if (GameType == GameType.Survive)
                 throw new Exception("this function cant't be called when game type equal to survive");
-            Debug.Log(snake.SnakeBody.Count+ " = " +SnakeLengthWin);
             if (SnakeLengthEnabled && snake.SnakeBody.Count+1 >= SnakeLengthWin)
                 return true;
             if (PointsEnabled && snake.PointsCount >= PointsCountWin)

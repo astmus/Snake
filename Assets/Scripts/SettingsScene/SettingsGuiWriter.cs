@@ -104,7 +104,7 @@ public class SettingsGuiWriter : MonoBehaviour
         screenRect.y += screenRect.height * 0.4f;
         screenRect.height *= 0.5f;
         GUI.SetNextControlName(controlName);
-        string enterValue = GUI.TextField(screenRect, value.ToString());
+        GUI.TextField(screenRect, value.ToString());
         if (Event.current.type == EventType.KeyUp && GUI.GetNameOfFocusedControl() == controlName)
             value = Event.current.keyCode;
         if (_player1Left == value) _player1Left = KeyCode.None;

@@ -34,8 +34,6 @@ public class OfflineGameStateController : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    
-
     void OnGUI()
     {
         /*GUILayout.Label(GameSettings.Instance.OfflineRules.GameType.ToString());

@@ -22,7 +22,7 @@ public class OfflineFruit : MonoBehaviour {
     private Vector3 _oldPos = Vector3.zero; // previous position fruit
     private Vector3 _newPos;
     OTSprite _sprite;
-    private Random _posGenerator;
+    
     public OfflineGameStateController _gameStateController;
 
     void Start()
@@ -34,7 +34,6 @@ public class OfflineFruit : MonoBehaviour {
         audio.volume = GameSettings.Instance.SoundsVolume;
         _sprite = transform.gameObject.GetComponent<OTSprite>();// поучаем компонент родителя через него будем отключать столкновения
         SwitchVisible(false);
-        _posGenerator = new Random();
         Random.seed = Environment.TickCount;
         _gameStateController.GameStatusChanged += OnGameStatusChanged;
         //_snake2 = (SnakeController)snakes[1];

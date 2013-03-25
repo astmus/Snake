@@ -13,7 +13,7 @@ public class SnakeControllerOffline : OTSprite, ISnakePart
     public TextMesh PointsLabel;
     int _playerNumber;
     float speed;
-    float rotateSpeed;
+    //float rotateSpeed;
     bool _isRemoteControling;
     public Texture SnakeBodyTexture;
     public GameObject SnakeBodyPrefab; // заполняется в редакторе
@@ -23,7 +23,6 @@ public class SnakeControllerOffline : OTSprite, ISnakePart
     public Boom _boomPref; // префаб взыра при столкновении
     List<SnakeBodySpan> snake;
     KeyController _directionData;
-    GameObject[] _labels;
     public OfflineGameStateController _gameStateController;
     
     public SoundManager _soundManager;
@@ -44,9 +43,8 @@ public class SnakeControllerOffline : OTSprite, ISnakePart
         lastTurn = new TargetPoint();
         snake = new List<SnakeBodySpan>();
         speed = 6;
-        rotateSpeed = speed * 0.5f;
+        //rotateSpeed = speed * 0.5f;
         _playerNumber = _numberCounter++;
-        _labels = GameObject.FindGameObjectsWithTag("PointLabel");
         // позже перенести этот код в класс настроек и оттуда по номеру игрока получать настройки управления
         _directionData = _playerNumber == 1 ? GameSettings.Instance.Player1Control : GameSettings.Instance.Player2Control;
         //
@@ -135,6 +133,7 @@ public class SnakeControllerOffline : OTSprite, ISnakePart
     void OnTriggerEnter(Collider colliderInfo)
     {
         if (colliderInfo.gameObject.tag == "SnakeHead") return;
+        
         switch (colliderInfo.gameObject.tag)
         {
             case "Wall":
@@ -144,26 +143,45 @@ public class SnakeControllerOffline : OTSprite, ISnakePart
             case "Fruit":
                 AddBody();
                 break;
+            case "SnakeBody":
+                if (!GameSettings.Instance.OfflineRules.WithSelfBody && !GameSettings.Instance.OfflineRules.WithEnemyBody) return;
+                int position = numberPartOfThisSnake(colliderInfo.gameObject);
+                if (GameSettings.Instance.OfflineRules.WithSelfBody && position > 2)
+                    ResetSnake(false);
+                if (GameSettings.Instance.OfflineRules.WithEnemyBody && position == -1)
+                    ResetSnake(false);
+                break;
             default:
-                if (snake.Count > 0 && colliderInfo.gameObject != snake[0].AsGameObject()/* && colliderInfo.gameObject != snake[1].AsGameObject()*/)
+                /*if (snake.Count > 0 && colliderInfo.gameObject != snake[0].AsGameObject())
                 {
                     //ResetSnake(false);
                     //_snakeClient.SendSyncData(this, snake.Select(e => e as ISnakePart).ToList());
                     //Time.timeScale = 0f;
-                }
+                }*/
                 break;
         }
+    }
+
+    int numberPartOfThisSnake(GameObject part)
+    {
+        return snake.FindIndex(b=>b.AsGameObject() == part);
     }
 
     void ResetSnake(bool colideWithWall)
     {
         //_snakeClient.SendSnakeReset(true);
+        if (speed == 0) return; // если скорость змеи 0 хначит она и так уже врезалась
         Boom boom = (Boom)Instantiate(_boomPref);
         boom.transform.position = new Vector3(transform.position.x, transform.position.y, boom.transform.position.z);
         if (colideWithWall) // если врезались в стену то по окончании взрыва переведем червяка в центр игрового поля
             boom.BoomCompleted += () =>
             {
                 transform.position = new Vector3(0, 0, 0);
+                speed = 6;
+            };
+        else
+            boom.BoomCompleted += () =>
+            {
                 speed = 6;
             };
         boom.StartAnimation(1.5f);
@@ -221,7 +239,7 @@ public class SnakeControllerOffline : OTSprite, ISnakePart
             int sendAngle = (int)rotateAngle;
             if (sendAngle >= 0 && headIsRotated)
             {
-                float syncCoord = (sendAngle == 0 || sendAngle == 180) ? this.transform.position.y : this.transform.position.x;
+                //float syncCoord = (sendAngle == 0 || sendAngle == 180) ? this.transform.position.y : this.transform.position.x;
                 //_snakeClient.SendSyncData(this, snake.Select(e => e as ISnakePart).ToList());
             }
         //}
@@ -236,7 +254,7 @@ public class SnakeControllerOffline : OTSprite, ISnakePart
             //iTween.ColorTo(headSprite, new Color(255, 255, 255, 0), 1.5f);
             //iTween.ColorTo(headSprite, iTween.Hash("color", new Color(200, 0, 0, 0), "time", .5));
             //iTween.ScaleTo(headSprite, new Vector3(2, 2), 1.5f);
-            //AddBody();
+            AddBody();
             //Time.timeScale = Time.timeScale > 0 ? 0f : 1f;
         }
         //if (Input.GetKeyDown(KeyCode.Escape))

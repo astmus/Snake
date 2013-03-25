@@ -26,7 +26,7 @@ public class SnakeController : OTSprite, ISnakePart
     private static IntRange _numberCounter = new IntRange(1,2);
     int _playerNumber;
     float speed;
-    float rotateSpeed;
+    //float rotateSpeed;
     bool _isRemoteControling;
     public Texture SnakeBodyTexture;
     public GameObject SnakeBodyPrefab; // заполняется в редакторе
@@ -55,7 +55,7 @@ public class SnakeController : OTSprite, ISnakePart
         lastTurn = new TargetPoint();
         snake = new List<SnakeBodySpan>();
         speed = 6;
-        rotateSpeed = speed * 0.5f;
+        //rotateSpeed = speed * 0.5f;
         _playerNumber = _numberCounter++;
         _labels = GameObject.FindGameObjectsWithTag("PointLabel");        
         // позже перенести этот код в класс настроек и оттуда по номеру игрока получать настройки управления
@@ -236,7 +236,7 @@ public class SnakeController : OTSprite, ISnakePart
             int sendAngle = (int)rotateAngle;
             if (sendAngle >= 0 && headIsRotated)
             {
-                float syncCoord = (sendAngle == 0 || sendAngle == 180) ? this.transform.position.y : this.transform.position.x;
+                //float syncCoord = (sendAngle == 0 || sendAngle == 180) ? this.transform.position.y : this.transform.position.x;
                 _snakeClient.SendSyncData(this, snake.Select(e => e as ISnakePart).ToList());
             }
         }
