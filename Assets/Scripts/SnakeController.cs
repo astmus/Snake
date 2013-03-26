@@ -69,11 +69,11 @@ public class SnakeController : OTSprite, ISnakePart
         _snakeClient.EnemyPointsCountUpdated += OnEnemyPointsCountUpdated;
         _snakeClient.GameStatusChanged += OnGameStatusChanged;
         _snakeClient.EnemySnakeReset += OnEnemySnakeReset;
-        //
     }
 
     void OnEnemySnakeReset(bool colideWithWall)
     {
+        Debug.Log("enemy snake reset");
         if (IsEnemyInstance()) ResetSnake(colideWithWall);
     }
 
@@ -157,6 +157,7 @@ public class SnakeController : OTSprite, ISnakePart
         switch (colliderInfo.gameObject.tag)
         {
             case "Wall":
+                Debug.Log("Wall Snake reset");
                 ResetSnake(true);
                 //_snakeClient.SendSyncData(this, snake.Select(e => e as ISnakePart).ToList());
                 break;
@@ -175,7 +176,15 @@ public class SnakeController : OTSprite, ISnakePart
 
     void ResetSnake(bool colideWithWall)
     {
-        _snakeClient.SendSnakeReset(true);
+        Debug.Log("Reset snake collide wall == " + colideWithWall);
+        if ((int)speed == 0) 
+        {
+            Debug.Log(speed);
+            return; // если скорость змеи 0 значит она уже врезалась и идет анимация столкновения и нам делать ничего не надо
+        }
+        speed = 0;
+        if (IsEnemyInstance() == false) // отправляем только если обнуляется червяк игрока
+            _snakeClient.SendSnakeReset(true);
         Boom boom = (Boom)Instantiate(_boomPref);
         boom.transform.position = new Vector3(transform.position.x, transform.position.y, boom.transform.position.z);
         if (colideWithWall) // если врезались в стену то по окончании взрыва переведем червяка в центр игрового поля
@@ -186,7 +195,7 @@ public class SnakeController : OTSprite, ISnakePart
                 };
         boom.StartAnimation(1.5f);
         RemoveBody(1.5f);
-        speed = 0;
+        
         //Camera.main.audio.Stop();
         //Camera.main.audio.Play();
         //GameObject[] labels = GameObject.FindGameObjectsWithTag("PointLabel");
