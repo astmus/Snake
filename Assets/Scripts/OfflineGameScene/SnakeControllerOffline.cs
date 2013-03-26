@@ -24,7 +24,6 @@ public class SnakeControllerOffline : OTSprite, ISnakePart
     List<SnakeBodySpan> snake;
     KeyController _directionData;
     public OfflineGameStateController _gameStateController;
-    
     public SoundManager _soundManager;
     //static float maxDist = 0;
 
