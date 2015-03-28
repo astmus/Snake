@@ -17,8 +17,8 @@ public class Fruit : MonoBehaviour {
         //var snakes = GameObject.FindObjectsOfType(typeof(SnakeController));
         //_snake = (SnakeController)snakes[0];
         _client.FruitRepositioned += OnFruitRepositioned;
-	    audio.volume = GameSettings.Instance.SoundsVolume;     
-        _sprite = this.transform.gameObject.GetComponent<OTSprite>();// поучаем компонент родителя через него будем отключать столкновения
+	    GetComponent<AudioSource>().volume = GameSettings.Instance.SoundsVolume;     
+        _sprite = this.transform.gameObject.GetComponent<OTSprite>();// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         SwitchVisible(false);
         
         //_snake2 = (SnakeController)snakes[1];
@@ -26,9 +26,9 @@ public class Fruit : MonoBehaviour {
 
     void SwitchVisible(bool visible)
     {        
-        renderer.enabled = visible;
+        GetComponent<Renderer>().enabled = visible;
         enabled = visible;
-        _sprite.rigidbody.detectCollisions = visible;
+        _sprite.GetComponent<Rigidbody>().detectCollisions = visible;
     }
 
     void OnFruitRepositioned(FruitInfo fruitInfo)
@@ -52,7 +52,7 @@ public class Fruit : MonoBehaviour {
         SwitchVisible(false);
         //Vector2 newPos;
         Number pointsNumber = (Number)Instantiate(NumberPrefab, new Vector3(this.transform.position.x,this.transform.position.y,-18), Quaternion.identity);
-        audio.Play();
+        GetComponent<AudioSource>().Play();
         /*int Counttries = 0;
         do 
         {
@@ -61,10 +61,10 @@ public class Fruit : MonoBehaviour {
             float x = Random.Range(-12.0f, 12.0f);
             newPos = new Vector2(x,y);
         } while (isColideWithSnake(newPos));*/
-        // вычисляем количество очком кот будет начислено за подбор нового фрукта
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         //int points = (int)(10 * Vector3.Distance(Vector3.zero, this.transform.position));
         
-        //if (points < 10) points = 10; // но менее 10 быть не может
+        //if (points < 10) points = 10; // пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ 10 пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
         pointsNumber.GetComponent<TextMesh>().text = _points.ToString();
         UpdatePointsCountOnLabel(_points, colliderInfo.gameObject);
         _client.SendCatchFruit(Id);

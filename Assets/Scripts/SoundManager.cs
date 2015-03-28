@@ -15,7 +15,7 @@ public class SoundManager : MonoBehaviour {
     public AudioClip _snakeLevelUp;
     public AudioClip _boom;
     void Start () {
-        audio.volume = GameSettings.Instance.SoundsVolume;
+        GetComponent<AudioSource>().volume = GameSettings.Instance.SoundsVolume;
 	}
 	
 	// Update is called once per frame
@@ -28,10 +28,10 @@ public class SoundManager : MonoBehaviour {
         switch (clip)
         {
             case SoundManagerClip.SnakeLevelUp:
-                audio.PlayOneShot(_snakeLevelUp);
+                GetComponent<AudioSource>().PlayOneShot(_snakeLevelUp);
                 break;
             case SoundManagerClip.Boom:
-                audio.PlayOneShot(_boom);
+                GetComponent<AudioSource>().PlayOneShot(_boom);
                 break;
         }
         

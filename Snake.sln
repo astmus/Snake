@@ -5,8 +5,6 @@ Project("{DFA90F1B-4EB3-AFFB-D3B4-6AF34ED2477C}") = "Snake", "Assembly-CSharp.cs
 EndProject
 Project("{DFA90F1B-4EB3-AFFB-D3B4-6AF34ED2477C}") = "Snake", "Assembly-CSharp-Editor.csproj", "{33882253-2CC5-76B7-0B2B-18CF9EE92954}"
 EndProject
-Project("{DFA90F1B-4EB3-AFFB-D3B4-6AF34ED2477C}") = "Snake", "Assembly-UnityScript.unityproj", "{738A041B-7BF9-58F4-D049-0EE3B968092F}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,15 +19,11 @@ Global
 		{33882253-2CC5-76B7-0B2B-18CF9EE92954}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{33882253-2CC5-76B7-0B2B-18CF9EE92954}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{33882253-2CC5-76B7-0B2B-18CF9EE92954}.Release|Any CPU.Build.0 = Release|Any CPU
-		{738A041B-7BF9-58F4-D049-0EE3B968092F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{738A041B-7BF9-58F4-D049-0EE3B968092F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{738A041B-7BF9-58F4-D049-0EE3B968092F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{738A041B-7BF9-58F4-D049-0EE3B968092F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-																																																																																																																																																																																																																			GlobalSection(MonoDevelopProperties) = preSolution
+																																																																																																																																																																																																																																							GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Assembly-CSharp.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1

@@ -18,7 +18,7 @@ public class MenuItem : MonoBehaviour
 	{
         var list = GameObject.FindGameObjectsWithTag("MenuItem").ToList();
 	    int delay = list.IndexOf(this.gameObject);
-	    audio.volume = GameSettings.Instance.SoundsVolume;
+	    GetComponent<AudioSource>().volume = GameSettings.Instance.SoundsVolume;
 	    StartCoroutine(StartAnimation(delay));
 	}
 	
@@ -41,14 +41,14 @@ public class MenuItem : MonoBehaviour
     void OnMouseEnter()
     {
         iTween.ColorTo(gameObject, Color.red, 0.3f);
-        audio.PlayOneShot(_mouseItemOver);
+        GetComponent<AudioSource>().PlayOneShot(_mouseItemOver);
         _displaySprite.image = _itemOverChangeTexture;
         _displaySprite.size = new Vector2(10,10);
     }
 
     void OnMouseDown()
     {
-        audio.PlayOneShot(_mouseItemClick);
+        GetComponent<AudioSource>().PlayOneShot(_mouseItemClick);
     }
 
     void OnMouseUp()

@@ -14,8 +14,8 @@ public class OfflineFruit : MonoBehaviour {
     public int Id { get; private set; }
     private float _y;
     private float _x;
-    private float _sizeX; // размер игрового поля по иксу
-    private float _sizeY; // по игрику
+    private float _sizeX; // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ
+    private float _sizeY; // пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
     private float _minDistByY; // 
     private float _minDistByX; // 
     private float _minDistBetweenFruit;
@@ -31,8 +31,8 @@ public class OfflineFruit : MonoBehaviour {
         //var snakes = GameObject.FindObjectsOfType(typeof(SnakeController));
         //_snake = (SnakeController)snakes[0];
         _minDistBetweenFruit = 4;
-        audio.volume = GameSettings.Instance.SoundsVolume;
-        _sprite = transform.gameObject.GetComponent<OTSprite>();// поучаем компонент родителя через него будем отключать столкновения
+        GetComponent<AudioSource>().volume = GameSettings.Instance.SoundsVolume;
+        _sprite = transform.gameObject.GetComponent<OTSprite>();// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         SwitchVisible(false);
         Random.seed = Environment.TickCount;
         _gameStateController.GameStatusChanged += OnGameStatusChanged;
@@ -62,9 +62,9 @@ public class OfflineFruit : MonoBehaviour {
 
     void SwitchVisible(bool visible)
     {
-        renderer.enabled = visible;
+        GetComponent<Renderer>().enabled = visible;
         enabled = visible;
-        _sprite.rigidbody.detectCollisions = visible;
+        _sprite.GetComponent<Rigidbody>().detectCollisions = visible;
     }
 
     void FruitReposition()
@@ -77,7 +77,7 @@ public class OfflineFruit : MonoBehaviour {
         }
         while (Vector3.Distance(_newPos, _oldPos) < _minDistBetweenFruit);
         _oldPos = _newPos;
-        if (_points < 10) _points = 10; // но менее 10 быть не может
+        if (_points < 10) _points = 10; // пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ 10 пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
         _points = (int)(10 * Vector3.Distance(Vector3.zero, _newPos));
         transform.position = _newPos;
     }
@@ -94,7 +94,7 @@ public class OfflineFruit : MonoBehaviour {
         SnakeControllerOffline colideSnake = colliderInfo.gameObject.GetComponent<SnakeControllerOffline>();
         //Vector2 newPos;
         Number pointsNumber = (Number)Instantiate(NumberPrefab, new Vector3(transform.position.x, transform.position.y, -18), Quaternion.identity);
-        audio.Play();
+        GetComponent<AudioSource>().Play();
         pointsNumber.GetComponent<TextMesh>().text = _points.ToString();
         colideSnake.PointsCount += _points;
         if (_gameStateController.CheckWinRules(colideSnake) == false)

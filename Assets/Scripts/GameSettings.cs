@@ -48,11 +48,11 @@ namespace Assets.Scripts
     {
         GameSettings()
         {
-            //ServerAddress = "54.228.214.178";
-            ServerAddress = "localhost";
+            ServerAddress = "54.228.222.73";
+            //ServerAddress = "localhost";
             Port = "5055";
-            MusicVolume = 0.35f;
-            SoundsVolume = 0.35f;
+            MusicVolume = 0.5f;
+            SoundsVolume = 0.5f;
             Player1Control = new KeyController();
             Player2Control = new KeyController(KeyCode.A, KeyCode.D, KeyCode.W, KeyCode.S);
             OfflineRules = new OfflineGameRules();

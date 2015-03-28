@@ -12,8 +12,8 @@ public class WhoIsWhoLabel : MonoBehaviour {
     public OfflineGameStateController _gameStateController;
     void Awake()
     {
-        _default = renderer.material.color;
-        renderer.material.color = _invisible;
+        _default = GetComponent<Renderer>().material.color;
+        GetComponent<Renderer>().material.color = _invisible;
         if (_gameStateController != null)
             _gameStateController.GameStatusChanged += OnGameStatusChanged;
         else

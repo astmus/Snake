@@ -14,7 +14,7 @@ public class GameStatusListener : MonoBehaviour {
 	        _client.GameStatusChanged += OnGameStatusChanged;
 	    else
 	        _gameStatusController.GameStatusChanged += OnGameStatusChanged;
-	    audio.volume = GameSettings.Instance.MusicVolume;
+	    GetComponent<AudioSource>().volume = GameSettings.Instance.MusicVolume;
 	}
 
     void OnGameStatusChanged(GameStatus status)
@@ -22,12 +22,12 @@ public class GameStatusListener : MonoBehaviour {
         switch (status)
         {
             case GameStatus.InGame:
-                audio.Play();
+                GetComponent<AudioSource>().Play();
                 break;
             case GameStatus.InRoom:
                 break;
             case GameStatus.GameOver:
-                audio.Stop();
+                GetComponent<AudioSource>().Stop();
                 break;
         }
     }

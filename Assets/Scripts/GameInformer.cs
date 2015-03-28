@@ -2,7 +2,6 @@ using System;
 using Assets.Scripts;
 using UnityEngine;
 using System.Collections.Generic;
-using ExitGames.Client.Photon;
 
 public class InformerMessage
 {
@@ -53,7 +52,7 @@ public class GameInformer : MonoBehaviour {
         _maxSize = new Vector3(.4f, .4f, .4f);
         _countDownPriority = true;
         _invisible = new Color(255, 255, 255, 0);
-        renderer.material.color = _invisible;
+        GetComponent<Renderer>().material.color = _invisible;
         transform.localScale = _maxSize;
 	    if (_snakeClient == null) return;
 	    _snakeClient.GameStatusChanged += OnGameStatusChanged;
@@ -139,7 +138,7 @@ public class GameInformer : MonoBehaviour {
         Color toColor = _currentHandleMessage.IsReverse ? _invisible : Color.white;
         Color fromColor = _currentHandleMessage.IsReverse ? Color.white : _invisible;
         transform.localScale = fromSize;
-        renderer.material.color = fromColor;
+        GetComponent<Renderer>().material.color = fromColor;
         _label.text = _currentHandleMessage.Message;
         iTween.ScaleTo(gameObject, toSize, .5f, true);
         iTween.ColorTo(gameObject, toColor, .5f, "OnAnimationComplete",true);        
@@ -152,7 +151,7 @@ public class GameInformer : MonoBehaviour {
         else
         {
             if (_currentHandleMessage.LeaveOnScreen == false)
-                renderer.material.color = _invisible;
+                GetComponent<Renderer>().material.color = _invisible;
             _isRunning = false;
         }
         _currentHandleMessage.EndUse();
