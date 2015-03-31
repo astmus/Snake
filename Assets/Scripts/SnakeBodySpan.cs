@@ -130,6 +130,11 @@ public class SnakeBodySpan : MonoBehaviour, ISnakePart
         this.gameObject.AddComponent(typeof(AlphaChanger));
     }
 
+    void OnDestroyCompleted()
+    {
+        Destroy(gameObject);
+    }
+
     /*public void OnComplete()
     {
         Debug.Log("OnAmountScaleAddDestroy");

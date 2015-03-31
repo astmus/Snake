@@ -21,10 +21,14 @@ public class OfflineFruit : MonoBehaviour {
     private float _minDistBetweenFruit;
     private Vector3 _oldPos = Vector3.zero; // previous position fruit
     private Vector3 _newPos;
+    
     //OTSprite _sprite;
     
     public OfflineGameStateController _gameStateController;
-
+    public UnityEngine.Vector3 CurrentPos
+    {
+        get { return _newPos; }
+    }
     void Start()
     {
         //Debug.Log("/////////////////////////fruit start");

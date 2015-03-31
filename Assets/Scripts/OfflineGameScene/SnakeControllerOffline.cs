@@ -24,6 +24,7 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
     List<SnakeBodySpan> snake;
     KeyController _directionData;
     public OfflineGameStateController _gameStateController;
+    public OfflineFruit _fruit;
     public SoundManager _soundManager;
     private float _rotation;
     float _halfScreenSize;
@@ -134,7 +135,7 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
 
     void OnTriggerEnter2D(Collider2D colliderInfo)
     {
-        print(colliderInfo.gameObject.tag);
+        //print(colliderInfo.gameObject.tag);
         //if (colliderInfo.gameObject.tag == "SnakeHead") return;
         
         switch (colliderInfo.gameObject.tag)
@@ -241,8 +242,25 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
             if (Input.touchCount > 0)
             {
                 Touch t = Input.GetTouch(0);
+                string s = "";
                 if (t.phase == TouchPhase.Began)
-                    rotateAngle  = (t.position.x > _halfScreenSize) ? Rotation - 90 : Rotation + 90;
+                    switch ((int)Rotation)
+                    {
+                        case -90:
+                        case 270:
+                            rotateAngle = (t.position.x < _halfScreenSize) ? Rotation - 90 : Rotation + 90;                    
+                            break;
+                        case 0:
+                            rotateAngle = (Position.y > _fruit.CurrentPos.y) ? Rotation - 90 : Rotation + 90;
+                            break;
+                        case 180:
+                            rotateAngle = (Position.y < _fruit.CurrentPos.y) ? Rotation - 90 : Rotation + 90;
+                            break;
+                        default:
+                            rotateAngle = (t.position.x > _halfScreenSize) ? Rotation - 90 : Rotation + 90;
+                            break;
+                    }
+                Debug.Log(rotateAngle.ToString());
             }
 
             bool headIsRotated = RotateHeadTo((int)rotateAngle);
