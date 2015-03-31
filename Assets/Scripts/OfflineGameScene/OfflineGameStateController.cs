@@ -47,7 +47,8 @@ public class OfflineGameStateController : MonoBehaviour
     {
         if (GameSettings.Instance.OfflineRules.CheckGameWinSituation(snake))
         {
-            string message = "player " + snake.PlayerNumber+" winner";
+            //string message = "player " + snake.PlayerNumber+" winner";
+            string message = "win";
             _informer.AddMessage(new InformerMessage(message,true));
             GameStatus = GameStatus.GameOver;
             Time.timeScale = 0f;

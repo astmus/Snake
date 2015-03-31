@@ -242,7 +242,6 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
             if (Input.touchCount > 0)
             {
                 Touch t = Input.GetTouch(0);
-                string s = "";
                 if (t.phase == TouchPhase.Began)
                     switch ((int)Rotation)
                     {
@@ -259,9 +258,10 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
                         default:
                             rotateAngle = (t.position.x > _halfScreenSize) ? Rotation - 90 : Rotation + 90;
                             break;
-                    }
-                Debug.Log(rotateAngle.ToString());
+                    }                
             }
+            //Debug.developerConsoleVisible = true;
+            //Debug.Log(rotateAngle.ToString());
 
             bool headIsRotated = RotateHeadTo((int)rotateAngle);
             int sendAngle = (int)rotateAngle;
