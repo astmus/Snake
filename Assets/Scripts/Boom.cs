@@ -9,8 +9,7 @@ public class Boom : MonoBehaviour {
     public event Action BoomCompleted;
     void Awake()
     {
-        if (_soundManager == null) _soundManager = (SoundManager)GameObject.FindObjectOfType(typeof(SoundManager));
-        gameObject.transform.localScale = new Vector3(0.5f,0.25f);
+        if (_soundManager == null) _soundManager = (SoundManager)GameObject.FindObjectOfType(typeof(SoundManager));        
     }
 
 	void Start()
@@ -21,7 +20,7 @@ public class Boom : MonoBehaviour {
     public void StartAnimation(float animationTime)
     {
         _soundManager.PlaySound(SoundManagerClip.Boom);
-        iTween.ScaleTo(gameObject, new Vector3(4, 2), animationTime, "OnAnimationComplete");
+        iTween.ScaleTo(gameObject, new Vector3(4, 3), animationTime, "OnAnimationComplete");
         iTween.ShakePosition(gameObject,new Vector3(0.2f,0.2f),animationTime);
     }
 
