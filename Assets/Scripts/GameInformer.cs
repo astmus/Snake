@@ -49,7 +49,7 @@ public class GameInformer : MonoBehaviour {
     {
         _isRunning = false;
         _minSize = new Vector3(.2f, .2f, .0f);
-        _maxSize = new Vector3(.4f, .4f, .4f);
+        _maxSize = new Vector3(.3f, .3f, .3f);
         _countDownPriority = true;
         _invisible = new Color(255, 255, 255, 0);
         GetComponent<Renderer>().material.color = _invisible;
@@ -61,7 +61,7 @@ public class GameInformer : MonoBehaviour {
 	}
 
     public void AddMessage(InformerMessage message)
-    {
+    {        
         _messages.Enqueue(message);
         if (Autostart) Run();
     }
@@ -140,8 +140,8 @@ public class GameInformer : MonoBehaviour {
         transform.localScale = fromSize;
         GetComponent<Renderer>().material.color = fromColor;
         _label.text = _currentHandleMessage.Message;
-        iTween.ScaleTo(gameObject, toSize, .5f, true);
-        iTween.ColorTo(gameObject, toColor, .5f, "OnAnimationComplete",true);        
+        iTween.ScaleTo(gameObject, toSize, 1.0f, true);
+        iTween.ColorTo(gameObject, toColor, 1.0f, "OnAnimationComplete",true);        
     }
 
     void OnAnimationComplete()

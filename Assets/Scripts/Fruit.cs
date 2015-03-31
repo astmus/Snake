@@ -8,7 +8,13 @@ public class Fruit : MonoBehaviour {
     public SnakeClient _client;
     public Number NumberPrefab;
     int _points = 0;
+    
+    //fake
+    float rotation;
+    Vector2 Position;
+
     public int Id { get; private set; }
+/*
 
     OTSprite _sprite;
 
@@ -53,14 +59,14 @@ public class Fruit : MonoBehaviour {
         //Vector2 newPos;
         Number pointsNumber = (Number)Instantiate(NumberPrefab, new Vector3(this.transform.position.x,this.transform.position.y,-18), Quaternion.identity);
         GetComponent<AudioSource>().Play();
-        /*int Counttries = 0;
+        / *int Counttries = 0;
         do 
         {
             Counttries++;
             float y = Random.Range(-9.0f, 9.0f);
             float x = Random.Range(-12.0f, 12.0f);
             newPos = new Vector2(x,y);
-        } while (isColideWithSnake(newPos));*/
+        } while (isColideWithSnake(newPos));* /
         // ��������� ���������� ����� ��� ����� ��������� �� ������ ������ ������
         //int points = (int)(10 * Vector3.Distance(Vector3.zero, this.transform.position));
         
@@ -88,15 +94,15 @@ public class Fruit : MonoBehaviour {
 
     bool isColideWithSnake(Vector2 newPos)
     {
-        /*if (Vector2.Distance(_snake.transform.position, newPos) < 3)
+        / *if (Vector2.Distance(_snake.transform.position, newPos) < 3)
             return true;
         foreach (SnakeBodySpan body in _snake.SnakeBody)
             if (Vector2.Distance(body.AsGameObject().transform.position, newPos) < transform.localScale.x)
-                return true;*/
-        /*foreach (SnakeBodySpan body in _snake2.SnakeBody)
+                return true;* /
+        / *foreach (SnakeBodySpan body in _snake2.SnakeBody)
             if (Vector2.Distance(body.AsGameObject().transform.position, newPos) < transform.localScale.x)
                 return true;
-        */
+        * /
         return false;
-    }
+    }*/
 }

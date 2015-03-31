@@ -20,27 +20,53 @@ public class TargetPoint
 
 }
 
-public class SnakeBodySpan : ISnakePart
+public class SnakeBodySpan : MonoBehaviour, ISnakePart
 {
 
     GameObject _snakeBody;
     List<TargetPoint> _pointList;
-    OTSprite _sprite;
+    //OTSprite _sprite;
     ISnakePart _previousPart;
+    
     static Vector3 _amountDestroy = new Vector3(.5f, .5f); //размер который будте добавлен части червяка при уничтожении
     //float dist = float.MaxValue;
     public event System.Action<TargetPoint> PartRotate;
+    float _rotation;
+    public SnakeBodySpan()
+    {
+        _pointList = new List<TargetPoint>();
+       // _snakeBody = span;
+        //_sprite = span.GetComponent<OTSprite>();        
+    }
+
+    //[Obsolete("old method for compability")]
     public SnakeBodySpan(GameObject span, ISnakePart previousPart)
     {
         _pointList = new List<TargetPoint>();
         _snakeBody = span;
-        _sprite = span.GetComponent<OTSprite>();
-        _sprite.rotation = previousPart.Rotation;
+        //_sprite = span.GetComponent<OTSprite>();
+        //_sprite.rotation = previousPart.Rotation;
         //_sprite.position = new Vector2(part.Position.x - _sprite.size.x, part.Position.y);
-        _sprite.position = previousPart.Position;
-        _sprite.transform.Translate(-_snakeBody.transform.lossyScale.x, 0, 0);
+        //_sprite.position = previousPart.Position;
+        //_sprite.transform.Translate(-_snakeBody.transform.lossyScale.x, 0, 0);
         _previousPart = previousPart;
         previousPart.PartRotate += new System.Action<TargetPoint>(OnPartRotate);
+    }
+
+    public ISnakePart PreviousPart
+    {
+        set 
+        {
+            if (_previousPart == null)
+            {
+                _previousPart = value;
+                Rotation = _previousPart.Rotation;
+                //_sprite.position = new Vector2(part.Position.x - _sprite.size.x, part.Position.y);
+                transform.position = _previousPart.Position;
+                transform.Translate(-/*_snakeBody.*/transform.lossyScale.x, 0, 0);
+                _previousPart.PartRotate += new System.Action<TargetPoint>(OnPartRotate);
+            }
+        }
     }
 
     void OnPartRotate(TargetPoint target)
@@ -55,13 +81,13 @@ public class SnakeBodySpan : ISnakePart
 
     public Transform Transform
     {
-        get { return _sprite.transform; }
+        get { return transform; }
     }
 
     public void Translate(float x, float y, float z,params OnGuiWriter [] wr)
     {
         //Vector2 v = Position + new Vector2(x,y);
-        _sprite.transform.Translate(x, y, z);
+        transform.Translate(x, y, z);
         //Debug.Log("lossy"+_snakeBody.transform.lossyScale.x);
         //Debug.Log("local"+_snakeBody.transform.localScale.x);
         //if (_pointList.Count != 0)
@@ -69,20 +95,20 @@ public class SnakeBodySpan : ISnakePart
         float dist = Vector2.Distance(Position, _previousPart.Position);
         if (x > 0 || y > 0)
         {            
-            if (dist > _snakeBody.transform.localScale.x)
+            if (dist > /*_snakeBody.*/transform.localScale.x)
             {
                 Rotation = _previousPart.Rotation;
                 Position = _previousPart.Position;
-                _sprite.transform.Translate(-_snakeBody.transform.localScale.x, 0, 0);
+                transform.Translate(-/*_snakeBody.*/transform.localScale.x, 0, 0);
             }
         }
         else
         {
-            if (dist > _snakeBody.transform.localScale.x)
+            if (dist > /*_snakeBody.*/transform.localScale.x)
             {
                 _previousPart.Rotation = Rotation;
                 _previousPart.Position = Position;
-                _sprite.transform.Translate(_snakeBody.transform.localScale.x, 0, 0);
+                transform.Translate(/*_snakeBody.*/transform.localScale.x, 0, 0);
             }
         }
         //else
@@ -100,8 +126,8 @@ public class SnakeBodySpan : ISnakePart
         args[itWeenParam.Time] = time;
         args[itWeenParam.OnComplete] = "OnDestroyCompleted"; //этот метод вызывается у OTSprite там же он и описан
         args[itWeenParam.Delay] = delay;
-        iTween.ScaleAdd(_snakeBody, args);
-        _snakeBody.AddComponent(typeof (OTSpriteAlphaChanger));
+        iTween.ScaleAdd(this.gameObject, args);
+        this.gameObject.AddComponent(typeof(AlphaChanger));
     }
 
     /*public void OnComplete()
@@ -112,18 +138,31 @@ public class SnakeBodySpan : ISnakePart
 
     public float Rotation
     {
-        set { _sprite.rotation = value; }
-        get { return _sprite.rotation; }
+        get
+        {
+            return transform.rotation.eulerAngles.z;
+        }
+        set
+        {
+            float val = value;
+            // keep this rotation within 0-360
+            if (val < 0) val += 360.0f;
+            else
+                if (val >= 360) val -= 360.0f;
+
+            this.gameObject.transform.rotation = Quaternion.Euler(0, 0, val);
+            _rotation = val;
+        }
     }
 
     public Vector2 Position
     {
-        set { _sprite.position = value; }
-        get { return _sprite.position; }
+        set { transform.position = value; }
+        get { return transform.position; }
     }
 
     public GameObject AsGameObject()
     {        
-        return _snakeBody;
+        return this.gameObject;
     }
 }

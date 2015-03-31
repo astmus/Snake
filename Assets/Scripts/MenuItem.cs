@@ -8,8 +8,7 @@ public class MenuItem : MonoBehaviour
 {
 
     public AudioClip _mouseItemOver;
-    public AudioClip _mouseItemClick;
-    public OTSprite _displaySprite;
+    public AudioClip _mouseItemClick;    
     public Texture _itemOverChangeTexture;
     public MenuItemAction _itemAction;
 
@@ -42,8 +41,8 @@ public class MenuItem : MonoBehaviour
     {
         iTween.ColorTo(gameObject, Color.red, 0.3f);
         GetComponent<AudioSource>().PlayOneShot(_mouseItemOver);
-        _displaySprite.image = _itemOverChangeTexture;
-        _displaySprite.size = new Vector2(10,10);
+        /*_displaySprite.image = _itemOverChangeTexture;
+        _displaySprite.size = new Vector2(10,10);*/
     }
 
     void OnMouseDown()

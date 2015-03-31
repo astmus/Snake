@@ -21,7 +21,7 @@ public class OfflineFruit : MonoBehaviour {
     private float _minDistBetweenFruit;
     private Vector3 _oldPos = Vector3.zero; // previous position fruit
     private Vector3 _newPos;
-    OTSprite _sprite;
+    //OTSprite _sprite;
     
     public OfflineGameStateController _gameStateController;
 
@@ -32,8 +32,8 @@ public class OfflineFruit : MonoBehaviour {
         //_snake = (SnakeController)snakes[0];
         _minDistBetweenFruit = 4;
         GetComponent<AudioSource>().volume = GameSettings.Instance.SoundsVolume;
-        _sprite = transform.gameObject.GetComponent<OTSprite>();// ������� ��������� �������� ����� ���� ����� ��������� ������������
-        SwitchVisible(false);
+        //_sprite = transform.gameObject.GetComponent<OTSprite>();// ������� ��������� �������� ����� ���� ����� ��������� ������������
+        //SwitchVisible(false);
         Random.seed = Environment.TickCount;
         _gameStateController.GameStatusChanged += OnGameStatusChanged;
         //_snake2 = (SnakeController)snakes[1];
@@ -64,7 +64,7 @@ public class OfflineFruit : MonoBehaviour {
     {
         GetComponent<Renderer>().enabled = visible;
         enabled = visible;
-        _sprite.GetComponent<Rigidbody>().detectCollisions = visible;
+        this.GetComponent<BoxCollider2D>().enabled = visible;
     }
 
     void FruitReposition()
@@ -72,7 +72,7 @@ public class OfflineFruit : MonoBehaviour {
         do
         {
             _y = Random.Range(-9,9);
-            _x = Random.Range(-12,12);
+            _x = Random.Range(-15,15);
             _newPos = new Vector3(_x, _y, 0);
         }
         while (Vector3.Distance(_newPos, _oldPos) < _minDistBetweenFruit);
@@ -87,7 +87,7 @@ public class OfflineFruit : MonoBehaviour {
     {
     }
 
-    void OnTriggerEnter(Collider colliderInfo)
+    void OnTriggerEnter2D(Collider2D colliderInfo)
     {
         //Debug.Log("colide");
         if (colliderInfo.gameObject.tag != "SnakeHead") return;

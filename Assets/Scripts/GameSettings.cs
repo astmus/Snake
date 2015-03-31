@@ -19,10 +19,10 @@ namespace Assets.Scripts
             SnakeLengthEnabled = false;
             SnakeLengthWin = 15;
             PointsEnabled = true;
-            PointsCountWin = 300;
+            PointsCountWin = 3000;
             GameType = GameType.MultyPlayer;
-            WithEnemyBody = false;
-            WithSelfBody = false;
+            WithEnemyBody = true;
+            WithSelfBody = true;
         }
         public bool SnakeLengthEnabled { get; set; }
         public int SnakeLengthWin { get; set; }

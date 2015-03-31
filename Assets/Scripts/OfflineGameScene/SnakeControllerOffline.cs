@@ -7,7 +7,7 @@ using System;
 using Assets.Scripts.Responses;
 using Assets.Scripts.SendDataModel;
 
-public class SnakeControllerOffline : OTSprite, ISnakePart
+public class SnakeControllerOffline : MonoBehaviour, ISnakePart
 {
     private static IntRange _numberCounter = new IntRange(1, 2);
     public TextMesh PointsLabel;
@@ -25,6 +25,8 @@ public class SnakeControllerOffline : OTSprite, ISnakePart
     KeyController _directionData;
     public OfflineGameStateController _gameStateController;
     public SoundManager _soundManager;
+    private float _rotation;
+    float _halfScreenSize;
     //static float maxDist = 0;
 
     //must del if not used
@@ -37,7 +39,7 @@ public class SnakeControllerOffline : OTSprite, ISnakePart
     TargetPoint lastTurn;
     public event Action<TargetPoint> PartRotate;
     // Use this for initialization
-    new void Start()
+    void Start()
     {
         lastTurn = new TargetPoint();
         snake = new List<SnakeBodySpan>();
@@ -46,9 +48,10 @@ public class SnakeControllerOffline : OTSprite, ISnakePart
         _playerNumber = _numberCounter++;
         // позже перенести этот код в класс настроек и оттуда по номеру игрока получать настройки управления
         _directionData = _playerNumber == 1 ? GameSettings.Instance.Player1Control : GameSettings.Instance.Player2Control;
+        _halfScreenSize = Screen.width * 0.5f;
         //
-        gameObject.GetComponent<OTSprite>().tintColor = _playerNumber == 1 ? Color.white : Color.red;
-        _WhoIsWhoLabel.text = "< player " + _playerNumber;
+        //gameObject.GetComponent<OTSprite>().tintColor = _playerNumber == 1 ? Color.white : Color.red;
+        //_WhoIsWhoLabel.text = "< player " + _playerNumber;
     }
 
     public int PointsCount
@@ -129,9 +132,10 @@ public class SnakeControllerOffline : OTSprite, ISnakePart
         return _numberCounter != _playerNumber;
     }
 
-    void OnTriggerEnter(Collider colliderInfo)
+    void OnTriggerEnter2D(Collider2D colliderInfo)
     {
-        if (colliderInfo.gameObject.tag == "SnakeHead") return;
+        print(colliderInfo.gameObject.tag);
+        //if (colliderInfo.gameObject.tag == "SnakeHead") return;
         
         switch (colliderInfo.gameObject.tag)
         {
@@ -213,7 +217,7 @@ public class SnakeControllerOffline : OTSprite, ISnakePart
     }
 
     // Update is called once per frame
-    new void Update()
+    void Update()
     {
         //if (_isRemoteControling) return;
         //Debug.Log("actor num = "+_snakeClient.ActorNumber);
@@ -234,7 +238,14 @@ public class SnakeControllerOffline : OTSprite, ISnakePart
                 rotateAngle = BasicDirections.Up;
             if (Input.GetKey(_directionData.Down))
                 rotateAngle = BasicDirections.Down;
-            bool headIsRotated = RotateHeadTo(rotateAngle);
+            if (Input.touchCount > 0)
+            {
+                Touch t = Input.GetTouch(0);
+                if (t.phase == TouchPhase.Began)
+                    rotateAngle  = (t.position.x > _halfScreenSize) ? Rotation - 90 : Rotation + 90;
+            }
+
+            bool headIsRotated = RotateHeadTo((int)rotateAngle);
             int sendAngle = (int)rotateAngle;
             if (sendAngle >= 0 && headIsRotated)
             {
@@ -281,17 +292,38 @@ public class SnakeControllerOffline : OTSprite, ISnakePart
     /// <returns></returns>
     bool RotateHeadTo(float angle)
     {
-        if (angle < 0) return false;
+        if (angle == -1) return false;
         if (Vector2.Distance(Position, lastTurn.Position) < 1.3) return false;
-        if ((int)rotation == angle || (int)Math.Abs(rotation - angle) == 180) return false;
-        rotation = angle;
-        lastTurn = new TargetPoint(angle, position);
+
+        if ((int)Rotation == angle || (int)Math.Abs(Rotation - angle) == 180) return false;
+        Rotation = angle;
+        lastTurn = new TargetPoint(angle, transform.position);
         return true;
         //Debug.Log("Send code = " + sendCode);
         //_snakeClient.SendTextMessage(sendCode);
         //if (PartRotate != null)
         //    PartRotate(lastTurn);
     }
+
+    public float Rotation
+    {
+        get
+        {            
+            return transform.rotation.eulerAngles.z;
+        }
+        set
+        {
+            float val = value;
+            // keep this rotation within 0-360
+            if (val < 0) val += 360.0f;
+            else
+                if (val >= 360) val -= 360.0f;
+            
+            transform.rotation = Quaternion.Euler(0, 0, val);
+            _rotation = val;
+        }
+    }
+
 
     void MoveSnake(float distance)
     {
@@ -316,11 +348,11 @@ public class SnakeControllerOffline : OTSprite, ISnakePart
     void AddBody()
     {
         speed += 0.25f;
-        GameObject bodySpan = (GameObject)Instantiate(SnakeBodyPrefab, Vector3.zero, Quaternion.identity);
         ISnakePart part = snake.Count != 0 ? (ISnakePart)snake.Last() : (ISnakePart)this;
-        SnakeBodySpan span = new SnakeBodySpan(bodySpan, part);
-        snake.Add(span);
-        if (IsEnemyInstance()) return;
+        SnakeBodySpan body = ((GameObject)Instantiate(SnakeBodyPrefab, Vector3.zero, Quaternion.identity)).GetComponent("SnakeBodySpan") as SnakeBodySpan;
+        body.PreviousPart = part;
+        snake.Add(body);
+        //if (IsEnemyInstance()) return;
         DisplayGrownUpInfo();
     }
 
@@ -345,19 +377,12 @@ public class SnakeControllerOffline : OTSprite, ISnakePart
         if (_groweMessage == String.Empty) return;
         _soundManager.PlaySound(SoundManagerClip.SnakeLevelUp);
         _informer.AddMessage(new InformerMessage(_groweMessage, false, true));
-
-    }
-
-    public float Rotation
-    {
-        get { return rotation; }
-        set { rotation = value; }
     }
 
     public Vector2 Position
     {
-        get { return position; }
-        set { position = value; }
+        get { return transform.position; }
+        set { transform.position = value; }
     }
 
 

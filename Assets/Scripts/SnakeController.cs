@@ -21,7 +21,7 @@ static class BasicDirections
     public static float Down = 270;
 }
 
-public class SnakeController : OTSprite, ISnakePart
+public class SnakeController : MonoBehaviour, ISnakePart
 {
     private static IntRange _numberCounter = new IntRange(1,2);
     int _playerNumber;
@@ -37,18 +37,21 @@ public class SnakeController : OTSprite, ISnakePart
     List<SnakeBodySpan> snake;
     KeyController _directionData;
     GameObject[] _labels;
-    
-
+    TargetPoint lastTurn;
+    public event Action<TargetPoint> PartRotate;
     public SoundManager _soundManager;
     //static float maxDist = 0;
     public OnGuiWriter _writer;
 
-    public List<SnakeBodySpan> SnakeBody
+    //fake
+    float rotation;
+    Vector2 position;
+
+    /*public List<SnakeBodySpan> SnakeBody
     {
         get { return snake; }
-    }
-    TargetPoint lastTurn;
-    public event Action<TargetPoint> PartRotate;
+    }   
+    
     // Use this for initialization
     new void Start()
     {
@@ -130,11 +133,11 @@ public class SnakeController : OTSprite, ISnakePart
         transform.position = new Vector3(rotateData.CoordX[0], rotateData.CoordY[0], 0);
         //string str = rotateData.RotateAngle[0] + ";" + rotateData.CoordX[0] + ";" + rotateData.CoordY[0] + "|"+Environment.NewLine;
         
-        /*if (snake.Count >= rotateData.CoordX.Length)
+        / *if (snake.Count >= rotateData.CoordX.Length)
         {
             _writer.DebugString2("Rotate head data different size");
             ResetSnake(false);
-        }*/
+        }* /
         for (int i = 0; i < snake.Count; i++)
         {
             SnakeBodySpan span = snake[i];
@@ -164,7 +167,7 @@ public class SnakeController : OTSprite, ISnakePart
             case "Fruit":
                 break;
             default:
-                if (snake.Count > 0 && colliderInfo.gameObject != snake[0].AsGameObject()/* && colliderInfo.gameObject != snake[1].AsGameObject()*/)
+                if (snake.Count > 0 && colliderInfo.gameObject != snake[0].AsGameObject()/ * && colliderInfo.gameObject != snake[1].AsGameObject()* /)
                 {
                     //ResetSnake(false);
                     _snakeClient.SendSyncData(this, snake.Select(e => e as ISnakePart).ToList());
@@ -250,7 +253,7 @@ public class SnakeController : OTSprite, ISnakePart
             }
         }
         
-        /*if (Input.GetKeyUp(KeyCode.Space))
+        / *if (Input.GetKeyUp(KeyCode.Space))
         {
             if (IsEnemyInstance()) return;
             //OTSprite headSprite = gameObject.GetComponent<OTSprite>();
@@ -264,15 +267,15 @@ public class SnakeController : OTSprite, ISnakePart
             //iTween.ScaleTo(headSprite, new Vector3(2, 2), 1.5f);
             AddBody();
             //Time.timeScale = 1f;
-        }*/
+        }* /
         //if (Input.GetKeyDown(KeyCode.Escape))
         //    speed = 2;
 
         float dist = Time.deltaTime * speed; // расстояние на которое надо передвинуть змейку с последнего момента ее отрисовки 
-        /*if (dist > maxDist)
+        / *if (dist > maxDist)
         {
             maxDist = dist;
-        }*/
+        }* /
 
         //Debug.Log(dist);
         if (dist < 0.4)
@@ -310,16 +313,16 @@ public class SnakeController : OTSprite, ISnakePart
 #endif
         foreach (SnakeBodySpan obj in snake)
             obj.Translate(distance, 0, 0);
-        /*foreach (distance obj in snake)
+        / *foreach (distance obj in snake)
         {
             oldPos = obj.AsGameObject().transform.position;
             obj.AsGameObject().transform.position = newPos;
             newPos = oldPos;
-        }*/
+        }* /
         //for (int i = snake.Count - 1; i > 0; i--)
-        /*{
+        / *{
             snake
-        }*/
+        }* /
     }
 
     void AddBody()
@@ -355,7 +358,7 @@ public class SnakeController : OTSprite, ISnakePart
         _soundManager.PlaySound(SoundManagerClip.SnakeLevelUp);
         _informer.AddMessage(new InformerMessage(_groweMessage, false, true));
         
-    }
+    }*/
 
     public float Rotation
     {
