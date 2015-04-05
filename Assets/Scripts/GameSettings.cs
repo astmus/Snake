@@ -22,7 +22,7 @@ namespace Assets.Scripts
             PointsCountWin = 3000;
             GameType = GameType.MultyPlayer;
             WithEnemyBody = true;
-            WithSelfBody = true;
+            WithSelfBody = false;
         }
         public bool SnakeLengthEnabled { get; set; }
         public int SnakeLengthWin { get; set; }

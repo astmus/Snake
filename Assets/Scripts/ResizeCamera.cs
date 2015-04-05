@@ -16,7 +16,7 @@ public class ResizeCamera : MonoBehaviour
         float xFactor = Screen.width / 800f;
         float yFactor = Screen.height / 480f;
         Camera.main.rect = new Rect(0, 0, 1, xFactor / yFactor);
-        Debug.Log(Camera.main.rect.height);
+        //Debug.Log(Camera.main.rect.height);
     }
 
     public void Resize()
@@ -24,6 +24,5 @@ public class ResizeCamera : MonoBehaviour
         float wantedSize = this.DesignWidth / this.GetComponent<Camera>().aspect;
         this.GetComponent<Camera>().orthographicSize = Mathf.Max(wantedSize,
             this.DesignOrthographicSize);
-        print(this.GetComponent<Camera>().orthographicSize);
     }
 }

@@ -10,7 +10,7 @@ public interface ISnakePart
 {
     float Rotation { set; get; }
     Vector2 Position { set; get; }
-    event Action<TargetPoint> PartRotate;
+    Vector2? LastRotatePoint {set; get;}
 }
 
 static class BasicDirections
@@ -372,5 +372,9 @@ public class SnakeController : MonoBehaviour, ISnakePart
         set { position = value; }
     }
 
-    
+    public Vector2? LastRotatePoint
+    {
+        get;
+        set;
+    }
 }

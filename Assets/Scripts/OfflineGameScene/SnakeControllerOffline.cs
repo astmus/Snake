@@ -28,6 +28,9 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
     public SoundManager _soundManager;
     private float _rotation;
     float _halfScreenSize;
+    private const float _startSpeed = 6f;
+    ISnakePart _lastPart;
+    public Vector2? LastRotatePoint { get; set; }
     //static float maxDist = 0;
 
     //must del if not used
@@ -38,15 +41,16 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
         get { return snake; }
     }
     TargetPoint lastTurn;
-    public event Action<TargetPoint> PartRotate;
+    //public event Action<TargetPoint> PartRotate;
     // Use this for initialization
     void Start()
     {
         lastTurn = new TargetPoint();
         snake = new List<SnakeBodySpan>();
-        speed = 6;
+        speed = _startSpeed;
         //rotateSpeed = speed * 0.5f;
         _playerNumber = _numberCounter++;
+        _lastPart = this;
         // позже перенести этот код в класс настроек и оттуда по номеру игрока получать настройки управления
         _directionData = _playerNumber == 1 ? GameSettings.Instance.Player1Control : GameSettings.Instance.Player2Control;
         _halfScreenSize = Screen.width * 0.5f;
@@ -181,12 +185,12 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
             boom.BoomCompleted += () =>
             {
                 transform.position = new Vector3(0, 0, 0);
-                speed = 6;
+                speed = _startSpeed;
             };
         else
             boom.BoomCompleted += () =>
             {
-                speed = 6;
+                speed = _startSpeed;
             };
         boom.StartAnimation(1.5f);
         RemoveBody(1.5f);
@@ -209,6 +213,7 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
             snake[snake.Count - 1].AnimationDestroy(timeAnimation, timeAnimation * delayFactor++);
             snake.RemoveAt(snake.Count - 1);
         }
+        _lastPart = this;
     }
 
     public int LabelPosForThisSnake()
@@ -264,12 +269,12 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
             //Debug.Log(rotateAngle.ToString());
 
             bool headIsRotated = RotateHeadTo((int)rotateAngle);
-            int sendAngle = (int)rotateAngle;
-            if (sendAngle >= 0 && headIsRotated)
-            {
+            //int sendAngle = (int)rotateAngle;
+            //if (sendAngle >= 0 && headIsRotated)
+            //{
                 //float syncCoord = (sendAngle == 0 || sendAngle == 180) ? this.transform.position.y : this.transform.position.x;
                 //_snakeClient.SendSyncData(this, snake.Select(e => e as ISnakePart).ToList());
-            }
+            //}
         //}
         
         if (Input.GetKeyUp(KeyCode.Space))
@@ -283,6 +288,7 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
             //iTween.ColorTo(headSprite, iTween.Hash("color", new Color(200, 0, 0, 0), "time", .5));
             //iTween.ScaleTo(headSprite, new Vector3(2, 2), 1.5f);
             AddBody();
+
             //Time.timeScale = Time.timeScale > 0 ? 0f : 1f;
         }
         //if (Input.GetKeyDown(KeyCode.Escape))
@@ -295,11 +301,11 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
         }*/
 
         //Debug.Log(dist);
-        if (dist < 0.4)
+        //if (dist < 0.2)
             MoveSnake(dist);
-        else
-            for (int i = 0; i < 4; i++)
-                MoveSnake(dist * 0.25f);
+        //else
+        //    for (int i = 0; i < 5; i++)
+        //       MoveSnake(dist * 0.2f);
     }
 
 
@@ -315,6 +321,7 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
 
         if ((int)Rotation == angle || (int)Math.Abs(Rotation - angle) == 180) return false;
         Rotation = angle;
+        LastRotatePoint = Position;
         lastTurn = new TargetPoint(angle, transform.position);
         return true;
         //Debug.Log("Send code = " + sendCode);
@@ -365,11 +372,12 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
 
     void AddBody()
     {
-        speed += 0.25f;
-        ISnakePart part = snake.Count != 0 ? (ISnakePart)snake.Last() : (ISnakePart)this;
+        speed += 0.2f;
+        ISnakePart part = _lastPart;
         SnakeBodySpan body = ((GameObject)Instantiate(SnakeBodyPrefab, Vector3.zero, Quaternion.identity)).GetComponent("SnakeBodySpan") as SnakeBodySpan;
         body.PreviousPart = part;
         snake.Add(body);
+        _lastPart = body;
         //if (IsEnemyInstance()) return;
         DisplayGrownUpInfo();
     }
@@ -402,7 +410,5 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
         get { return transform.position; }
         set { transform.position = value; }
     }
-
-
 }
 
