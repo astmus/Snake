@@ -4,6 +4,17 @@ using UnityEngine;
 using System.Collections;
 using Random = UnityEngine.Random;
 
+public enum FruitType
+{
+    Apple,
+    Bannan,
+    Blackberry,
+    Orange,
+    Raspberry,
+    Watermelon,
+    Strawbery
+}
+
 public class OfflineFruit : MonoBehaviour {
 
     // Use this for initialization

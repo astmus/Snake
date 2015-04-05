@@ -1,7 +1,5 @@
 using System.Reflection;
 using UnityEngine;
-using ExitGames.Client.Photon;
-using ExitGames.Client.Photon.Lite;
 using System;
 using System.Collections.Generic;
 using Assets.Scripts.Responses;
@@ -19,9 +17,9 @@ namespace Assets.Scripts
         CountDown = 5
     }
 
-    public class SnakeConnection : LitePeer
+    public class SnakeConnection //: LitePeer
     {
-        public SnakeConnection()
+        /*public SnakeConnection()
             : base(ConnectionProtocol.Udp)
         {
         }
@@ -34,10 +32,10 @@ namespace Assets.Scripts
         public void ChangeListener(IPhotonPeerListener newListener)
         {
             this.Listener = newListener;
-        }
+        }*/
     }
 
-    public class SnakeClient : MonoBehaviour, IPhotonPeerListener
+    public class SnakeClient : MonoBehaviour//, IPhotonPeerListener
     {
         static SnakeConnection _connection;
         GameStatus _connectionStatus;
@@ -83,17 +81,17 @@ namespace Assets.Scripts
             // initialize connection only if it null for situation when lplayer press button "play again"
             if (_connection == null)
                 _connection = new SnakeConnection();
-            _connection.ChangeListener(this);
+            //_connection.ChangeListener(this);
             // if user play again then connection already established and we don't must call "Connect"
-            if (_connection.PeerState == PeerStateValue.Disconnected)
+            /*if (_connection.PeerState == PeerStateValue.Disconnected)
             {
                 //Debug.Log("Peer connect");
                 Connect();
-            }
+            }*/
             else // else we join to new game
             {
                 //Debug.Log("peer join to new game");
-                JoinToNewGame();
+                //JoinToNewGame();
             }
 
         }
@@ -105,14 +103,14 @@ namespace Assets.Scripts
 
         public virtual void OnApplicationQuit()
         {
-            _connection.Disconnect();
+            //_connection.Disconnect();
         }
 
         // Update is called once per frame
         void Update()
         {
             if (Environment.TickCount <= _nextSendTickCount) return;
-            _connection.Service();
+            //_connection.Service();
             _nextSendTickCount = Environment.TickCount + this.SendIntervalMs;
         }
 
@@ -120,16 +118,16 @@ namespace Assets.Scripts
         {
             // PhotonPeer.Connect() is described in the client reference doc: Photon-DotNet-Client-Documentation_v6-1-0.pdf
             //Debug.Log("Connecting =" + ConnectionString());
-            _connection.Connect(ConnectionString(), ServerApplication);
+            //_connection.Connect(ConnectionString(), ServerApplication);
         }
 
-        public void DebugReturn(DebugLevel level, string message)
+       /* public void DebugReturn(DebugLevel level, string message)
         {
             if (_isDebugMode == false) return;
             Debug.Log(message);
-        }
+        }*/
 
-        public void OnEvent(EventData eventData)
+        /*public void OnEvent(EventData eventData)
         {
             //DebugReturn(DebugLevel.INFO, String.Format("OnEvent: {0}", eventData.ToStringFull()));
             switch (eventData.Code)
@@ -137,8 +135,8 @@ namespace Assets.Scripts
                 case (byte)EventCode.Join:
                     //Debug.Log("OnIvent Join");
                     int[] actors = (int[])eventData.Parameters[(byte)ParameterKey.Actors];
-                    /*if (actors.Length == 2)
-                    ConnectionStatus = GameStatus.InGame;*/
+                    / *if (actors.Length == 2)
+                    ConnectionStatus = GameStatus.InGame;* /
                     //Debug.Log("actors count = " + actors.Length);
                     break;
                 case (byte)EventCode.Leave:
@@ -171,9 +169,9 @@ namespace Assets.Scripts
                     if (EnemySnakeReset != null) EnemySnakeReset((bool)eventData.Parameters[(byte)ParameterKey.SnakeColideWithWall]);
                     break;
             }
-        }
+        }*/
 
-        public void OnOperationResponse(OperationResponse operationResponse)
+        /*public void OnOperationResponse(OperationResponse operationResponse)
         {
             DebugReturn(DebugLevel.INFO, String.Format("OnOperationResponse: {0}", operationResponse.ToStringFull()));
             switch (operationResponse.OperationCode)
@@ -195,46 +193,46 @@ namespace Assets.Scripts
                     SendSnakeGroweUp();
                     break;
             }
-        }
+        }*/
 
-        void SendSnakeGroweUp()
+        /*void SendSnakeGroweUp()
         {
             //Debug.Log("SnakeClient SendSnakeGroweUp");
             parameters.Clear();
             _connection.OpCustom((byte)GameCode.SnakeGroweUp, parameters, true);
-        }
+        }*/
 
-        public void SendSnakeReset(bool colideWithWall)
+        /*public void SendSnakeReset(bool colideWithWall)
         {
             parameters.Clear();
             parameters.Add((byte)ParameterKey.SnakeColideWithWall,colideWithWall);
             _connection.OpCustom((byte)GameCode.SnakeReset, parameters, true);
-        }
+        }*/
 
-        public void SendSyncData(ISnakePart head, List<ISnakePart> body)
+        /*public void SendSyncData(ISnakePart head, List<ISnakePart> body)
         {
             SnakeSyncData syncData = new SnakeSyncData(head);
             syncData.Add(body);
             parameters.Clear();
             syncData.DictionaryForSend(ref parameters);
             _connection.OpCustom((byte)GameCode.RotateHead, parameters, true);
-        }
+        }*/
 
-        public void SendTextMessage(string message)
+       /* public void SendTextMessage(string message)
         {
             parameters.Clear();
             parameters.Add((Byte)ParameterKey.TextMessage, message);
             _connection.OpCustom((byte)GameCode.SendMessage, parameters, true);
-        }
+        }*/
 
-        public void SendCatchFruit(int fruitId)
+       /* public void SendCatchFruit(int fruitId)
         {
             parameters.Clear();
             parameters.Add((Byte)ParameterKey.FruitID, fruitId);
             _connection.OpCustom((byte)GameCode.CatchFruit, parameters, true);
-        }
+        }*/
 
-        public void JoinToNewGame()
+       /* public void JoinToNewGame()
         {
             _connection.OpJoin("");// комнату выдадут на сервере независимо от того что передадим параметром
         }
@@ -281,6 +279,6 @@ namespace Assets.Scripts
                     break;
             }
 
-        }
+        }*/
     }
 }
