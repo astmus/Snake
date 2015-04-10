@@ -6,6 +6,7 @@ using System.Linq;
 using System;
 using Assets.Scripts.Responses;
 using Assets.Scripts.SendDataModel;
+
 public interface ISnakePart
 {
     float Rotation { set; get; }

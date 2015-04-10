@@ -19,7 +19,7 @@ namespace Assets.Scripts
             SnakeLengthEnabled = false;
             SnakeLengthWin = 15;
             PointsEnabled = true;
-            PointsCountWin = 3000;
+            PointsCountWin = 30000;
             GameType = GameType.MultyPlayer;
             WithEnemyBody = true;
             WithSelfBody = false;
@@ -66,7 +66,23 @@ namespace Assets.Scripts
         public string Port { set; get; }
         public KeyController Player1Control { set; get; }
         public KeyController Player2Control { set; get; }
+        private GameDifficult _currentDifficult;
+        public GameDifficult DifficultOfCurrentGame 
+        { 
+            set
+            {
+                if (_currentDifficult == value) return;
+                _currentDifficult = value;
+                SpeedIncreaseFirst = 0.5f * (byte)_currentDifficult;
+                SpeedIncreaseSecond = 0.125f * (byte)_currentDifficult;
+                SpeedIncreaseThird = 0.075f * (byte)_currentDifficult;
+            }
+            get { return _currentDifficult; }
+        }
 
+        public float SpeedIncreaseFirst { get; private set; }
+        public float SpeedIncreaseSecond { get; private set; }
+        public float SpeedIncreaseThird { get; private set; }
         private static GameSettings _instance;
         public static GameSettings Instance
         {

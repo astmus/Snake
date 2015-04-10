@@ -3,6 +3,14 @@ using Assets.Scripts;
 using UnityEngine;
 using System.Collections;
 
+public enum GameDifficult : byte
+{
+    NotSelected = 0x0000,
+    Slow = 0x0001,
+    Normal = 0x0002,
+    Fast = 0x0003
+}
+
 public class OfflineGameStateController : MonoBehaviour
 {
 
@@ -10,6 +18,7 @@ public class OfflineGameStateController : MonoBehaviour
     private GameStatus _gameStatus = GameStatus.Connect;
     public event Action<GameStatus> GameStatusChanged;
     public GameInformer _informer;
+    public SoundManager _soundManager;
     public GameStatus GameStatus
     {
         get { return _gameStatus; }
@@ -20,13 +29,7 @@ public class OfflineGameStateController : MonoBehaviour
     {
         Time.timeScale = 1f;
         GameStatus = GameStatus.InRoom;
-        _informer.Autostart = false;
-        _informer.AddMessage(new InformerMessage("3",false,false));
-        _informer.AddMessage(new InformerMessage("2", false, false));
-        _informer.AddMessage(new InformerMessage("1", false, false));
-        var message = new InformerMessage("start", false, false);
-        message.Completed += OnMessageCompleted;
-        _informer.AddMessage(message);
+        GameObject.Find("SpeedCanvas").GetComponent<Canvas>().enabled = true;
     }
 
     void Awake()
@@ -57,8 +60,44 @@ public class OfflineGameStateController : MonoBehaviour
         return false;
     }
 
-    void OnMessageCompleted()
+    public void DiffucltSelected(int difficult)
     {
+        GameSettings.Instance.DifficultOfCurrentGame = (GameDifficult)difficult;
+        GameObject.Find("SpeedCanvas").GetComponent<Canvas>().enabled = false;
+        _informer.Autostart = false;
+        _informer.AddMessage(new InformerMessage("3", false, PlayCountdownTickSound));
+        _informer.AddMessage(new InformerMessage("2", false, PlayCountdownTickSound));
+        _informer.AddMessage(new InformerMessage("1", false, PlayCountdownTickSound));
+        var message = new InformerMessage("start", false);
+        message.Completed += OnMessageCompleted;
+        _informer.AddMessage(message);
+        _informer.StartDisplayMessages();
+    }
+
+    public void PlayCountdownTickSound()
+    {
+        print("play sound");
+        _soundManager.PlaySound(SoundManagerClip.CountDownTick);
+    }
+    void PlayStartGameSound()
+    {
+        print("play sound 2");
+        _soundManager.PlaySound(SoundManagerClip.StartGame);
+    }
+
+    void OnPlayAgainButtonPress()
+    {
+        Application.LoadLevel(Application.loadedLevel);
+    }
+    public void OnToMenuButtonPress()
+    {
+        Time.timeScale = 1f;
+        Application.LoadLevel((int)GameScene.Menu);
+    }
+
+    public void OnMessageCompleted()
+    {
+        PlayStartGameSound();
         GameStatus = GameStatus.InGame;
     }
 

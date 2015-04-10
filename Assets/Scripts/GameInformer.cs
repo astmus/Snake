@@ -3,12 +3,14 @@ using Assets.Scripts;
 using UnityEngine;
 using System.Collections.Generic;
 
+
 public class InformerMessage
 {
     public string Message { get; set; }
     public bool LeaveOnScreen { get; set; }
     public bool IsReverse { get; set; }
     public event Action Completed;
+    public event Action Start;
     public InformerMessage(string message, bool leaveOnScreen, bool isReverse = false)
     {
         Message = message;
@@ -16,18 +18,38 @@ public class InformerMessage
         IsReverse = isReverse;
     }
 
-    public void EndUse()
+    public InformerMessage(string message, bool leaveOnScreen, Action CompletedCallback, bool isReverse = false)
     {
-        if (Completed == null) return;
-        Completed();
-        Completed = null;
+        Message = message;
+        LeaveOnScreen = leaveOnScreen;
+        IsReverse = isReverse;
+        Start += CompletedCallback;
+    }
+
+    public void RaiseStartEvent()
+    {
+        if (Start != null)
+        {
+            Start();
+            Start = null;
+        }
+    }
+
+    public void RaiseCompletedEvent()
+    {
+        if (Completed != null)
+        {
+            Completed();
+            Completed = null;
+        }
     }
 }
 
-public class GameInformer : MonoBehaviour {
+public partial class GameInformer : MonoBehaviour
+{
 
-	// Use this for initialization
-    TextMesh _label;    
+    // Use this for initialization
+    TextMesh _label;
     Queue<InformerMessage> _messages;
     bool _isRunning;
     Color _invisible;
@@ -35,7 +57,7 @@ public class GameInformer : MonoBehaviour {
     Vector3 _maxSize;
     InformerMessage _currentHandleMessage;
     bool _countDownPriority;
-    public SnakeClient _snakeClient;
+    public SnakeClient _snakeClient; // used only in online game
     public bool Autostart { get; set; }
     void Awake()
     {
@@ -45,7 +67,7 @@ public class GameInformer : MonoBehaviour {
         //DontDestroyOnLoad(gameObject);
     }
 
-	void Start () 
+    void Start()
     {
         _isRunning = false;
         _minSize = new Vector3(.2f, .2f, .0f);
@@ -54,14 +76,14 @@ public class GameInformer : MonoBehaviour {
         _invisible = new Color(255, 255, 255, 0);
         GetComponent<Renderer>().material.color = _invisible;
         transform.localScale = _maxSize;
-	    if (_snakeClient == null) return;
-	    _snakeClient.GameStatusChanged += OnGameStatusChanged;
-	    _snakeClient.CountDownTick += OnCountDownTick;
-	    _snakeClient.GameOver += OnGameOver;
-	}
+        if (_snakeClient == null) return;
+        _snakeClient.GameStatusChanged += OnGameStatusChanged; //// used only in online game
+        _snakeClient.CountDownTick += OnCountDownTick; // used only in online game
+        _snakeClient.GameOver += OnGameOver;// used only in online game
+    }
 
     public void AddMessage(InformerMessage message)
-    {        
+    {
         _messages.Enqueue(message);
         if (Autostart) Run();
     }
@@ -107,21 +129,21 @@ public class GameInformer : MonoBehaviour {
         switch (statusCode)
         {
             case GameStatus.Connect:
-                _messages.Enqueue(new InformerMessage("connected",true));                
+                _messages.Enqueue(new InformerMessage("connected", true));
                 break;
             case GameStatus.Disconnect:
-                _messages.Enqueue(new InformerMessage("disconnected",true));
-                break;          
+                _messages.Enqueue(new InformerMessage("disconnected", true));
+                break;
             case GameStatus.InRoom:
                 _messages.Enqueue(new InformerMessage("waiting for opponent", true));
                 break;
             case GameStatus.InGame:
                 //_messages.Enqueue(new InformerMessage("", false));
                 break;
-        }        
+        }
         Run();
     }
-	
+
     public void Run()
     {
         if (_isRunning) return;
@@ -133,6 +155,7 @@ public class GameInformer : MonoBehaviour {
     void ExecuteAnimation()
     {
         _currentHandleMessage = _messages.Dequeue();
+        _currentHandleMessage.RaiseStartEvent();
         Vector3 toSize = _currentHandleMessage.IsReverse ? _maxSize : _minSize;
         Vector3 fromSize = _currentHandleMessage.IsReverse ? _minSize : _maxSize;
         Color toColor = _currentHandleMessage.IsReverse ? _invisible : Color.white;
@@ -141,7 +164,7 @@ public class GameInformer : MonoBehaviour {
         GetComponent<Renderer>().material.color = fromColor;
         _label.text = _currentHandleMessage.Message;
         iTween.ScaleTo(gameObject, toSize, 1.0f, true);
-        iTween.ColorTo(gameObject, toColor, 1.0f, "OnAnimationComplete",true);        
+        iTween.ColorTo(gameObject, toColor, 1.0f, "OnAnimationComplete", true);
     }
 
     void OnAnimationComplete()
@@ -154,11 +177,15 @@ public class GameInformer : MonoBehaviour {
                 GetComponent<Renderer>().material.color = _invisible;
             _isRunning = false;
         }
-        _currentHandleMessage.EndUse();
+        _currentHandleMessage.RaiseCompletedEvent();
     }
 
-	// Update is called once per frame
-	void Update () {
-	
-	}
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+
+
 }
+

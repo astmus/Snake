@@ -48,20 +48,11 @@ public class OfflineGUIWriter : MonoBehaviour {
         GUI.BeginGroup(new Rect(Screen.width / 2 - 50, Screen.height / 2 - 150, 100, 105));
         GUI.Box(new Rect(0, 0, 100, 105), "select action");
         if (GUI.Button(new Rect(10, 30, 80, 30), "play again"))
-            OnPlayAgainButtonPress();
+            //OnPlayAgainButtonPress();
         if (GUI.Button(new Rect(10, 65, 80, 30), "to menu"))
-            OnToMenuButtonPress();
+            //OnToMenuButtonPress();
         GUI.EndGroup();
     }
 
-    void OnPlayAgainButtonPress()
-    {
-        Application.LoadLevel(Application.loadedLevel);
-    }
-
-    void OnToMenuButtonPress()
-    {
-        Time.timeScale = 1f;
-        Application.LoadLevel((int)GameScene.Menu);
-    }
+    
 }

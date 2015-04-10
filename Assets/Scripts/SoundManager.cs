@@ -6,7 +6,9 @@ using System.Collections;
 public enum SoundManagerClip
 {
     SnakeLevelUp,
-    Boom
+    Boom,
+    CountDownTick,
+    StartGame
 }
 
 public class SoundManager : MonoBehaviour {
@@ -14,8 +16,14 @@ public class SoundManager : MonoBehaviour {
 	// Use this for initialization
     public AudioClip _snakeLevelUp;
     public AudioClip _boom;
+    public AudioClip _countDownTick;
+    public AudioClip _gameStart;
+
+    private AudioSource _source;
     void Start () {
-        GetComponent<AudioSource>().volume = GameSettings.Instance.SoundsVolume;
+
+        _source = GetComponent<AudioSource>();
+        _source.volume = GameSettings.Instance.SoundsVolume;
 	}
 	
 	// Update is called once per frame
@@ -28,10 +36,16 @@ public class SoundManager : MonoBehaviour {
         switch (clip)
         {
             case SoundManagerClip.SnakeLevelUp:
-                GetComponent<AudioSource>().PlayOneShot(_snakeLevelUp);
+                _source.PlayOneShot(_snakeLevelUp);
                 break;
             case SoundManagerClip.Boom:
-                GetComponent<AudioSource>().PlayOneShot(_boom);
+                _source.PlayOneShot(_boom);
+                break;
+            case SoundManagerClip.CountDownTick:
+                _source.PlayOneShot(_countDownTick);
+                break;
+            case SoundManagerClip.StartGame:
+                _source.PlayOneShot(_gameStart);
                 break;
         }
         

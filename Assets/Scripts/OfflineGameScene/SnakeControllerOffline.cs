@@ -28,7 +28,7 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
     public SoundManager _soundManager;
     private float _rotation;
     float _halfScreenSize;
-    private const float _startSpeed = 6f;
+    private float _startSpeed = 3f;
     ISnakePart _lastPart;
     public Vector2? LastRotatePoint { get; set; }
     //static float maxDist = 0;
@@ -47,7 +47,7 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
     {
         lastTurn = new TargetPoint();
         snake = new List<SnakeBodySpan>();
-        speed = _startSpeed;
+        
         //rotateSpeed = speed * 0.5f;
         _playerNumber = _numberCounter++;
         _lastPart = this;
@@ -103,6 +103,12 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
         if (answer.Catched)
             AddBody();
     }*/
+
+    public void DifficultSelected(int startSpeedIncrease)
+    {
+        _startSpeed = 3 + startSpeedIncrease;
+        speed = _startSpeed;
+    }
 
     public int PlayerNumber
     {
@@ -371,15 +377,25 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
     }
 
     void AddBody()
-    {
-        speed += 0.2f;
+    {        
         ISnakePart part = _lastPart;
         SnakeBodySpan body = ((GameObject)Instantiate(SnakeBodyPrefab, Vector3.zero, Quaternion.identity)).GetComponent("SnakeBodySpan") as SnakeBodySpan;
         body.PreviousPart = part;
         snake.Add(body);
         _lastPart = body;
+       // CalcSpeedUp(snake.Count);
+        speed += CalcSpeedUp(snake.Count);
+        print(speed);
         //if (IsEnemyInstance()) return;
         DisplayGrownUpInfo();
+    }
+
+    float CalcSpeedUp(int snakeLength)
+    { 
+        if (snakeLength < 5) return GameSettings.Instance.SpeedIncreaseFirst;
+        if (snakeLength >= 5 && snakeLength < 13) return GameSettings.Instance.SpeedIncreaseSecond;
+        else
+            return GameSettings.Instance.SpeedIncreaseThird;
     }
 
     void DisplayGrownUpInfo()
