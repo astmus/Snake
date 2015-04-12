@@ -3,7 +3,6 @@ Assets/Orthello/Examples
 Library
 Temp
 *.wav
-*.mp3
 *.obj
 *.exe
 *.pdb
@@ -33,3 +32,4 @@ _ReSharper*/
 *.vssscc
 $tf*/
 *.meta
+Compiled/
