@@ -16,15 +16,15 @@ public class Number : MonoBehaviour {
         //iTween.FadeTo(gameObject, iTween.Hash("alpha", 0, "time", .5));
         iTween.MoveBy(gameObject, iTween.Hash("y", 2, "easeType", iTween.EaseType.easeInBack, "loopType", iTween.LoopType.none, "time", .5));
         iTween.ScaleBy(gameObject, iTween.Hash("amount", amountSize, "easeType", iTween.EaseType.linear, "loopType", iTween.LoopType.none, "time", .5));
-        iTween.ColorTo(gameObject, iTween.Hash("color", new Color(200, 0, 0, 0), "time", .5, "oncomplete", "OnAnimationComplete"));
+        iTween.ColorTo(gameObject, iTween.Hash("color", new Color(200, 0, 0, 0), "time", 0.8f, "oncomplete", "OnAnimationComplete"));
 	}
 
-    public void StartAnimation()
+    /*public void StartAnimation()
     {
         iTween.MoveBy(gameObject, iTween.Hash("y", 2, "easeType", iTween.EaseType.easeInBack, "loopType", iTween.LoopType.none, "time", .5));
         iTween.ScaleBy(gameObject, iTween.Hash("amount", amountSize, "easeType", iTween.EaseType.linear, "loopType", iTween.LoopType.none, "time", .5));
-        iTween.ColorTo(gameObject, iTween.Hash("color", new Color(200, 0, 0, 0), "time", .5, "oncomplete", "OnAnimationComplete"));
-    }
+        iTween.ColorTo(gameObject, iTween.Hash("color", new Color(200, 0, 0, 0), "time", 1f, "oncomplete", "OnAnimationComplete"));
+    }*/
 
     void OnAnimationComplete()
     {

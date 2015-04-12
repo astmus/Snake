@@ -106,7 +106,7 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
 
     public void DifficultSelected(int startSpeedIncrease)
     {
-        _startSpeed = 3 + startSpeedIncrease;
+        _startSpeed = 4 + startSpeedIncrease;
         speed = _startSpeed;
     }
 
@@ -417,8 +417,12 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
                 break;
         }
         if (_groweMessage == String.Empty) return;
+        _informer.AddMessage(new InformerMessage(_groweMessage, false, PlayGrownUpSound, true));
+    }
+
+    void PlayGrownUpSound()
+    {
         _soundManager.PlaySound(SoundManagerClip.SnakeLevelUp);
-        _informer.AddMessage(new InformerMessage(_groweMessage, false, true));
     }
 
     public Vector2 Position

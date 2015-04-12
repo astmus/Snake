@@ -18,12 +18,12 @@ public class InformerMessage
         IsReverse = isReverse;
     }
 
-    public InformerMessage(string message, bool leaveOnScreen, Action CompletedCallback, bool isReverse = false)
+    public InformerMessage(string message, bool leaveOnScreen, Action StartCallback, bool isReverse = false)
     {
         Message = message;
         LeaveOnScreen = leaveOnScreen;
         IsReverse = isReverse;
-        Start += CompletedCallback;
+        Start += StartCallback;
     }
 
     public void RaiseStartEvent()
@@ -153,7 +153,7 @@ public partial class GameInformer : MonoBehaviour
     }
 
     void ExecuteAnimation()
-    {
+    {        
         _currentHandleMessage = _messages.Dequeue();
         _currentHandleMessage.RaiseStartEvent();
         Vector3 toSize = _currentHandleMessage.IsReverse ? _maxSize : _minSize;

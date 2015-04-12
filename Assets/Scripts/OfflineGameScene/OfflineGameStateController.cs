@@ -72,16 +72,15 @@ public class OfflineGameStateController : MonoBehaviour
         message.Completed += OnMessageCompleted;
         _informer.AddMessage(message);
         _informer.StartDisplayMessages();
+        _informer.Autostart = true;
     }
 
     public void PlayCountdownTickSound()
     {
-        print("play sound");
         _soundManager.PlaySound(SoundManagerClip.CountDownTick);
     }
     void PlayStartGameSound()
     {
-        print("play sound 2");
         _soundManager.PlaySound(SoundManagerClip.StartGame);
     }
 
