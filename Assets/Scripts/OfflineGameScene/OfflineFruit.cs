@@ -21,6 +21,7 @@ public class OfflineFruit : MonoBehaviour {
     //SnakeController _snake;
     //SnakeController _snake2;
     public Number NumberPrefab;
+    public Sprite [] _spriteCollection;
     int _points = 0;
     public int Id { get; private set; }
     private float _y;
@@ -49,7 +50,7 @@ public class OfflineFruit : MonoBehaviour {
         GetComponent<AudioSource>().volume = GameSettings.Instance.SoundsVolume;
         //_sprite = transform.gameObject.GetComponent<OTSprite>();// ������� ��������� �������� ����� ���� ����� ��������� ������������
         //SwitchVisible(false);
-        Random.seed = Environment.TickCount;
+        Random.seed = Environment.TickCount;        
         _gameStateController.GameStatusChanged += OnGameStatusChanged;
         //_snake2 = (SnakeController)snakes[1];
     }
@@ -95,6 +96,7 @@ public class OfflineFruit : MonoBehaviour {
         if (_points < 10) _points = 10; // �� ����� 10 ���� �� �����
         _points = (int)(10 * Vector3.Distance(Vector3.zero, _newPos));
         transform.position = _newPos;
+        this.GetComponent<SpriteRenderer>().sprite = _spriteCollection[Random.Range(0, 6)];
     }
 
     // Update is called once per frame
