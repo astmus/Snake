@@ -31,6 +31,18 @@ public class SoundManager : MonoBehaviour {
 	
 	}
 
+    bool _isPaused;
+    public bool IsPaused
+    {
+        get { return _isPaused; }
+        set
+        {
+            _isPaused = value;
+            print(_isPaused);
+            if (_isPaused) _source.audio.Pause(); else _source.audio.UnPause();
+        }
+    }
+
     public void PlaySound(SoundManagerClip clip)
     {
         switch (clip)

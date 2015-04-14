@@ -84,9 +84,10 @@ public class OfflineGameStateController : MonoBehaviour
         _soundManager.PlaySound(SoundManagerClip.StartGame);
     }
 
-    void OnPlayAgainButtonPress()
+    public void OnQuitGameButtonPress()
     {
-        Application.LoadLevel(Application.loadedLevel);
+        Application.Quit();
+        //Application.LoadLevel(Application.loadedLevel);
     }
     public void OnToMenuButtonPress()
     {
@@ -100,12 +101,27 @@ public class OfflineGameStateController : MonoBehaviour
         GameStatus = GameStatus.InGame;
     }
 
+    private void PauseGame(bool pause)
+    {
+        _gameStatus = (pause) ? GameStatus.Paused : GameStatus.InGame;
+        GameObject.Find("EndGameCanvas").GetComponent<Canvas>().enabled = pause;
+        _soundManager.IsPaused = pause;
+        Time.timeScale = Convert.ToInt32(!pause);
+    }
+
     // Update is called once per frame
     void Update()
     {
-        if (_gameStatus != GameStatus.InRoom) return;
-        _gameStatus = GameStatus.CountDown;
-        _informer.StartDisplayMessages();
-        _informer.Autostart = true;
+        switch (_gameStatus)
+        {
+            case GameStatus.InGame:
+                if (Input.GetKeyDown(KeyCode.Escape))
+                    PauseGame(true);
+                break;
+            case GameStatus.Paused:
+                if (Input.GetKeyDown(KeyCode.Escape))
+                    PauseGame(false);
+                break;
+        }        
     }
 }
