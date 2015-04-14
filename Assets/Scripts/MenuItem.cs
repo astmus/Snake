@@ -37,15 +37,15 @@ public class MenuItem : MonoBehaviour
 	
 	}
 
-    void OnMouseEnter()
+   /* void OnMouseEnter()
     {
         iTween.ColorTo(gameObject, Color.red, 0.3f);
         GetComponent<AudioSource>().PlayOneShot(_mouseItemOver);
-        /*_displaySprite.image = _itemOverChangeTexture;
-        _displaySprite.size = new Vector2(10,10);*/
-    }
+        / *_displaySprite.image = _itemOverChangeTexture;
+        _displaySprite.size = new Vector2(10,10);* /
+    }*/
 
-    void OnMouseDown()
+    /*void OnMouseDown()
     {
         GetComponent<AudioSource>().PlayOneShot(_mouseItemClick);
     }
@@ -76,5 +76,5 @@ public class MenuItem : MonoBehaviour
     void OnMouseExit()
     {
         iTween.ColorTo(gameObject, Color.white,0.3f);
-    }
+    }*/
 }

@@ -75,7 +75,7 @@ namespace Assets.Scripts
                 _currentDifficult = value;
                 SpeedIncreaseFirst = 0.3f * (byte)_currentDifficult;
                 SpeedIncreaseSecond = 0.1f * (byte)_currentDifficult;
-                SpeedIncreaseThird = 0.06f * (byte)_currentDifficult;
+                SpeedIncreaseThird = 0.05f * (byte)_currentDifficult;
             }
             get { return _currentDifficult; }
         }

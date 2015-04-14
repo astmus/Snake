@@ -38,8 +38,7 @@ public class SoundManager : MonoBehaviour {
         set
         {
             _isPaused = value;
-            print(_isPaused);
-            if (_isPaused) _source.audio.Pause(); else _source.audio.UnPause();
+            AudioListener.pause = _isPaused;
         }
     }
 
