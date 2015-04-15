@@ -6,18 +6,19 @@ using System.Linq;
 
 public class MenuItem : MonoBehaviour
 {
-
-    public AudioClip _mouseItemOver;
     public AudioClip _mouseItemClick;    
     public Texture _itemOverChangeTexture;
     public MenuItemAction _itemAction;
-
+    public MenuItemAction ItemAction
+    {
+        get { return _itemAction; }
+    }
 	// Use this for initialization
 	void Start ()
 	{
         var list = GameObject.FindGameObjectsWithTag("MenuItem").ToList();
 	    int delay = list.IndexOf(this.gameObject);
-	    GetComponent<AudioSource>().volume = GameSettings.Instance.SoundsVolume;
+	    //GetComponent<AudioSource>().volume = GameSettings.Instance.SoundsVolume;
 	    StartCoroutine(StartAnimation(delay));
 	}
 	
@@ -25,41 +26,61 @@ public class MenuItem : MonoBehaviour
     {
         yield return new WaitForSeconds(waitTime);
         Hashtable args = new Hashtable();
-        args[itWeenParam.X] = 0.5;
+        args[itWeenParam.X] = 0.75;
         args[itWeenParam.LoopType] = iTween.LoopType.pingPong;
-        args[itWeenParam.EaseType] = iTween.EaseType.easeInOutQuad;
-        args[itWeenParam.Speed] = 0.25;
+        args[itWeenParam.EaseType] = iTween.EaseType.linear;
+        args[itWeenParam.Speed] = 0.3;
         iTween.MoveBy(gameObject, args);
     }
 
 	// Update is called once per frame
 	void Update () {
-	
+        int nbTouches = Input.touchCount;
+
+        if (nbTouches > 0)
+        {
+            for (int i = 0; i < nbTouches; i++)
+            {
+                Touch touch = Input.GetTouch(i);
+
+                if (touch.phase == TouchPhase.Began)
+                {
+                    Ray screenRay = Camera.main.ScreenPointToRay(touch.position);
+                    RaycastHit hit;
+                    if (Physics.Raycast(screenRay, out hit))
+                        if (hit.collider.gameObject.tag == "MenuItem")
+                            NavigateToNextScene(hit.collider.gameObject.GetComponent<MenuItem>().ItemAction);
+                }
+
+            }
+        }
 	}
 
-   /* void OnMouseEnter()
+   void OnMouseEnter()
     {
         iTween.ColorTo(gameObject, Color.red, 0.3f);
-        GetComponent<AudioSource>().PlayOneShot(_mouseItemOver);
-        / *_displaySprite.image = _itemOverChangeTexture;
-        _displaySprite.size = new Vector2(10,10);* /
-    }*/
+        //GetComponent<AudioSource>().PlayOneShot(_mouseItemOver);
+        /*_displaySprite.image = _itemOverChangeTexture;
+        _displaySprite.size = new Vector2(10,10);*/
+    }
 
-    /*void OnMouseDown()
+    void OnMouseDown()
     {
         GetComponent<AudioSource>().PlayOneShot(_mouseItemClick);
     }
 
     void OnMouseUp()
     {
-        switch (_itemAction)
+        NavigateToNextScene(_itemAction);        
+    }
+
+    private void NavigateToNextScene(MenuItemAction action)
+    {
+        switch (action)
         {
             case MenuItemAction.PlayOffline:
-                Application.LoadLevel((int)GameScene.PreloadToOffline);
-                break;
-            case MenuItemAction.Play:
-                Application.LoadLevel((int)GameScene.Game);
-                break;
+                Application.LoadLevel((int)GameScene.GameOffline);
+                break;            
             case MenuItemAction.Settings:
                 Application.LoadLevel((int)GameScene.Settings);
                 break;
@@ -70,11 +91,10 @@ public class MenuItem : MonoBehaviour
                 Application.Quit();
                 break;
         }
-        
     }
 
     void OnMouseExit()
     {
         iTween.ColorTo(gameObject, Color.white,0.3f);
-    }*/
+    }
 }

@@ -1,9 +1,9 @@
 public enum GameScene
 {
     Menu,
-    Game,
+    //Game,    
+    GameOffline,
     Settings,
     About,
-    GameOffline,
-    PreloadToOffline
+    PreloadToOffline    
 }
