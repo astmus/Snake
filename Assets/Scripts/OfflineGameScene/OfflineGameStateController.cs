@@ -32,10 +32,10 @@ public class OfflineGameStateController : MonoBehaviour
         GameObject.Find("SpeedCanvas").GetComponent<Canvas>().enabled = true;
     }
 
-    void Awake()
+    /*void Awake()
     {
         DontDestroyOnLoad(gameObject);
-    }
+    }*/
 
     void OnGUI()
     {
@@ -91,6 +91,7 @@ public class OfflineGameStateController : MonoBehaviour
     }
     public void OnToMenuButtonPress()
     {
+        _soundManager.IsPaused = false;
         Time.timeScale = 1f;
         Application.LoadLevel((int)GameScene.Menu);
     }
@@ -101,9 +102,12 @@ public class OfflineGameStateController : MonoBehaviour
         GameStatus = GameStatus.InGame;
     }
 
+    GameStatus _oldStatus;
     private void PauseGame(bool pause)
     {
-        _gameStatus = (pause) ? GameStatus.Paused : GameStatus.InGame;
+        if (_gameStatus != GameStatus.Paused)
+            _oldStatus = _gameStatus;
+        _gameStatus = (pause) ? GameStatus.Paused : _oldStatus;
         GameObject.Find("EndGameCanvas").GetComponent<Canvas>().enabled = pause;
         _soundManager.IsPaused = pause;
         Time.timeScale = Convert.ToInt32(!pause);
@@ -114,10 +118,11 @@ public class OfflineGameStateController : MonoBehaviour
     {
         switch (_gameStatus)
         {
+            case GameStatus.InRoom:
             case GameStatus.InGame:
                 if (Input.GetKeyDown(KeyCode.Escape))
                     PauseGame(true);
-                break;
+                break;            
             case GameStatus.Paused:
                 if (Input.GetKeyDown(KeyCode.Escape))
                     PauseGame(false);

@@ -50,9 +50,8 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
         
         //rotateSpeed = speed * 0.5f;
         _playerNumber = _numberCounter++;
-        _lastPart = this;
-        // позже перенести этот код в класс настроек и оттуда по номеру игрока получать настройки управления
-        _directionData = _playerNumber == 1 ? GameSettings.Instance.Player1Control : GameSettings.Instance.Player2Control;
+        _lastPart = this;        
+        _directionData = GameSettings.Instance.Player1Control;
         _halfScreenSize = Screen.width * 0.5f;
         //
         //gameObject.GetComponent<OTSprite>().tintColor = _playerNumber == 1 ? Color.white : Color.red;
@@ -249,7 +248,8 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
             if (Input.GetKey(_directionData.Up))
                 rotateAngle = BasicDirections.Up;
             if (Input.GetKey(_directionData.Down))
-                rotateAngle = BasicDirections.Down;
+                rotateAngle = BasicDirections.Down;            
+
             if (Input.touchCount > 0)
             {
                 Touch t = Input.GetTouch(0);
@@ -260,12 +260,12 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
                         case 270:
                             rotateAngle = (t.position.x < _halfScreenSize) ? Rotation - 90 : Rotation + 90;                    
                             break;
-                        case 0:
+                        /*case 0:
                             rotateAngle = (Position.y > _fruit.CurrentPos.y) ? Rotation - 90 : Rotation + 90;
                             break;
                         case 180:
                             rotateAngle = (Position.y < _fruit.CurrentPos.y) ? Rotation - 90 : Rotation + 90;
-                            break;
+                            break;*/
                         default:
                             rotateAngle = (t.position.x > _halfScreenSize) ? Rotation - 90 : Rotation + 90;
                             break;

@@ -51,8 +51,8 @@ namespace Assets.Scripts
             ServerAddress = "54.228.222.73";
             //ServerAddress = "localhost";
             Port = "5055";
-            MusicVolume = 0.5f;
-            SoundsVolume = 0.5f;
+            MusicVolume = 1f;
+            SoundsVolume = 1f;
             Player1Control = new KeyController();
             Player2Control = new KeyController(KeyCode.A, KeyCode.D, KeyCode.W, KeyCode.S);
             OfflineRules = new OfflineGameRules();
@@ -73,9 +73,9 @@ namespace Assets.Scripts
             {
                 if (_currentDifficult == value) return;
                 _currentDifficult = value;
-                SpeedIncreaseFirst = 0.3f * (byte)_currentDifficult;
-                SpeedIncreaseSecond = 0.1f * (byte)_currentDifficult;
-                SpeedIncreaseThird = 0.05f * (byte)_currentDifficult;
+                SpeedIncreaseFirst = 0.25f * (byte)_currentDifficult;
+                SpeedIncreaseSecond = 0.08f * (byte)_currentDifficult;
+                SpeedIncreaseThird = 0.03f * (byte)_currentDifficult;
             }
             get { return _currentDifficult; }
         }

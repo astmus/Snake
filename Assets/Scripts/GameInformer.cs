@@ -2,6 +2,7 @@ using System;
 using Assets.Scripts;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 
 public class InformerMessage
@@ -163,8 +164,10 @@ public partial class GameInformer : MonoBehaviour
         transform.localScale = fromSize;
         GetComponent<Renderer>().material.color = fromColor;
         _label.text = _currentHandleMessage.Message;
-        iTween.ScaleTo(gameObject, toSize, 1.0f, true);
-        iTween.ColorTo(gameObject, toColor, 1.0f, "OnAnimationComplete", true);
+        Hashtable param = iTween.Hash("color", toColor, "time", 1.0f);
+        iTween.ColorTo(gameObject, param);
+        param = iTween.Hash("scale", toSize, "time", 1.0f, "oncomplete", "OnAnimationComplete");
+        iTween.ScaleTo(gameObject, param);        
     }
 
     void OnAnimationComplete()
@@ -175,6 +178,8 @@ public partial class GameInformer : MonoBehaviour
         {
             if (_currentHandleMessage.LeaveOnScreen == false)
                 GetComponent<Renderer>().material.color = _invisible;
+            else
+                print("leave on screen");
             _isRunning = false;
         }
         _currentHandleMessage.RaiseCompletedEvent();

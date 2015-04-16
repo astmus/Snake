@@ -66,7 +66,7 @@ public class MenuItem : MonoBehaviour
 
     void OnMouseDown()
     {
-        GetComponent<AudioSource>().PlayOneShot(_mouseItemClick);
+        //GetComponent<AudioSource>().PlayOneShot(_mouseItemClick);
     }
 
     void OnMouseUp()
@@ -83,10 +83,7 @@ public class MenuItem : MonoBehaviour
                 break;            
             case MenuItemAction.Settings:
                 Application.LoadLevel((int)GameScene.Settings);
-                break;
-            case MenuItemAction.About:
-                Application.LoadLevel((int)GameScene.About);
-                break;
+                break;            
             case MenuItemAction.Exit:
                 Application.Quit();
                 break;

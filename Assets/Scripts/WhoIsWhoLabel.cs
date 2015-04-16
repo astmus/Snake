@@ -47,7 +47,8 @@ public class WhoIsWhoLabel : MonoBehaviour {
 
     public void StopAnimation()
     {
-        iTween.ColorTo(gameObject,_invisible,0.5f,"OnColorToComplete");
+        Hashtable param = iTween.Hash("color", _invisible, "time", 0.5f, "oncomplete", "OnColorToComplete");
+        iTween.ColorTo(gameObject,param);
     }
 
     void OnColorToComplete()
