@@ -27,12 +27,11 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
     public OfflineFruit _fruit;
     public SoundManager _soundManager;
     private float _rotation;
-    float _halfScreenSize;
     private float _startSpeed = 3f;
     ISnakePart _lastPart;
     public Vector2? LastRotatePoint { get; set; }
     //static float maxDist = 0;
-
+    SnakeMoveHandler _moveController;
     //must del if not used
     //public OfflineGUIWriter _writer;
 
@@ -52,7 +51,20 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
         _playerNumber = _numberCounter++;
         _lastPart = this;        
         _directionData = GameSettings.Instance.Player1Control;
-        _halfScreenSize = Screen.width * 0.5f;
+        
+        switch (GameSettings.Instance.ControllerType)
+        {
+            case ControllerType.OneTouch:
+                _moveController = new OneTouchHandler();
+                break;
+            case ControllerType.TwoTouch:
+                _moveController = new TwoTouchHandler();
+                break;
+            case ControllerType.TwoTouchReverse:
+                _moveController = new TwoTouchReverseHandler();
+                break;
+        }       
+
         //
         //gameObject.GetComponent<OTSprite>().tintColor = _playerNumber == 1 ? Color.white : Color.red;
         //_WhoIsWhoLabel.text = "< player " + _playerNumber;
@@ -248,29 +260,10 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
             if (Input.GetKey(_directionData.Up))
                 rotateAngle = BasicDirections.Up;
             if (Input.GetKey(_directionData.Down))
-                rotateAngle = BasicDirections.Down;            
+                rotateAngle = BasicDirections.Down;
 
-            if (Input.touchCount > 0)
-            {
-                Touch t = Input.GetTouch(0);
-                if (t.phase == TouchPhase.Began)
-                    switch ((int)Rotation)
-                    {
-                        case -90:
-                        case 270:
-                            rotateAngle = (t.position.x < _halfScreenSize) ? Rotation - 90 : Rotation + 90;                    
-                            break;
-                        /*case 0:
-                            rotateAngle = (Position.y > _fruit.CurrentPos.y) ? Rotation - 90 : Rotation + 90;
-                            break;
-                        case 180:
-                            rotateAngle = (Position.y < _fruit.CurrentPos.y) ? Rotation - 90 : Rotation + 90;
-                            break;*/
-                        default:
-                            rotateAngle = (t.position.x > _halfScreenSize) ? Rotation - 90 : Rotation + 90;
-                            break;
-                    }                
-            }
+            rotateAngle = _moveController.HandleTouch(Position, (int)Rotation);
+
             //Debug.developerConsoleVisible = true;
             //Debug.Log(rotateAngle.ToString());
 

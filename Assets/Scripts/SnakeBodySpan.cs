@@ -85,7 +85,7 @@ public class SnakeBodySpan : MonoBehaviour, ISnakePart
     }
 
     float _lastDist = float.MaxValue;
-    public void Translate(float x, float y, float z,params OnGuiWriter [] wr)
+    public void Translate(float x, float y, float z)
     {
         //Vector2 v = Position + new Vector2(x,y);
         transform.Translate(x, y, z);

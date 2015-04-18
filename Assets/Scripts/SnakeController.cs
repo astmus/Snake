@@ -42,7 +42,7 @@ public class SnakeController : MonoBehaviour, ISnakePart
     public event Action<TargetPoint> PartRotate;
     public SoundManager _soundManager;
     //static float maxDist = 0;
-    public OnGuiWriter _writer;
+    //public OnGuiWriter _writer;
 
     //fake
     float rotation;

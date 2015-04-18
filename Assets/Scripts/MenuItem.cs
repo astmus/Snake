@@ -45,6 +45,7 @@ public class MenuItem : MonoBehaviour
 
                 if (touch.phase == TouchPhase.Began)
                 {
+                    return;
                     Ray screenRay = Camera.main.ScreenPointToRay(touch.position);
                     RaycastHit hit;
                     if (Physics.Raycast(screenRay, out hit))
@@ -58,7 +59,7 @@ public class MenuItem : MonoBehaviour
 
    void OnMouseEnter()
     {
-        iTween.ColorTo(gameObject, Color.red, 0.3f);
+        
         //GetComponent<AudioSource>().PlayOneShot(_mouseItemOver);
         /*_displaySprite.image = _itemOverChangeTexture;
         _displaySprite.size = new Vector2(10,10);*/
@@ -71,7 +72,9 @@ public class MenuItem : MonoBehaviour
 
     void OnMouseUp()
     {
-        NavigateToNextScene(_itemAction);        
+        var param = iTween.Hash("amount", new Vector3(0.5f,0.5f,0.5f), "time", 0.4f, "oncomplete", "NavigateToNextScene", "oncompleteparams", _itemAction);
+        iTween.ShakePosition(gameObject, param);
+        //()=>{NavigateToNextScene(_itemAction);}
     }
 
     private void NavigateToNextScene(MenuItemAction action)

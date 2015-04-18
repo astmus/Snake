@@ -6,12 +6,20 @@ using UnityEngine;
 
 namespace Assets.Scripts
 {
-    public enum GameType
+    public enum GameType : byte
     {
         SinglePlayer,
         MultyPlayer,
         Survive
     }
+
+    public enum ControllerType : byte
+    {
+        OneTouch,
+        TwoTouch,
+        TwoTouchReverse
+    }
+
     public class OfflineGameRules
     {
         public OfflineGameRules()
@@ -47,12 +55,12 @@ namespace Assets.Scripts
     public class GameSettings
     {
         GameSettings()
-        {
+        {            
             ServerAddress = "54.228.222.73";
             //ServerAddress = "localhost";
             Port = "5055";
-            MusicVolume = 1f;
-            SoundsVolume = 1f;
+            MusicVolume = 0.8f;
+            SoundsVolume = 0.8f;
             Player1Control = new KeyController();
             Player2Control = new KeyController(KeyCode.A, KeyCode.D, KeyCode.W, KeyCode.S);
             OfflineRules = new OfflineGameRules();
@@ -83,6 +91,8 @@ namespace Assets.Scripts
         public float SpeedIncreaseFirst { get; private set; }
         public float SpeedIncreaseSecond { get; private set; }
         public float SpeedIncreaseThird { get; private set; }
+
+        public ControllerType ControllerType { get; set; }
         private static GameSettings _instance;
         public static GameSettings Instance
         {
