@@ -54,6 +54,9 @@ namespace Assets.Scripts
 
     public class GameSettings
     {
+        const string CONTROLLER_TYPE_KEY = "controllerType";
+        const string SOUND_VOLUME_KEY = "soundVolume";
+        const string MUSIC_VOLUME_KEY = "musicVolume";
         GameSettings()
         {            
             ServerAddress = "54.228.222.73";
@@ -64,12 +67,36 @@ namespace Assets.Scripts
             Player1Control = new KeyController();
             Player2Control = new KeyController(KeyCode.A, KeyCode.D, KeyCode.W, KeyCode.S);
             OfflineRules = new OfflineGameRules();
+            if (PlayerPrefs.HasKey(CONTROLLER_TYPE_KEY))
+                _controllerType = (ControllerType)PlayerPrefs.GetInt(CONTROLLER_TYPE_KEY);
+            if (PlayerPrefs.HasKey(SOUND_VOLUME_KEY))
+                _soundVolume = PlayerPrefs.GetFloat(SOUND_VOLUME_KEY);
+            if (PlayerPrefs.HasKey(MUSIC_VOLUME_KEY))
+                _musicVolume = PlayerPrefs.GetFloat(MUSIC_VOLUME_KEY);
         }
 
         public OfflineGameRules OfflineRules { get; set; }
 
-        public float MusicVolume { get; set; }
-        public float SoundsVolume { get; set; }
+        float _musicVolume;
+        public float MusicVolume 
+        { 
+            get { return _musicVolume;}
+            set 
+            {
+                _musicVolume = value;
+                PlayerPrefs.SetFloat(MUSIC_VOLUME_KEY, _musicVolume);
+            }
+        }
+        float _soundVolume;
+        public float SoundsVolume
+        {
+            get { return _soundVolume; }
+            set
+            {
+                _soundVolume = value;
+                PlayerPrefs.SetFloat(SOUND_VOLUME_KEY, _soundVolume);
+            }
+        }
         public string ServerAddress { set; get; }
         public string Port { set; get; }
         public KeyController Player1Control { set; get; }
@@ -79,6 +106,7 @@ namespace Assets.Scripts
         { 
             set
             {
+                if (value == GameDifficult.NotSelected) return;
                 if (_currentDifficult == value) return;
                 _currentDifficult = value;
                 SpeedIncreaseFirst = 0.25f * (byte)_currentDifficult;
@@ -92,7 +120,15 @@ namespace Assets.Scripts
         public float SpeedIncreaseSecond { get; private set; }
         public float SpeedIncreaseThird { get; private set; }
 
-        public ControllerType ControllerType { get; set; }
+        ControllerType _controllerType;
+        public ControllerType ControllerType 
+        {
+            get { return _controllerType; }
+            set {                
+                _controllerType = value;
+                PlayerPrefs.SetInt("controllerType",(int)value);
+            }
+        }
         private static GameSettings _instance;
         public static GameSettings Instance
         {
