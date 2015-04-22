@@ -18,7 +18,7 @@ public class ResizeCamera : MonoBehaviour
         Camera.main.rect = new Rect(0, 0, 1, xFactor / yFactor);
         //Debug.Log(Camera.main.rect.height);
     }
-
+    
     public void Resize()
     {
         float wantedSize = this.DesignWidth / this.GetComponent<Camera>().aspect;

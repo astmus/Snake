@@ -70,9 +70,9 @@ namespace Assets.Scripts
             if (PlayerPrefs.HasKey(CONTROLLER_TYPE_KEY))
                 _controllerType = (ControllerType)PlayerPrefs.GetInt(CONTROLLER_TYPE_KEY);
             if (PlayerPrefs.HasKey(SOUND_VOLUME_KEY))
-                _soundVolume = PlayerPrefs.GetFloat(SOUND_VOLUME_KEY);
+                _soundVolume = PlayerPrefs.GetFloat(SOUND_VOLUME_KEY);            
             if (PlayerPrefs.HasKey(MUSIC_VOLUME_KEY))
-                _musicVolume = PlayerPrefs.GetFloat(MUSIC_VOLUME_KEY);
+                _musicVolume = PlayerPrefs.GetFloat(MUSIC_VOLUME_KEY);            
         }
 
         public OfflineGameRules OfflineRules { get; set; }
