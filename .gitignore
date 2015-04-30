@@ -32,3 +32,5 @@ _ReSharper*/
 $tf*/
 *.meta
 Compiled/
+Assembly-CSharp.dll
+Assembly-CSharp-firstpass.dll
