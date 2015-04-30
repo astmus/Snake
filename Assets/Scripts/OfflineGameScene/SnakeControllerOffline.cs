@@ -9,6 +9,10 @@ using Assets.Scripts.SendDataModel;
 
 public class SnakeControllerOffline : MonoBehaviour, ISnakePart
 {
+    public const string MAX_POINTS_KEY = "maxPoints";
+    public const string MAX_LENGTH_KEY = "maxLength";
+    public const string PLAYER_RANGE_KEY = "playerRange";
+
     private static IntRange _numberCounter = new IntRange(1, 2);
     public TextMesh PointsLabel;
     int _playerNumber;
@@ -28,6 +32,28 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
     public SoundManager _soundManager;
     private float _rotation;
     private float _startSpeed = 3f;
+    int _maxPoints = 0;
+    public int MaxPoints
+    {
+        get { return _maxPoints; }
+        private set 
+        { 
+            _maxPoints = value;
+            PlayerPrefs.SetInt(MAX_POINTS_KEY, _maxPoints);
+        }
+    }
+
+    int _maxLength = 0;
+    public int MaxLength
+    {
+        get { return _maxLength; }
+        private set 
+        { 
+            _maxLength = value;
+            PlayerPrefs.SetInt(MAX_LENGTH_KEY,_maxLength);
+        }
+    }
+
     ISnakePart _lastPart;
     public Vector2? LastRotatePoint { get; set; }
     //static float maxDist = 0;
@@ -46,7 +72,10 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
     {
         lastTurn = new TargetPoint();
         snake = new List<SnakeBodySpan>();
-        
+        if (PlayerPrefs.HasKey(MAX_POINTS_KEY))
+            _maxPoints = PlayerPrefs.GetInt(MAX_POINTS_KEY);
+        if (PlayerPrefs.HasKey(MAX_LENGTH_KEY))
+            _maxLength = PlayerPrefs.GetInt(MAX_LENGTH_KEY);
         //rotateSpeed = speed * 0.5f;
         _playerNumber = _numberCounter++;
         _lastPart = this;        
@@ -63,17 +92,29 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
             case ControllerType.TwoTouchReverse:
                 _moveController = new TwoTouchReverseHandler();
                 break;
-        }       
-
+        }
+        UpdateUserHUD();
         //
         //gameObject.GetComponent<OTSprite>().tintColor = _playerNumber == 1 ? Color.white : Color.red;
         //_WhoIsWhoLabel.text = "< player " + _playerNumber;
     }
 
+    int _currentPoints;
     public int PointsCount
     {
-        get { return System.Convert.ToInt32(PointsLabel.text); }
-        set { PointsLabel.text = value.ToString(); }
+        get { return _currentPoints; }
+        set 
+        { 
+            _currentPoints = value;
+            if (_currentPoints > _maxPoints)
+                MaxPoints = _currentPoints;
+            UpdateUserHUD();            
+        }
+    }
+
+    private void UpdateUserHUD()
+    {
+        PointsLabel.text = String.Format("{0}/{1} \n{2}/{3}", _currentPoints, _maxPoints, snake.Count, _maxLength);
     }
 
     void OnGameStatusChanged(GameStatus status)
@@ -167,6 +208,9 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
                 break;
             case "Fruit":
                 AddBody();
+                if (snake.Count > _maxLength)
+                    MaxLength = snake.Count;
+                UpdateUserHUD();
                 break;
             case "SnakeBody":
                 if (!GameSettings.Instance.OfflineRules.WithSelfBody && !GameSettings.Instance.OfflineRules.WithEnemyBody) return;
@@ -209,9 +253,11 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
             {
                 speed = _startSpeed;
             };
+        _currentPoints = 0;
         boom.StartAnimation(1.5f);
         RemoveBody(1.5f);
         speed = 0;
+        UpdateUserHUD();
         //Camera.main.audio.Stop();
         //Camera.main.audio.Play();
         //GameObject[] labels = GameObject.FindGameObjectsWithTag("PointLabel");
@@ -252,7 +298,13 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
 #endif
         //if (_numberCounter == _playerNumber)
         //{
-            float rotateAngle = -1;
+        float rotateAngle = -1;
+
+#if UNITY_WP8
+        rotateAngle = _moveController.HandleTouch(Position, (int)Rotation);
+#endif
+
+#if UNITY_EDITOR_WIN || UNITY_WEBPLAYER
             if (Input.GetKey(_directionData.Left))
                 rotateAngle = BasicDirections.Left;
             if (Input.GetKey(_directionData.Right))
@@ -261,9 +313,9 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
                 rotateAngle = BasicDirections.Up;
             if (Input.GetKey(_directionData.Down))
                 rotateAngle = BasicDirections.Down;
+#endif
 
-            rotateAngle = _moveController.HandleTouch(Position, (int)Rotation);
-
+            
             //Debug.developerConsoleVisible = true;
             //Debug.Log(rotateAngle.ToString());
 
@@ -275,7 +327,7 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
                 //_snakeClient.SendSyncData(this, snake.Select(e => e as ISnakePart).ToList());
             //}
         //}
-        
+#if UNITY_EDITOR_WIN || UNITY_WEBPLAYER        
         if (Input.GetKeyUp(KeyCode.Space))
         {
             //if (IsEnemyInstance()) return;
@@ -290,6 +342,7 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
 
             //Time.timeScale = Time.timeScale > 0 ? 0f : 1f;
         }
+#endif
         //if (Input.GetKeyDown(KeyCode.Escape))
         //    speed = 2;
 
@@ -369,8 +422,9 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
         }*/
     }
 
-    void AddBody()
-    {        
+    public void AddBody()
+    {
+        //print("add body");
         ISnakePart part = _lastPart;
         SnakeBodySpan body = ((GameObject)Instantiate(SnakeBodyPrefab, Vector3.zero, Quaternion.identity)).GetComponent("SnakeBodySpan") as SnakeBodySpan;
         body.PreviousPart = part;
@@ -378,7 +432,7 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
         _lastPart = body;
        // CalcSpeedUp(snake.Count);
         speed += CalcSpeedUp(snake.Count);
-        print(speed);
+        //print(speed);
         //if (IsEnemyInstance()) return;
         DisplayGrownUpInfo();
     }
@@ -393,24 +447,31 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
 
     void DisplayGrownUpInfo()
     {
-        string _groweMessage = "";
-        switch (snake.Count)
-        {
-            case 5:
-                _groweMessage = "pythone";
-                break;
-            case 10:
-                _groweMessage = "anakonda";
-                break;
-            case 15:
-                _groweMessage = "MONSTER";
-                break;
-            case 20:
-                _groweMessage = "king snake";
-                break;
-        }
+        string _groweMessage = GetRangeByLength(snake.Count);        
         if (_groweMessage == String.Empty) return;
+        if (snake.Count > _maxLength)
+            PlayerPrefs.SetString(PLAYER_RANGE_KEY,_groweMessage);
         _informer.AddMessage(new InformerMessage(_groweMessage, false, PlayGrownUpSound, true));
+    }
+
+    public static string GetRangeByLength(int snakeLength)
+    {
+        switch (snakeLength)
+        {
+            case 145: return "king of snake";
+            case 135: return "MONSTER";
+            case 125: return "anakonda";
+            case 110: return "pythone";
+            case 95: return "tiger python";
+            case 80: return "cobra";
+            case 65: return "boa";             
+            case 50: return "black mamba";                
+            case 35: return "bushmaster";                
+            case 25: return "gurza";
+            case 15: return "little snake";                
+            case 10: return "worm";
+            default: return string.Empty;
+        }
     }
 
     void PlayGrownUpSound()

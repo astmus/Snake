@@ -116,6 +116,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+	<data name="Game.Exit" xml:space="preserve">
+		<value>Exit game</value>
+	</data>
 	<data name="Game.Fast" xml:space="preserve">
 		<value>Fast</value>
 	</data>
@@ -124,6 +127,18 @@
 	</data>
 	<data name="Game.Slow" xml:space="preserve">
 		<value>Slow</value>
+	</data>
+	<data name="Game.ToMenu" xml:space="preserve">
+		<value>To menu</value>
+	</data>
+	<data name="MainMenu.ClassicalGame" xml:space="preserve">
+		<value>Сlassic game</value>
+	</data>
+	<data name="MainMenu.Exit" xml:space="preserve">
+		<value>Exit</value>
+	</data>
+	<data name="MainMenu.Settings" xml:space="preserve">
+		<value>Settings</value>
 	</data>
 	<data name="Settings.ControlGamePad" xml:space="preserve">
 		<value>like gamepad</value>

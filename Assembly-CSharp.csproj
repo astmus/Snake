@@ -53,6 +53,7 @@
      <Compile Include="Assets\Scripts\FruitInfo.cs" />
      <Compile Include="Assets\Scripts\GameInformer.cs" />
      <Compile Include="Assets\Scripts\GameScene.cs" />
+     <Compile Include="Assets\Scripts\GameSceneLocalizer.cs" />
      <Compile Include="Assets\Scripts\GameSettings.cs" />
      <Compile Include="Assets\Scripts\GameStatusListener.cs" />
      <Compile Include="Assets\Scripts\Handler.cs" />
@@ -60,6 +61,7 @@
      <Compile Include="Assets\Scripts\IntRange.cs" />
      <Compile Include="Assets\Scripts\JoinResponse.cs" />
      <Compile Include="Assets\Scripts\KeyController.cs" />
+     <Compile Include="Assets\Scripts\MainMenuLocalizer.cs" />
      <Compile Include="Assets\Scripts\MenuItem.cs" />
      <Compile Include="Assets\Scripts\MenuItemAction.cs" />
      <Compile Include="Assets\Scripts\Number.cs" />
@@ -67,6 +69,7 @@
      <Compile Include="Assets\Scripts\OfflineGameScene\OfflineGameStateController.cs" />
      <Compile Include="Assets\Scripts\OfflineGameScene\SnakeControllerOffline.cs" />
      <Compile Include="Assets\Scripts\OneTouchHandler.cs" />
+     <Compile Include="Assets\Scripts\RateStarHandler.cs" />
      <Compile Include="Assets\Scripts\ResizeCamera.cs" />
      <Compile Include="Assets\Scripts\Responses\CatchFruitResponse.cs" />
      <Compile Include="Assets\Scripts\Responses\EnemySnakeSizeChangeData.cs" />

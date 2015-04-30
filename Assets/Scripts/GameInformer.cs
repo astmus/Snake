@@ -178,8 +178,7 @@ public partial class GameInformer : MonoBehaviour
         {
             if (_currentHandleMessage.LeaveOnScreen == false)
                 GetComponent<Renderer>().material.color = _invisible;
-            else
-                print("leave on screen");
+            
             _isRunning = false;
         }
         _currentHandleMessage.RaiseCompletedEvent();
