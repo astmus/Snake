@@ -125,17 +125,14 @@
 	<data name="Game.Slow" xml:space="preserve">
 		<value>Slow</value>
 	</data>
-	<data name="Settings.SoundVolume" xml:space="preserve">
-		<value>sound volume</value>
+	<data name="MainMenu.ClassicalGame" xml:space="preserve">
+		<value>Сlassic game</value>
 	</data>
-	<data name="Settings.MusicVolume" xml:space="preserve">
-		<value>music volume</value>
+	<data name="MainMenu.Exit" xml:space="preserve">
+		<value>Exit</value>
 	</data>
-	<data name="Settings.ControlType" xml:space="preserve">
-		<value>controller type</value>
-	</data>
-	<data name="Settings.ControlOneFinger" xml:space="preserve">
-		<value>one finger</value>
+	<data name="MainMenu.Settings" xml:space="preserve">
+		<value>Settings</value>
 	</data>
 	<data name="Settings.ControlGamePad" xml:space="preserve">
 		<value>gamepad</value>
@@ -143,7 +140,25 @@
 	<data name="Settings.ControlGamePadReverse" xml:space="preserve">
 		<value>gamepad reverse</value>
 	</data>
+	<data name="Settings.ControlOneFinger" xml:space="preserve">
+		<value>one finger</value>
+	</data>
+	<data name="Settings.ControlType" xml:space="preserve">
+		<value>controller type</value>
+	</data>
+	<data name="Settings.MusicVolume" xml:space="preserve">
+		<value>music volume</value>
+	</data>
+	<data name="Settings.SoundVolume" xml:space="preserve">
+		<value>sound volume</value>
+	</data>
 	<data name="Settings.Title" xml:space="preserve">
 		<value>Settings</value>
+	</data>
+	<data name="Game.ToMenu" xml:space="preserve">
+		<value>To menu</value>
+	</data>
+	<data name="Game.Exit" xml:space="preserve">
+		<value>Exit game</value>
 	</data>
 </root>

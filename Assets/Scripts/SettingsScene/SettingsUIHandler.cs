@@ -19,8 +19,16 @@ public class SettingsUIHandler : MonoBehaviour {
     public TextMesh _likeGamePadReverseLabel;
     SmartCultureInfo sysLang;
 	// Use this for initialization
+    void Awake()
+    {
+        _langManager = LanguageManager.Instance;
+    }
 	void Start () {
-        _langManager = LanguageManager.Instance;         
+        sysLang = _langManager.GetSupportedSystemLanguage();
+        if (_langManager.IsLanguageSupported(sysLang))
+            _langManager.ChangeLanguage(sysLang);
+        else
+            _langManager.ChangeLanguage("en");
         GameObject.Find("SoundVolumeSlider").GetComponent<Slider>().value = GameSettings.Instance.SoundsVolume * 100;
         GameObject.Find("MusicVolumeSlider").GetComponent<Slider>().value = GameSettings.Instance.MusicVolume * 100;
         switch(GameSettings.Instance.ControllerType)
@@ -42,12 +50,7 @@ public class SettingsUIHandler : MonoBehaviour {
 	void Update () {
         if (Input.GetKey(KeyCode.Escape))
             Application.LoadLevel((int)GameScene.Menu);
-        if (_isLocalized) return;
-        sysLang = _langManager.GetSupportedSystemLanguage();
-        if (_langManager.IsLanguageSupported(sysLang))
-            _langManager.ChangeLanguage(sysLang);
-        else
-            _langManager.ChangeLanguage("en");
+        if (_isLocalized) return;        
         _soundVolumeText = _langManager.GetTextValue("Settings.SoundVolume");
         _musicVolumeText = _langManager.GetTextValue("Settings.MusicVolume");
         _musicVolumeLabel.text = _musicVolumeText + string.Format(" {0}%", GameSettings.Instance.MusicVolume * 100);

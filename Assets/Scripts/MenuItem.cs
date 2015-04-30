@@ -72,7 +72,7 @@ public class MenuItem : MonoBehaviour
 
     void OnMouseUp()
     {
-        var param = iTween.Hash("amount", new Vector3(0.5f,0.5f,0.5f), "time", 0.4f, "oncomplete", "NavigateToNextScene", "oncompleteparams", _itemAction);
+        var param = iTween.Hash("amount", new Vector3(0.45f,0.45f,0.45f), "time", 0.4f, "oncomplete", "NavigateToNextScene", "oncompleteparams", _itemAction);
         iTween.ShakePosition(gameObject, param);
         //()=>{NavigateToNextScene(_itemAction);}
     }

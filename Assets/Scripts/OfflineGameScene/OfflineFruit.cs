@@ -93,8 +93,8 @@ public class OfflineFruit : MonoBehaviour {
         }
         while (Vector3.Distance(_newPos, _oldPos) < _minDistBetweenFruit);
         _oldPos = _newPos;
-        if (_points < 10) _points = 10; // �� ����� 10 ���� �� �����
-        _points = (int)(10 * Vector3.Distance(Vector3.zero, _newPos));
+        if (_points < 10) _points = 10;
+        _points = (int)(10 * Vector3.Distance(Vector3.zero, _newPos)) * (int)GameSettings.Instance.DifficultOfCurrentGame;
         transform.position = _newPos;
         this.GetComponent<SpriteRenderer>().sprite = _spriteCollection[Random.Range(0, 6)];
     }
@@ -114,8 +114,8 @@ public class OfflineFruit : MonoBehaviour {
         GetComponent<AudioSource>().Play();
         pointsNumber.GetComponent<TextMesh>().text = _points.ToString();
         colideSnake.PointsCount += _points;
-        if (_gameStateController.CheckWinRules(colideSnake) == false)
-            FruitReposition();
+        //if (_gameStateController.CheckWinRules(colideSnake) == false)
+        FruitReposition();
         //Debug.Log("counttries = " + Counttries);
     }
    
