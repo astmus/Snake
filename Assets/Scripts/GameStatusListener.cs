@@ -6,14 +6,10 @@ public class GameStatusListener : MonoBehaviour {
 
 	// Use this for initialization
     public SnakeClient _client;
-    public OfflineGameStateController _gameStatusController;
 
 	void Start ()
-	{
-	    if (_client != null)
-	        _client.GameStatusChanged += OnGameStatusChanged;
-	    else
-	        _gameStatusController.GameStatusChanged += OnGameStatusChanged;
+	{	    
+        OfflineGameStateController.GameStatusChanged += OnGameStatusChanged;
 	    GetComponent<AudioSource>().volume = GameSettings.Instance.MusicVolume;
 	}
 

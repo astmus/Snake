@@ -36,7 +36,7 @@ public class OfflineFruit : MonoBehaviour {
     
     //OTSprite _sprite;
     
-    public OfflineGameStateController _gameStateController;
+    //public OfflineGameStateController _gameStateController;
     public UnityEngine.Vector3 CurrentPos
     {
         get { return _newPos; }
@@ -50,8 +50,8 @@ public class OfflineFruit : MonoBehaviour {
         GetComponent<AudioSource>().volume = GameSettings.Instance.SoundsVolume;
         //_sprite = transform.gameObject.GetComponent<OTSprite>();// ������� ��������� �������� ����� ���� ����� ��������� ������������
         //SwitchVisible(false);
-        Random.seed = Environment.TickCount;        
-        _gameStateController.GameStatusChanged += OnGameStatusChanged;
+        Random.seed = Environment.TickCount;
+        OfflineGameStateController.GameStatusChanged += OnGameStatusChanged;
         //_snake2 = (SnakeController)snakes[1];
     }
 

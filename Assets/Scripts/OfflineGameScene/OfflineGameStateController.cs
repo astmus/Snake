@@ -16,7 +16,7 @@ public class OfflineGameStateController : MonoBehaviour
 
     // Use this for initialization
     private GameStatus _gameStatus = GameStatus.Connect;
-    public event Action<GameStatus> GameStatusChanged;
+    public static event Action<GameStatus> GameStatusChanged;
     public GameInformer _informer;
     public SoundManager _soundManager;
     public GameStatus GameStatus

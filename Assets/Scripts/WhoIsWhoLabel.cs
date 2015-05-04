@@ -9,21 +9,18 @@ public class WhoIsWhoLabel : MonoBehaviour {
     private Color _default;
 
     public SnakeClient _client;
-    public OfflineGameStateController _gameStateController;
+    //public OfflineGameStateController _gameStateController;
     void Awake()
     {
         _default = GetComponent<Renderer>().material.color;
         GetComponent<Renderer>().material.color = _invisible;
-        if (_gameStateController != null)
-            _gameStateController.GameStatusChanged += OnGameStatusChanged;
-        else
-            _client.GameStatusChanged += OnGameStatusChanged;
+        
+        OfflineGameStateController.GameStatusChanged += OnGameStatusChanged;
         DontDestroyOnLoad(gameObject);
     }
 
 	void Start () {
         //iTween.EaseType.easeInExpo
-        
 	}
 
     void OnGameStatusChanged(Assets.Scripts.GameStatus status)
