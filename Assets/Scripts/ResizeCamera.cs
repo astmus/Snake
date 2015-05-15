@@ -11,11 +11,13 @@ public class ResizeCamera : MonoBehaviour
     public float DesignAspectHeight;
     public float DesignAspectWidth;
 
-    public void Awake()
+	public TextMesh _debugText;
+
+    public void Start()
     {
         float xFactor = Screen.width / 800f;
         float yFactor = Screen.height / 480f;
-        Camera.main.rect = new Rect(0, 0, 1, xFactor / yFactor);
+		Camera.main.rect = new Rect(0, 0, 1, xFactor / yFactor);
         //Debug.Log(Camera.main.rect.height);
     }
     

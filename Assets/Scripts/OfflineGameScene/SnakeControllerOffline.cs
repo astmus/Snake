@@ -6,6 +6,7 @@ using System.Linq;
 using System;
 using Assets.Scripts.Responses;
 using Assets.Scripts.SendDataModel;
+using Assets;
 
 public class SnakeControllerOffline : MonoBehaviour, ISnakePart
 {
@@ -133,29 +134,6 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
         //Debug.Log("SnakeClient number == "+_snakeClient.ActorNumber);
     }
 
-   /* void OnEnemyPointsCountUpdated(int enemyPoints)
-    {
-        if (!IsEnemyInstance()) return;
-        //GameObject[] _labels = GameObject.FindGameObjectsWithTag("PointLabel");
-        TextMesh label = _labels[LabelPosForThisSnake()].GetComponent<TextMesh>();
-        label.text = enemyPoints.ToString();
-    }*/
-
-    /*void OnEnemySnakeGrooveUp(EnemySnakeSizeChangeData sizeData)
-    {
-        if (!IsEnemyInstance()) return;
-        Debug.Log("sizeData = " + sizeData.NewSize + " snakesize = " + snake.Count);
-        while (snake.Count != sizeData.NewSize)
-            AddBody();
-    }*/
-
-    /*void OnCatchFruitAnswer(CatchFruitResponse answer)
-    {
-        if (IsEnemyInstance()) return;
-        if (answer.Catched)
-            AddBody();
-    }*/
-
     public void DifficultSelected(int startSpeedIncrease)
     {
         _startSpeed = 4 + startSpeedIncrease;
@@ -170,24 +148,7 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
 
     void OnRotateHead(RotateHeadData rotateData)
     {
-        /*if (!IsEnemyInstance()) return;
-        Rotation = rotateData.RotateAngle[0];
-        transform.position = new Vector3(rotateData.CoordX[0], rotateData.CoordY[0], 0);
-        //string str = rotateData.RotateAngle[0] + ";" + rotateData.CoordX[0] + ";" + rotateData.CoordY[0] + "|"+Environment.NewLine;
-        */
-        /*if (snake.Count >= rotateData.CoordX.Length)
-        {
-            _writer.DebugString2("Rotate head data different size");
-            ResetSnake(false);
-        }*/
-        /*for (int i = 0; i < snake.Count; i++)
-        {
-            SnakeBodySpan span = snake[i];
-            span.Rotation = rotateData.RotateAngle[i + 1];
-            span.Position = new Vector2(rotateData.CoordX[i + 1], rotateData.CoordY[i + 1]);
-            //str += rotateData.RotateAngle[i+1] + ";" + rotateData.CoordX[i+1] + ";" + rotateData.CoordY[i+1] + "|"+Environment.NewLine;
-        }*/
-        //_writer.DebugString(str);
+        
     }
 
     public bool IsEnemyInstance()
@@ -195,30 +156,87 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
         return _numberCounter != _playerNumber;
     }
 
+    List<GameObject> _colidedwalls = new List<GameObject>();
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        switch (collision.gameObject.tag)
+        {
+            case SnakeTags.Brick:                
+                GameObject brickWall = collision.gameObject.transform.parent.gameObject;
+                if (_colidedwalls.Contains(brickWall)) return;
+                print("brick colide");
+                _colidedwalls.Add(brickWall);
+                var bodies = brickWall.GetComponentsInChildren<Rigidbody2D>();                
+
+                foreach (Rigidbody2D br in bodies)
+                    br.gravityScale = 1;
+
+                var body = collision.gameObject.GetComponent<Rigidbody2D>();
+                body.AddForce(AngleToVector(_rotation) * speed, ForceMode2D.Impulse);
+                var colidedColiders = collision.gameObject.transform.parent.gameObject.GetComponentsInChildren<BoxCollider2D>().ToList();
+                var brickColliders = from brick in GameObject.FindGameObjectsWithTag(SnakeTags.Brick).Select(s=>s.GetComponent<BoxCollider2D>()) where !colidedColiders.Contains(brick) select brick; // выбираем все кирпичи которые не €вл€ютс€ детками того префаба стены с которым столкнулась зме€
+                foreach (BoxCollider2D colider in brickColliders)
+                    colidedColiders.ForEach((BoxCollider2D box) => { Physics2D.IgnoreCollision(box, colider); }); //и говорим игноирровать все кирпичи которые разлетаютс€ от удара дабы не рушились стены в короые зме€ не врезалась
+                                
+                //print("all count exclude == " + all.Count());
+                //print("brick count == " + bricks.Length);                
+                break;  
+        }
+    }
+
+/*
+//     void FixedUpdate()
+//     {
+//         if (_r.Count == 0) return;
+//         print("fized update");
+//         do
+//         {
+//             BoxCollider2D[] coliders = _r.Dequeue();
+//             foreach (BoxCollider2D bc in coliders)
+//             {
+//                 bc.isTrigger = true;
+//             }
+//         }
+//         while (_r.Count > 0);
+//     }
+*/
+
+    Vector2 AngleToVector(float angle)
+    {
+        return new Vector2(Mathf.Cos(angle * Mathf.Rad2Deg), -Mathf.Sin(angle * Mathf.Rad2Deg));
+    }
+
     void OnTriggerEnter2D(Collider2D colliderInfo)
     {
         //print(colliderInfo.gameObject.tag);
         //if (colliderInfo.gameObject.tag == "SnakeHead") return;
-        
         switch (colliderInfo.gameObject.tag)
         {
-            case "Wall":
+            case SnakeTags.Wall:
                 ResetSnake(true);
                 //_snakeClient.SendSyncData(this, snake.Select(e => e as ISnakePart).ToList());
                 break;
-            case "Fruit":
+            case SnakeTags.Fruit:
                 AddBody();
                 if (snake.Count > _maxLength)
                     MaxLength = snake.Count;
                 UpdateUserHUD();
                 break;
-            case "SnakeBody":
-                if (!GameSettings.Instance.OfflineRules.WithSelfBody && !GameSettings.Instance.OfflineRules.WithEnemyBody) return;
-                int position = numberPartOfThisSnake(colliderInfo.gameObject);
-                if (GameSettings.Instance.OfflineRules.WithSelfBody && position > 2)
+            case SnakeTags.SnakeBody:
+                //if (!GameSettings.Instance.OfflineRules.WithSelfBody && !GameSettings.Instance.OfflineRules.WithEnemyBody) return;
+                //int position = numberPartOfThisSnake(colliderInfo.gameObject);
+                //if (GameSettings.Instance.OfflineRules.WithSelfBody && position > 2)
                     ResetSnake(false);
-                if (GameSettings.Instance.OfflineRules.WithEnemyBody && position == -1)
-                    ResetSnake(false);
+                //if (GameSettings.Instance.OfflineRules.WithEnemyBody && position == -1)
+                //    ResetSnake(false);
+                break;
+            case SnakeTags.BrickWall:
+                return;
+                
+
+                /*var boxcoliders = colliderInfo.gameObject.GetComponentsInChildren<BoxCollider2D>();
+                foreach (BoxCollider2D bc in boxcoliders)
+                    bc.size = Vector2.zero;*/
                 break;
             default:
                 /*if (snake.Count > 0 && colliderInfo.gameObject != snake[0].AsGameObject())
@@ -264,9 +282,7 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
         //TextMesh label = _labels[LabelPosForThisSnake()].GetComponent<TextMesh>();
         //label.text = "0";
     }
-
-
-
+    
     public void RemoveBody(float scaledTime)
     {
         float timeAnimation = scaledTime / snake.Count;
@@ -426,13 +442,14 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
     {
         //print("add body");
         ISnakePart part = _lastPart;
-        SnakeBodySpan body = ((GameObject)Instantiate(SnakeBodyPrefab, Vector3.zero, Quaternion.identity)).GetComponent("SnakeBodySpan") as SnakeBodySpan;
+        SnakeBodySpan body = ((GameObject)Instantiate(SnakeBodyPrefab, Vector3.zero, Quaternion.identity)).GetComponent<SnakeBodySpan>();
+        if (part is SnakeControllerOffline) //убираем коллайдер только с первой горошинф после головы что бы она не слала инфу про то что зме€ врезалась сама в себ€
+            Destroy(body.GetComponent<BoxCollider2D>());
         body.PreviousPart = part;
         snake.Add(body);
         _lastPart = body;
        // CalcSpeedUp(snake.Count);
         speed += CalcSpeedUp(snake.Count);
-        //print(speed);
         //if (IsEnemyInstance()) return;
         DisplayGrownUpInfo();
     }

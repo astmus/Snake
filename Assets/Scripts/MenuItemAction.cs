@@ -4,5 +4,6 @@ public enum MenuItemAction
     Play,
     Settings,
     About,
-    Exit
+    Exit,
+    Survive
 }

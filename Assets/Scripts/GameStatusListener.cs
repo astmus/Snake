@@ -5,7 +5,7 @@ using Assets.Scripts;
 public class GameStatusListener : MonoBehaviour {
 
 	// Use this for initialization
-    public SnakeClient _client;
+    //public SnakeClient _client;
 
 	void Start ()
 	{	    

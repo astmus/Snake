@@ -92,7 +92,8 @@ public class OfflineGameStateController : MonoBehaviour
     public void OnToMenuButtonPress()
     {
         _soundManager.IsPaused = false;
-        Time.timeScale = 1f;
+		GameStatus = GameStatus.InRoom;
+        Time.timeScale = 1f;		
         Application.LoadLevel((int)GameScene.Menu);
     }
 

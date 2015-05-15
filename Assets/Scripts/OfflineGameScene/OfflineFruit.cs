@@ -89,7 +89,7 @@ public class OfflineFruit : MonoBehaviour {
         {
             _y = Random.Range(-9,9);
             _x = Random.Range(-15,15);
-            _newPos = new Vector3(_x, _y, 0);
+            _newPos = new Vector3(_x, _y, transform.position.z);
         }
         while (Vector3.Distance(_newPos, _oldPos) < _minDistBetweenFruit);
         _oldPos = _newPos;

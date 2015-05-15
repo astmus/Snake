@@ -3,6 +3,7 @@ using Assets.Scripts;
 using UnityEngine;
 using System.Collections;
 using System.Linq;
+using Assets.Scripts.SurviveObjects;
 
 public class MenuItem : MonoBehaviour
 {
@@ -34,7 +35,7 @@ public class MenuItem : MonoBehaviour
     }
 
 	// Update is called once per frame
-	void Update () {
+	/*void Update () {
         int nbTouches = Input.touchCount;
 
         if (nbTouches > 0)
@@ -55,11 +56,10 @@ public class MenuItem : MonoBehaviour
 
             }
         }
-	}
+	}*/
 
    void OnMouseEnter()
-    {
-        
+    {        
         //GetComponent<AudioSource>().PlayOneShot(_mouseItemOver);
         /*_displaySprite.image = _itemOverChangeTexture;
         _displaySprite.size = new Vector2(10,10);*/
@@ -79,9 +79,14 @@ public class MenuItem : MonoBehaviour
 
     private void NavigateToNextScene(MenuItemAction action)
     {
+        print(action.ToString());
         switch (action)
         {
             case MenuItemAction.PlayOffline:
+                Application.LoadLevel((int)GameScene.GameOffline);
+                break;
+            case MenuItemAction.Survive:                
+                GameObject.DontDestroyOnLoad(GameObject.Find("WallMaker"));
                 Application.LoadLevel((int)GameScene.GameOffline);
                 break;            
             case MenuItemAction.Settings:
