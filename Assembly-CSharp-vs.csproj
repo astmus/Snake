@@ -84,6 +84,8 @@
      <Compile Include="Assets\Scripts\SnakeMoveHandler.cs" />
      <Compile Include="Assets\Scripts\SnakeTags.cs" />
      <Compile Include="Assets\Scripts\SoundManager.cs" />
+     <Compile Include="Assets\Scripts\SurviveObjects\Lightning.cs" />
+     <Compile Include="Assets\Scripts\SurviveObjects\PolyLightning.cs" />
      <Compile Include="Assets\Scripts\SurviveObjects\WallMaker.cs" />
      <Compile Include="Assets\Scripts\TwoTouchHandler.cs" />
      <Compile Include="Assets\Scripts\TwoTouchReverseHandler.cs" />

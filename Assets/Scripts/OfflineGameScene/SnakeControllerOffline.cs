@@ -220,6 +220,7 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
                 AddBody();
                 if (snake.Count > _maxLength)
                     MaxLength = snake.Count;
+				DestroyWallsByLigthning();
                 UpdateUserHUD();
                 break;
             case SnakeTags.SnakeBody:
@@ -231,13 +232,7 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
                 //    ResetSnake(false);
                 break;
             case SnakeTags.BrickWall:
-                return;
-                
-
-                /*var boxcoliders = colliderInfo.gameObject.GetComponentsInChildren<BoxCollider2D>();
-                foreach (BoxCollider2D bc in boxcoliders)
-                    bc.size = Vector2.zero;*/
-                break;
+                return;               
             default:
                 /*if (snake.Count > 0 && colliderInfo.gameObject != snake[0].AsGameObject())
                 {
@@ -248,6 +243,27 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
                 break;
         }
     }
+
+	void DestroyWallsByLigthning()
+	{
+		GameObject lightObj = GameObject.Find("PolyLightning");
+		if (lightObj == null) return;
+		PolyLightning ligth = lightObj.GetComponent<PolyLightning>();
+		int countOfDestroyWalls = UnityEngine.Random.Range(0, 4);
+		if (countOfDestroyWalls == 0) return;
+		GameObject [] brickWalls = GameObject.FindGameObjectsWithTag(SnakeTags.BrickWall);
+		if (brickWalls == null || brickWalls.Length == 0) return;
+		if (countOfDestroyWalls > brickWalls.Length)
+			countOfDestroyWalls = brickWalls.Length;
+		for (int i = 0; i < countOfDestroyWalls; ++i)
+		{
+			int wallPosition = UnityEngine.Random.Range(0, brickWalls.Length);
+			GameObject wall = brickWalls[wallPosition];
+			if (!ligth._targetPoints.Contains(wall))
+				ligth._targetPoints.Add(wall);
+		}
+		ligth.StartLightningStroke();
+	}
 
     int numberPartOfThisSnake(GameObject part)
     {
