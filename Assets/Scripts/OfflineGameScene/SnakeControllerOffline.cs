@@ -161,7 +161,7 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
     {
         switch (collision.gameObject.tag)
         {
-            case SnakeTags.Brick:                
+            case SnakeTags.Brick:
                 GameObject brickWall = collision.gameObject.transform.parent.gameObject;
                 if (_colidedwalls.Contains(brickWall)) return;
                 print("brick colide");
@@ -247,21 +247,17 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
 	void DestroyWallsByLigthning()
 	{
 		GameObject lightObj = GameObject.Find("PolyLightning");
-		if (lightObj == null) return;
+		if (lightObj == null) return; // возможно играют в классическую змейку тогда объекта полимолния не будет в сцене
 		PolyLightning ligth = lightObj.GetComponent<PolyLightning>();
-		int countOfDestroyWalls = UnityEngine.Random.Range(0, 4);
-		if (countOfDestroyWalls == 0) return;
+		int countOfDestroyWalls = UnityEngine.Random.Range(1, 3);
 		GameObject [] brickWalls = GameObject.FindGameObjectsWithTag(SnakeTags.BrickWall);
-		if (brickWalls == null || brickWalls.Length == 0) return;
-		if (countOfDestroyWalls > brickWalls.Length)
+		if (brickWalls == null || brickWalls.Length == 0) return; // вдруг нету еще стен или они все разбиты, в этой жизни возможно все!
+		if (countOfDestroyWalls > brickWalls.Length) // и даже момент когда нету столко стен сколько нам хотелось бы вхерачить молнией :)
 			countOfDestroyWalls = brickWalls.Length;
+		int wallPosition = UnityEngine.Random.Range(0, brickWalls.Length - countOfDestroyWalls); //ну а если есть то херачим по порядочку в котором они сгенерились
 		for (int i = 0; i < countOfDestroyWalls; ++i)
-		{
-			int wallPosition = UnityEngine.Random.Range(0, brickWalls.Length);
-			GameObject wall = brickWalls[wallPosition];
-			if (!ligth._targetPoints.Contains(wall))
-				ligth._targetPoints.Add(wall);
-		}
+			ligth.TargetPoints.Add(brickWalls[wallPosition + i]);
+		
 		ligth.StartLightningStroke();
 	}
 

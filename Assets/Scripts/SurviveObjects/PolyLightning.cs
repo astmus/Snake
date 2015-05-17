@@ -5,7 +5,13 @@ using System.Collections.Generic;
 public class PolyLightning : MonoBehaviour {
 
 	public Lightning _lightningPrefab;
-	public List<GameObject> _targetPoints;
+	private List<GameObject> _targetPoints;
+
+	public List<GameObject> TargetPoints
+	{
+		get { return _targetPoints; }
+		set { _targetPoints = value; }
+	}
 
 	bool _shouldUpdate = false;
 

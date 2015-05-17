@@ -37,6 +37,7 @@ public class Lightning : MonoBehaviour {
 
 	public void RenderLightning()
 	{
+		if (_targetObject == null) Destroy(gameObject);
 		if (vertCount != NumberOfSegments)
 		{
 			lineRenderer.SetVertexCount(NumberOfSegments);
@@ -69,6 +70,7 @@ public class Lightning : MonoBehaviour {
 	}
 
 	void Update () {
+		if (_targetObject == null) Destroy(gameObject);
 		transform.LookAt(_endPoint);		
 
 		if (timer < Duration)
@@ -77,8 +79,7 @@ public class Lightning : MonoBehaviour {
 
 			if (timer >= Duration)
 			{
-				if (_targetObject != null)
-					_targetObject.GetComponent<BrickWall>().DestroyByLikeExplosion();
+				_targetObject.GetComponent<BrickWall>().DestroyByLikeExplosion();
 				Destroy(gameObject);
 			}
 		}

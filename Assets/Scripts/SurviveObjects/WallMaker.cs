@@ -33,7 +33,7 @@ namespace Assets.Scripts.SurviveObjects
         {
             switch(status)
             {
-                case GameStatus.InGame: StartCoroutine("AddWall", TimeSpan.FromSeconds(5));
+                case GameStatus.InGame: StartCoroutine("AddWall", TimeSpan.FromSeconds(0.15));
                     break;
 				case GameStatus.InRoom:
 					StopCoroutine("AddWall");
@@ -54,7 +54,7 @@ namespace Assets.Scripts.SurviveObjects
         static int i = 0;
         IEnumerator AddWall(TimeSpan interval)
         {   
-            while (true)
+            while (_availablePositions.Count > 0)
             {
 				int vectPos = UnityEngine.Random.Range(0,_availablePositions.Count);
 				Vector3 position = _availablePositions[vectPos];
