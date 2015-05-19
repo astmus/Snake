@@ -140,6 +140,9 @@
 	<data name="MainMenu.Settings" xml:space="preserve">
 		<value>Настройки</value>
 	</data>
+	<data name="Menu.Survive" xml:space="preserve">
+		<value>Выживание</value>
+	</data>
 	<data name="Settings.ControlGamePad" xml:space="preserve">
 		<value>как геймпад</value>
 	</data>

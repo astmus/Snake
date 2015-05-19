@@ -18,5 +18,6 @@ namespace Assets
         public const string MenuItem = "MenuItem";
         public const string BrickWall = "BrickWall";
         public const string Brick = "Brick";
+		public const string ColidedBrickWall = "ColidedBrickWall";
     }
 }

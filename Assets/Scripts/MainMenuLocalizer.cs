@@ -9,6 +9,7 @@ public class MainMenuLocalizer : MonoBehaviour {
     public TextMesh _classicalGame;
     public TextMesh _settings;
     public TextMesh _exit;
+	public TextMesh _surviveMode;
     SmartCultureInfo sysLang;
 	// Use this for initialization
     void Awake()
@@ -30,6 +31,7 @@ public class MainMenuLocalizer : MonoBehaviour {
         _classicalGame.text = _langManager.GetTextValue("MainMenu.ClassicalGame");
         _settings.text = _langManager.GetTextValue("MainMenu.Settings");
         _exit.text = _langManager.GetTextValue("MainMenu.Exit");
+		_surviveMode.text = _langManager.GetTextValue("Menu.Survive");
         _isLocalized = true;
 	}
 }

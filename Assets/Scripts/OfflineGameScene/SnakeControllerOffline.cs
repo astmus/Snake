@@ -156,30 +156,14 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
         return _numberCounter != _playerNumber;
     }
 
-    List<GameObject> _colidedwalls = new List<GameObject>();
+    //List<GameObject> _colidedwalls = new List<GameObject>();
     void OnCollisionEnter2D(Collision2D collision)
     {
         switch (collision.gameObject.tag)
         {
-            case SnakeTags.Brick:
-                GameObject brickWall = collision.gameObject.transform.parent.gameObject;
-                if (_colidedwalls.Contains(brickWall)) return;
-                print("brick colide");
-                _colidedwalls.Add(brickWall);
-                var bodies = brickWall.GetComponentsInChildren<Rigidbody2D>();                
-
-                foreach (Rigidbody2D br in bodies)
-                    br.gravityScale = 1;
-
+            case SnakeTags.Brick:				
                 var body = collision.gameObject.GetComponent<Rigidbody2D>();
-                body.AddForce(AngleToVector(_rotation) * speed, ForceMode2D.Impulse);
-                var colidedColiders = collision.gameObject.transform.parent.gameObject.GetComponentsInChildren<BoxCollider2D>().ToList();
-                var brickColliders = from brick in GameObject.FindGameObjectsWithTag(SnakeTags.Brick).Select(s=>s.GetComponent<BoxCollider2D>()) where !colidedColiders.Contains(brick) select brick; // выбираем все кирпичи которые не €вл€ютс€ детками того префаба стены с которым столкнулась зме€
-                foreach (BoxCollider2D colider in brickColliders)
-                    colidedColiders.ForEach((BoxCollider2D box) => { Physics2D.IgnoreCollision(box, colider); }); //и говорим игноирровать все кирпичи которые разлетаютс€ от удара дабы не рушились стены в короые зме€ не врезалась
-                                
-                //print("all count exclude == " + all.Count());
-                //print("brick count == " + bricks.Length);                
+				body.AddForceAtPosition(AngleToVector(_rotation) * speed, collision.contacts[0].point, ForceMode2D.Impulse);
                 break;  
         }
     }
@@ -209,7 +193,7 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
     void OnTriggerEnter2D(Collider2D colliderInfo)
     {
         //print(colliderInfo.gameObject.tag);
-        //if (colliderInfo.gameObject.tag == "SnakeHead") return;
+        if (colliderInfo.gameObject.tag == "SnakeHead") return;
         switch (colliderInfo.gameObject.tag)
         {
             case SnakeTags.Wall:
@@ -256,7 +240,11 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
 			countOfDestroyWalls = brickWalls.Length;
 		int wallPosition = UnityEngine.Random.Range(0, brickWalls.Length - countOfDestroyWalls); //ну а если есть то херачим по пор€дочку в котором они сгенерились
 		for (int i = 0; i < countOfDestroyWalls; ++i)
-			ligth.TargetPoints.Add(brickWalls[wallPosition + i]);
+		{
+			GameObject wall = brickWalls[wallPosition + i];
+			wall.tag = SnakeTags.ColidedBrickWall;
+			ligth.TargetPoints.Add(wall);
+		}
 		
 		ligth.StartLightningStroke();
 	}
