@@ -26,8 +26,8 @@ public class OfflineFruit : MonoBehaviour {
     public int Id { get; private set; }
     private float _y;
     private float _x;
-    private float _sizeX; // ������ �������� ���� �� ����
-    private float _sizeY; // �� ������
+    private float _sizeX;
+    private float _sizeY;
     private float _minDistByY; // 
     private float _minDistByX; // 
     private float _minDistBetweenFruit;
@@ -54,6 +54,12 @@ public class OfflineFruit : MonoBehaviour {
         OfflineGameStateController.GameStatusChanged += OnGameStatusChanged;
         //_snake2 = (SnakeController)snakes[1];
     }
+
+	void OnDestroy()
+	{
+		print("fruit destroy");
+		OfflineGameStateController.GameStatusChanged -= OnGameStatusChanged;
+	}
 
     void OnGameStatusChanged(GameStatus status)
     {

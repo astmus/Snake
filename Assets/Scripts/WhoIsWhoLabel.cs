@@ -16,7 +16,7 @@ public class WhoIsWhoLabel : MonoBehaviour {
         GetComponent<Renderer>().material.color = _invisible;
         
         OfflineGameStateController.GameStatusChanged += OnGameStatusChanged;
-        DontDestroyOnLoad(gameObject);
+        //DontDestroyOnLoad(gameObject);
     }
 
 	void Start () {

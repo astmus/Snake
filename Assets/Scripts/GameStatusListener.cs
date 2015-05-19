@@ -11,6 +11,20 @@ public class GameStatusListener : MonoBehaviour {
 	{	    
         OfflineGameStateController.GameStatusChanged += OnGameStatusChanged;
 	    GetComponent<AudioSource>().volume = GameSettings.Instance.MusicVolume;
+		switch(GameSettings.Instance.CurrentGameType)
+		{
+			case GameType.SinglePlayer:
+				Destroy(GameObject.Find("PolyLightning"));
+				Destroy(GameObject.Find("WallMaker"));
+				break;
+			case GameType.Survive:
+				break;
+		}
+	}
+
+	void OnDestroy()
+	{
+		OfflineGameStateController.GameStatusChanged -= OnGameStatusChanged;
 	}
 
     void OnGameStatusChanged(GameStatus status)

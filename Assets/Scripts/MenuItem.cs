@@ -83,10 +83,12 @@ public class MenuItem : MonoBehaviour
         switch (action)
         {
             case MenuItemAction.PlayOffline:
-                Application.LoadLevel((int)GameScene.GameOffline);
+				GameSettings.Instance.CurrentGameType = GameType.SinglePlayer;
+				Application.LoadLevel((int)GameScene.GameOffline);
                 break;
             case MenuItemAction.Survive:                
-                GameObject.DontDestroyOnLoad(GameObject.Find("WallMaker"));
+                //GameObject.DontDestroyOnLoad(GameObject.Find("WallMaker"));
+				GameSettings.Instance.CurrentGameType = GameType.Survive;
                 Application.LoadLevel((int)GameScene.GameOffline);
                 break;            
             case MenuItemAction.Settings:

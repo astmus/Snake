@@ -78,7 +78,7 @@ public partial class GameInformer : MonoBehaviour
         GetComponent<Renderer>().material.color = _invisible;
         transform.localScale = _maxSize;
         if (_snakeClient == null) return;
-        _snakeClient.GameStatusChanged += OnGameStatusChanged; //// used only in online game
+        _snakeClient.GameStatusChanged += OnGameStatusChanged;
         _snakeClient.CountDownTick += OnCountDownTick; // used only in online game
         _snakeClient.GameOver += OnGameOver;// used only in online game
     }

@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Assets.Scripts
 {
-    public enum GameType : byte
+	public enum GameType : byte
     {
         SinglePlayer,
         MultyPlayer,
@@ -76,7 +76,7 @@ namespace Assets.Scripts
         }
 
         public OfflineGameRules OfflineRules { get; set; }
-
+		public GameType CurrentGameType {get;set;}
         float _musicVolume;
         public float MusicVolume 
         { 
