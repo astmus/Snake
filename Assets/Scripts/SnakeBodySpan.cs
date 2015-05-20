@@ -134,6 +134,12 @@ public class SnakeBodySpan : MonoBehaviour, ISnakePart
         this.gameObject.AddComponent(typeof(AlphaChanger));
     }
 
+	public void RemoveColiderAndRigibody()
+	{
+		Destroy(this.gameObject.GetComponent<Rigidbody2D>());
+		Destroy(this.gameObject.GetComponent<BoxCollider2D>());
+	}
+
     void OnDestroyCompleted()
     {
         Destroy(gameObject);

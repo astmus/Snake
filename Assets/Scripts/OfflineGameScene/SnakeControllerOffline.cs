@@ -26,7 +26,7 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
     public GameInformer _informer;
     public TextMesh _WhoIsWhoLabel; // label на котором будет указано изграет этим червыком игрок или противник
     public Boom _boomPref; // префаб взыра при столкновении
-    List<SnakeBodySpan> snake;
+    List<SnakeBodySpan> _snake;
     KeyController _directionData;
     public OfflineGameStateController _gameStateController;
     public OfflineFruit _fruit;
@@ -64,7 +64,7 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
 
     public List<SnakeBodySpan> SnakeBody
     {
-        get { return snake; }
+        get { return _snake; }
     }
     TargetPoint lastTurn;
     //public event Action<TargetPoint> PartRotate;
@@ -72,7 +72,7 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
     void Start()
     {
         lastTurn = new TargetPoint();
-        snake = new List<SnakeBodySpan>();
+        _snake = new List<SnakeBodySpan>();
         if (PlayerPrefs.HasKey(MAX_POINTS_KEY))
             _maxPoints = PlayerPrefs.GetInt(MAX_POINTS_KEY);
         if (PlayerPrefs.HasKey(MAX_LENGTH_KEY))
@@ -115,7 +115,7 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
 
     private void UpdateUserHUD()
     {
-        PointsLabel.text = String.Format("{0}/{1} \n{2}/{3}", _currentPoints, _maxPoints, snake.Count, _maxLength);
+        PointsLabel.text = String.Format("{0}/{1} \n{2}/{3}", _currentPoints, _maxPoints, _snake.Count, _maxLength);
     }
 
     void OnGameStatusChanged(GameStatus status)
@@ -168,23 +168,6 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
         }
     }
 
-/*
-//     void FixedUpdate()
-//     {
-//         if (_r.Count == 0) return;
-//         print("fized update");
-//         do
-//         {
-//             BoxCollider2D[] coliders = _r.Dequeue();
-//             foreach (BoxCollider2D bc in coliders)
-//             {
-//                 bc.isTrigger = true;
-//             }
-//         }
-//         while (_r.Count > 0);
-//     }
-*/
-
     Vector2 AngleToVector(float angle)
     {
         return new Vector2(Mathf.Cos(angle * Mathf.Rad2Deg), -Mathf.Sin(angle * Mathf.Rad2Deg));
@@ -202,8 +185,8 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
                 break;
             case SnakeTags.Fruit:
                 AddBody();
-                if (snake.Count > _maxLength)
-                    MaxLength = snake.Count;
+                if (_snake.Count > _maxLength)
+                    MaxLength = _snake.Count;
 				DestroyWallsByLigthning();
                 UpdateUserHUD();
                 break;
@@ -211,7 +194,16 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
                 //if (!GameSettings.Instance.OfflineRules.WithSelfBody && !GameSettings.Instance.OfflineRules.WithEnemyBody) return;
                 //int position = numberPartOfThisSnake(colliderInfo.gameObject);
                 //if (GameSettings.Instance.OfflineRules.WithSelfBody && position > 2)
-                    ResetSnake(false);
+                switch(GameSettings.Instance.CurrentGameType)
+				{
+					case GameType.SinglePlayer:
+						ResetSnake(false);
+						break;
+					case GameType.Survive:
+						BiteOffTail(colliderInfo.gameObject);
+						break;
+				}
+				
                 //if (GameSettings.Instance.OfflineRules.WithEnemyBody && position == -1)
                 //    ResetSnake(false);
                 break;
@@ -227,6 +219,13 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
                 break;
         }
     }
+	void BiteOffTail(GameObject colidedBodyPart)
+	{
+		SnakeBodySpan body = colidedBodyPart.GetComponent<SnakeBodySpan>();
+		int position = _snake.IndexOf(body);
+		RemoveBody(1.5f, position);
+		UpdateUserHUD();
+	}
 
 	void DestroyWallsByLigthning()
 	{
@@ -244,14 +243,13 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
 			GameObject wall = brickWalls[wallPosition + i];
 			wall.tag = SnakeTags.ColidedBrickWall;
 			ligth.TargetPoints.Add(wall);
-		}
-		
+		}		
 		ligth.StartLightningStroke();
 	}
 
     int numberPartOfThisSnake(GameObject part)
     {
-        return snake.FindIndex(b=>b.AsGameObject() == part);
+        return _snake.FindIndex(b=>b.AsGameObject() == part);
     }
 
     void ResetSnake(bool colideWithWall)
@@ -283,16 +281,20 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
         //label.text = "0";
     }
     
-    public void RemoveBody(float scaledTime)
+
+    public void RemoveBody(float scaledTime, int fromPos = 0)
     {
-        float timeAnimation = scaledTime / snake.Count;
+        float timeAnimation = scaledTime / _snake.Count;
         int delayFactor = 0;
-        while (snake.Count != 0)
-        {
-            snake[snake.Count - 1].AnimationDestroy(timeAnimation, timeAnimation * delayFactor++);
-            snake.RemoveAt(snake.Count - 1);
-        }
-        _lastPart = this;
+		while(_snake.Count != fromPos)
+		{
+			SnakeBodySpan body = _snake[fromPos];
+			body.RemoveColiderAndRigibody();
+			body.AnimationDestroy(timeAnimation, timeAnimation * delayFactor++);
+			_snake.Remove(body);
+		}
+
+        _lastPart = fromPos == 0 ? this as ISnakePart : _snake[fromPos-1] as ISnakePart;
     }
 
     public int LabelPosForThisSnake()
@@ -422,9 +424,9 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
     {
         transform.Translate(distance, 0, 0);
 #if UNITY_EDITOR
-        if (snake == null) return;
+        if (_snake == null) return;
 #endif
-        foreach (SnakeBodySpan obj in snake)
+        foreach (SnakeBodySpan obj in _snake)
             obj.Translate(distance, 0, 0);
         /*foreach (distance obj in snake)
         {
@@ -446,10 +448,10 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
         if (part is SnakeControllerOffline) //убираем коллайдер только с первой горошинф после головы что бы она не слала инфу про то что змея врезалась сама в себя
             Destroy(body.GetComponent<BoxCollider2D>());
         body.PreviousPart = part;
-        snake.Add(body);
+        _snake.Add(body);
         _lastPart = body;
        // CalcSpeedUp(snake.Count);
-        speed += CalcSpeedUp(snake.Count);
+        speed += CalcSpeedUp(_snake.Count);
         //if (IsEnemyInstance()) return;
         DisplayGrownUpInfo();
     }
@@ -464,9 +466,9 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
 
     void DisplayGrownUpInfo()
     {
-        string _groweMessage = GetRangeByLength(snake.Count);        
+        string _groweMessage = GetRangeByLength(_snake.Count);        
         if (_groweMessage == String.Empty) return;
-        if (snake.Count > _maxLength)
+        if (_snake.Count > _maxLength)
             PlayerPrefs.SetString(PLAYER_RANGE_KEY,_groweMessage);
         _informer.AddMessage(new InformerMessage(_groweMessage, false, PlayGrownUpSound, true));
     }

@@ -33,7 +33,7 @@ namespace Assets.Scripts.SurviveObjects
         {
             switch(status)
             {
-                case GameStatus.InGame: StartCoroutine("AddWall", TimeSpan.FromSeconds(0.15));
+                case GameStatus.InGame: StartCoroutine("AddWall", TimeSpan.FromSeconds(4.5f / (int)GameSettings.Instance.DifficultOfCurrentGame));
                     break;
 				case GameStatus.InRoom:
 					StopCoroutine("AddWall");
@@ -51,20 +51,25 @@ namespace Assets.Scripts.SurviveObjects
             
         }
 
+		static TimeSpan decrement = TimeSpan.FromMilliseconds(-50);
         static int i = 0;
         IEnumerator AddWall(TimeSpan interval)
         {   
             while (_availablePositions.Count > 0)
             {
+				yield return new WaitForSeconds((float)interval.TotalSeconds);
 				int vectPos = UnityEngine.Random.Range(0,_availablePositions.Count);
 				Vector3 position = _availablePositions[vectPos];
 				_availablePositions.Remove(position);
 				GameObject brickWallObject = Instantiate(_wallPrefab, position,Quaternion.identity) as GameObject;
 				BrickWall brickWall = brickWallObject.GetComponent<BrickWall>();
-				brickWall.DestroyCallBack = OnBrickWallDestroyed;									
+				brickWall.DestroyCallBack = OnBrickWallDestroyed;
+								
                 //2.061666
-                //1.837083
-                yield return new WaitForSeconds((float)interval.TotalSeconds);
+                //1.837083  
+              	if (interval.TotalMilliseconds > (150 * (int)GameSettings.Instance.DifficultOfCurrentGame))
+					interval += decrement;
+				print(interval);
             }                       
         }
 
