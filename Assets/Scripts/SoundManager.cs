@@ -8,7 +8,9 @@ public enum SoundManagerClip
     SnakeLevelUp,
     Boom,
     CountDownTick,
-    StartGame
+    StartGame,
+	ColideWithBrickWall,
+	LightningStrike
 }
 
 public class SoundManager : MonoBehaviour {
@@ -18,6 +20,8 @@ public class SoundManager : MonoBehaviour {
     public AudioClip _boom;
     public AudioClip _countDownTick;
     public AudioClip _gameStart;
+	public AudioClip _brickWallColided;
+	public AudioClip _lightningStrike;
 
     private AudioSource _source;
     void Start () {
@@ -42,6 +46,11 @@ public class SoundManager : MonoBehaviour {
         }
     }
 
+	public void Stop()
+	{
+		_source.Stop();
+	}
+
     public void PlaySound(SoundManagerClip clip)
     {
         switch (clip)
@@ -58,6 +67,12 @@ public class SoundManager : MonoBehaviour {
             case SoundManagerClip.StartGame:
                 _source.PlayOneShot(_gameStart);
                 break;
+			case SoundManagerClip.ColideWithBrickWall:
+				_source.PlayOneShot(_brickWallColided);
+				break;
+			case SoundManagerClip.LightningStrike:
+				_source.PlayOneShot(_lightningStrike);
+				break;
         }
         
     }

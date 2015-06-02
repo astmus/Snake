@@ -3,6 +3,7 @@ using Assets.Scripts;
 using UnityEngine;
 using System.Collections;
 using Random = UnityEngine.Random;
+using Assets;
 
 public enum FruitType
 {
@@ -22,7 +23,8 @@ public class OfflineFruit : MonoBehaviour {
     //SnakeController _snake2;
     public Number NumberPrefab;
     public Sprite [] _spriteCollection;
-    int _points = 0;
+	public event Action<Vector3> FruitRepositionedTo;	
+	int _points = 0;
     public int Id { get; private set; }
     private float _y;
     private float _x;
@@ -33,9 +35,7 @@ public class OfflineFruit : MonoBehaviour {
     private float _minDistBetweenFruit;
     private Vector3 _oldPos = Vector3.zero; // previous position fruit
     private Vector3 _newPos;
-    
-    //OTSprite _sprite;
-    
+
     //public OfflineGameStateController _gameStateController;
     public UnityEngine.Vector3 CurrentPos
     {
@@ -46,9 +46,9 @@ public class OfflineFruit : MonoBehaviour {
         //Debug.Log("/////////////////////////fruit start");
         //var snakes = GameObject.FindObjectsOfType(typeof(SnakeController));
         //_snake = (SnakeController)snakes[0];
-        _minDistBetweenFruit = 4;
+        _minDistBetweenFruit = 5;
         GetComponent<AudioSource>().volume = GameSettings.Instance.SoundsVolume;
-        //_sprite = transform.gameObject.GetComponent<OTSprite>();// ������� ��������� �������� ����� ���� ����� ��������� ������������
+        //_sprite = transform.gameObject.GetComponent<OTSprite>();
         //SwitchVisible(false);
         Random.seed = Environment.TickCount;
         OfflineGameStateController.GameStatusChanged += OnGameStatusChanged;
@@ -57,7 +57,6 @@ public class OfflineFruit : MonoBehaviour {
 
 	void OnDestroy()
 	{
-		print("fruit destroy");
 		OfflineGameStateController.GameStatusChanged -= OnGameStatusChanged;
 	}
 
@@ -97,17 +96,22 @@ public class OfflineFruit : MonoBehaviour {
             _x = Random.Range(-15,15);
             _newPos = new Vector3(_x, _y, transform.position.z);
         }
-        while (Vector3.Distance(_newPos, _oldPos) < _minDistBetweenFruit);
+		while (Vector3.Distance(_newPos, _oldPos) < _minDistBetweenFruit);
         _oldPos = _newPos;
         if (_points < 10) _points = 10;
         _points = (int)(10 * Vector3.Distance(Vector3.zero, _newPos)) * (int)GameSettings.Instance.DifficultOfCurrentGame;
         transform.position = _newPos;
+		if (FruitRepositionedTo != null)
+			FruitRepositionedTo(_newPos);		
+		
         this.GetComponent<SpriteRenderer>().sprite = _spriteCollection[Random.Range(0, 6)];
     }
 
+	
     // Update is called once per frame
     void Update()
     {
+				
     }
 
     void OnTriggerEnter2D(Collider2D colliderInfo)
@@ -116,10 +120,15 @@ public class OfflineFruit : MonoBehaviour {
         if (colliderInfo.gameObject.tag != "SnakeHead") return;
         SnakeControllerOffline colideSnake = colliderInfo.gameObject.GetComponent<SnakeControllerOffline>();
         //Vector2 newPos;
-        Number pointsNumber = (Number)Instantiate(NumberPrefab, new Vector3(transform.position.x, transform.position.y, -18), Quaternion.identity);
-        GetComponent<AudioSource>().Play();
-        pointsNumber.GetComponent<TextMesh>().text = _points.ToString();
-        colideSnake.PointsCount += _points;
+
+		if (GameSettings.Instance.CurrentGameType == GameType.SinglePlayer)
+		{
+			Number pointsNumber = (Number)Instantiate(NumberPrefab, new Vector3(transform.position.x, transform.position.y, -18), Quaternion.identity);
+			pointsNumber.GetComponent<TextMesh>().text = _points.ToString();
+		}						
+
+		GetComponent<AudioSource>().Play();
+		colideSnake.PointsCount += _points;
         //if (_gameStateController.CheckWinRules(colideSnake) == false)
         FruitReposition();
         //Debug.Log("counttries = " + Counttries);

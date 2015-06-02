@@ -20,7 +20,7 @@ public class Boom : MonoBehaviour {
     public void StartAnimation(float animationTime)
     {
         _soundManager.PlaySound(SoundManagerClip.Boom);
-        Hashtable param = iTween.Hash("scale", new Vector3(4, 3), "time", animationTime,"oncomplete","OnAnimationComplete");
+		Hashtable param = iTween.Hash("scale", new Vector3(4, 3), "time", animationTime, "oncomplete", "OnAnimationComplete", "ignoretimescale", true);
         iTween.ScaleTo(gameObject, param);
         iTween.ShakePosition(gameObject,new Vector3(0.2f,0.2f),animationTime);
     }

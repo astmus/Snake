@@ -7,13 +7,22 @@ public class GameStatusListener : MonoBehaviour {
 	// Use this for initialization
     //public SnakeClient _client;
 
+	void Awake()
+	{
+#if UNITY_EDITOR
+		//GameSettings.Instance.CurrentGameType = GameType.Survive;
+#endif
+	}
+
 	void Start ()
 	{	    
         OfflineGameStateController.GameStatusChanged += OnGameStatusChanged;
 	    GetComponent<AudioSource>().volume = GameSettings.Instance.MusicVolume;
-		switch(GameSettings.Instance.CurrentGameType)
+		//print(GameSettings.Instance.CurrentGameType);
+		switch (GameSettings.Instance.CurrentGameType)
 		{
 			case GameType.SinglePlayer:
+				print("destroy");
 				Destroy(GameObject.Find("PolyLightning"));
 				Destroy(GameObject.Find("WallMaker"));
 				break;

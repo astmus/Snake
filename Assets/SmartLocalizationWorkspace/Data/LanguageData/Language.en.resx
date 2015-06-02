@@ -125,6 +125,9 @@
 	<data name="Game.Normal" xml:space="preserve">
 		<value>Normal</value>
 	</data>
+	<data name="Game.Range" xml:space="preserve">
+		<value>Your rank is </value>
+	</data>
 	<data name="Game.Slow" xml:space="preserve">
 		<value>Slow</value>
 	</data>

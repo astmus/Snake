@@ -109,9 +109,10 @@ namespace Assets.Scripts
                 if (value == GameDifficult.NotSelected) return;
                 if (_currentDifficult == value) return;
                 _currentDifficult = value;
-                SpeedIncreaseFirst = 0.25f * (byte)_currentDifficult;
+                SpeedIncreaseFirst = 0.24f * (byte)_currentDifficult;
                 SpeedIncreaseSecond = 0.08f * (byte)_currentDifficult;
                 SpeedIncreaseThird = 0.03f * (byte)_currentDifficult;
+				SurviveModeSpeedIncrease = 0.05f;
             }
             get { return _currentDifficult; }
         }
@@ -119,6 +120,7 @@ namespace Assets.Scripts
         public float SpeedIncreaseFirst { get; private set; }
         public float SpeedIncreaseSecond { get; private set; }
         public float SpeedIncreaseThird { get; private set; }
+		public float SurviveModeSpeedIncrease { get; private set; }
 
         ControllerType _controllerType;
         public ControllerType ControllerType 

@@ -125,6 +125,9 @@
 	<data name="Game.Normal" xml:space="preserve">
 		<value>Средне</value>
 	</data>
+	<data name="Game.Range" xml:space="preserve">
+		<value>Ваш ранг </value>
+	</data>
 	<data name="Game.Slow" xml:space="preserve">
 		<value>Медленно</value>
 	</data>

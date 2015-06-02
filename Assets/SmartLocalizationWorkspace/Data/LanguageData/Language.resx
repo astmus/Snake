@@ -164,4 +164,7 @@
 	<data name="Settings.Title" xml:space="preserve">
 		<value>Settings</value>
 	</data>
+	<data name="Game.Range" xml:space="preserve">
+		<value>Your range is</value>
+	</data>
 </root>

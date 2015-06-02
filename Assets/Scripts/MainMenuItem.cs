@@ -5,7 +5,7 @@ using System.Collections;
 using System.Linq;
 using Assets.Scripts.SurviveObjects;
 
-public class MenuItem : MonoBehaviour
+public class MainMenuItem : MonoBehaviour
 {
     public AudioClip _mouseItemClick;    
     public Texture _itemOverChangeTexture;
@@ -98,6 +98,7 @@ public class MenuItem : MonoBehaviour
                 Application.Quit();
                 break;
         }
+		print(GameSettings.Instance.CurrentGameType);
     }
 
     void OnMouseExit()

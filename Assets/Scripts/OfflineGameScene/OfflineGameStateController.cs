@@ -2,6 +2,8 @@ using System;
 using Assets.Scripts;
 using UnityEngine;
 using System.Collections;
+using SmartLocalization;
+using Assets;
 
 public enum GameDifficult : byte
 {
@@ -16,9 +18,13 @@ public class OfflineGameStateController : MonoBehaviour
 
     // Use this for initialization
     private GameStatus _gameStatus = GameStatus.Connect;
-    public static event Action<GameStatus> GameStatusChanged;
+    public static event Action<GameStatus> GameStatusChanged ;
     public GameInformer _informer;
     public SoundManager _soundManager;
+	public Canvas _endGameRangeDisplay;
+	public UnityEngine.UI.Text _nextRangeText;
+	public UnityEngine.UI.Text _currentRangeText;
+	public UnityEngine.UI.Text _prevRangeText;	
     public GameStatus GameStatus
     {
         get { return _gameStatus; }
@@ -32,6 +38,18 @@ public class OfflineGameStateController : MonoBehaviour
         GameObject.Find("SpeedCanvas").GetComponent<Canvas>().enabled = true;
     }
 
+	public void StopGameAndDisplayeResult()
+	{
+		Time.timeScale = 0;
+		_endGameRangeDisplay.enabled = true;
+		string rangeText = LanguageManager.Instance.GetTextValue("Game.Range");
+		SnakeControllerOffline snake = GameObject.FindGameObjectWithTag(SnakeTags.SnakeHead).GetComponent<SnakeControllerOffline>();
+		SnakeControllerOffline.ResultRanks ranks = snake.GetResultRanks();
+		_currentRangeText.text = rangeText + ranks.CurrentRank;
+		_nextRangeText.text = ranks.NextRank;
+		_prevRangeText.text = ranks.PrevRank;
+		Camera.main.GetComponent<AudioSource>().Stop();
+	}
     /*void Awake()
     {
         DontDestroyOnLoad(gameObject);
@@ -116,7 +134,7 @@ public class OfflineGameStateController : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
+    {		
         switch (_gameStatus)
         {
             case GameStatus.InRoom:

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class PolyLightning : MonoBehaviour {
 
 	public Lightning _lightningPrefab;
+	public SoundManager _soundManager;
 	private List<GameObject> _targetPoints;
 
 	public List<GameObject> TargetPoints
@@ -36,6 +37,7 @@ public class PolyLightning : MonoBehaviour {
 	public void StartLightningStroke()
 	{
 		_shouldUpdate = true;
+		_soundManager.PlaySound(SoundManagerClip.LightningStrike);
 		transform.position = new Vector3(UnityEngine.Random.Range(-15,15),transform.position.y,transform.position.z);
 	}
 }

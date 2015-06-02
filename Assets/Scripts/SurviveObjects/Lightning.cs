@@ -28,7 +28,8 @@ public class Lightning : MonoBehaviour {
 	{
 		lineRenderer = GetComponent<LineRenderer>();
 		lineRenderer.useWorldSpace = false;
-		_endPoint = _targetObject.transform;
+		if (_targetObject != null)
+			_endPoint = _targetObject.transform;
 		transform.LookAt(_endPoint);
 
 		StartCoroutine(AnimateLightning());
@@ -37,7 +38,11 @@ public class Lightning : MonoBehaviour {
 
 	public void RenderLightning()
 	{
-		if (_targetObject == null) Destroy(gameObject);
+		if (_targetObject == null || _endPoint == null)
+		{
+			Destroy(gameObject);
+			return;
+		}
 		if (vertCount != NumberOfSegments)
 		{
 			lineRenderer.SetVertexCount(NumberOfSegments);
@@ -79,7 +84,8 @@ public class Lightning : MonoBehaviour {
 
 			if (timer >= Duration)
 			{
-				_targetObject.GetComponent<BrickWall>().DestroyByLikeExplosion();
+				BrickWall wall = _targetObject.GetComponent<BrickWall>();
+				wall.DestroyByLikeExplosion();
 				Destroy(gameObject);
 			}
 		}
