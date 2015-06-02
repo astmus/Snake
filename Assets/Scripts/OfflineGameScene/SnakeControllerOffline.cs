@@ -15,7 +15,7 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
     public const string PLAYER_RANGE_KEY = "playerRange";
 
     private static IntRange _numberCounter = new IntRange(1, 2);
-	private int _currentRankIndex;
+	private int _currentRankIndex = -1;	
     public TextMesh PointsLabel;
     int _playerNumber;
 	float speed;
@@ -45,6 +45,7 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
             PlayerPrefs.SetInt(MAX_POINTS_KEY, _maxPoints);
         }
     }
+	
 	public float Speed
 	{
 		get { return speed; }
@@ -252,11 +253,12 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
 
 	void BiteOffTail(GameObject colidedBodyPart)
 	{
-		SnakeBodySpan body = colidedBodyPart.GetComponent<SnakeBodySpan>();
+		SnakeBodySpan body = colidedBodyPart.GetComponent<SnakeBodySpan>();		
+		_currentRankIndex = GetRankPosition();		
 		int position = _snake.IndexOf(body);
-		float speedDecrease = ((_snake.Count - 1) - position) * (GameSettings.Instance.SpeedIncreaseSecond * 0.5f);
+		float speedDecrease = ((_snake.Count - 1) - position) * (GameSettings.Instance.SurviveModeSpeedIncrease);
 		speed -= speedDecrease;
-		RemoveBody(1.5f, position);
+		RemoveBody(1.5f, position);		
 		UpdateUserHUD();
 	}
 
@@ -265,7 +267,7 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
 		GameObject lightObj = GameObject.Find("PolyLightning");
 		if (lightObj == null) return; // возможно играют в классическую змейку тогда объекта полимолния не будет в сцене
 		PolyLightning ligth = lightObj.GetComponent<PolyLightning>();
-		int countOfDestroyWalls = (_snake.Count / 35) + 1;
+		int countOfDestroyWalls = (_snake.Count / 25) + 1;
 		GameObject [] brickWalls = GameObject.FindGameObjectsWithTag(SnakeTags.BrickWall);
 		if (brickWalls == null || brickWalls.Length == 0) return; // вдруг нету еще стен или они все разбиты, в этой жизни возможно все!
 		if (countOfDestroyWalls > brickWalls.Length) // и даже момент когда нету столко стен сколько нам хотелось бы вхерачить молнией :)
@@ -506,30 +508,41 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
 
     void DisplayGrownUpInfo()
     {
-        string _groweMessage = GetRangeByLength(_snake.Count);        
-        if (_groweMessage == String.Empty) return;
+		int tmpPos = GetRankPosition();
+		if (tmpPos == _currentRankIndex) return;
+		_currentRankIndex = tmpPos;
+		string growMessage = ranges[_currentRankIndex, 0];
         if (_snake.Count > _maxLength)
-            PlayerPrefs.SetString(PLAYER_RANGE_KEY,_groweMessage);
-		_currentRankIndex = GetRankPosition(_snake.Count);
-        _informer.AddMessage(new InformerMessage(_groweMessage, false, PlayGrownUpSound, true));
+			PlayerPrefs.SetString(PLAYER_RANGE_KEY, growMessage);
+		_informer.AddMessage(new InformerMessage(growMessage, false, PlayGrownUpSound, true));
     }
 
 	static string[,] ranges = new string[,] { { "worm ", "(10)" }, { "little snake ", "(15)" }, { "gurza ", "(25)" }, { "bushmaster ", "(35)" }, { "black mamba ", "(50)" }, { "boa ", "(65)" },
-	{ "cobra ", "(80)" }, { "tiger python ", "(95)" }, { "pythone ", "(110)" }, { "anakonda ", "(125)" }, { "MONSTER ", "(135)" }, { "king of snake ", "(145)" } };
+	{ "cobra ", "(80)" }, { "tiger python ", "(95)" }, { "pythone ", "(110)" }, { "anakonda ", "(125)" }, { "MONSTER ", "(135)" }, { "king of snake ", "(145)" },{"Emperor snakes","(150)"} };
 
 	public string[,] SnakeRanges
 	{
 		get { return SnakeControllerOffline.ranges; }
 	}
-    public string GetRangeByLength(int snakeLength)
-    {
-		int pos = GetRankPosition(snakeLength);
-        return pos == -1 ? String.Empty : ranges[pos, 0];
-    }
-
-	int GetRankPosition(int snakeLength)
+    
+	int GetRankPosition()
 	{
-		switch (snakeLength)
+		int snakeLength = _snake.Count;
+		if (snakeLength >= 0 && snakeLength < 15) return 0;
+		if (snakeLength >= 15 && snakeLength < 25) return 1;
+		if (snakeLength >= 25 && snakeLength < 35) return 2;
+		if (snakeLength >= 35 && snakeLength < 50) return 3;
+		if (snakeLength >= 50 && snakeLength < 65) return 4;
+		if (snakeLength >= 65 && snakeLength < 80) return 5;
+		if (snakeLength >= 80 && snakeLength < 95) return 6;
+		if (snakeLength >= 95 && snakeLength < 110) return 7;
+		if (snakeLength >= 110 && snakeLength < 125) return 8;
+		if (snakeLength >= 125 && snakeLength < 135) return 9;
+		if (snakeLength >= 135 && snakeLength < 145) return 10;
+		if (snakeLength >= 145 && snakeLength < 155) return 11;
+		if (snakeLength == 155) return 12;
+		return -1;
+		/*switch (snakeLength)
 		{
 			case 145: return 11;
 			case 135: return 10;
@@ -544,7 +557,7 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
 			case 15: return 1;
 			case 10: return 0;
 			default: return -1;
-		}
+		}*/
 	}
 
 	public struct ResultRanks
@@ -559,7 +572,7 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
 		ResultRanks res = new ResultRanks();	
 		int posNext = _currentRankIndex + 1;
 		int posPrev = _currentRankIndex - 1;
-		print(_currentRankIndex + " " + posNext + " " + posPrev);
+		print(_currentRankIndex);
 		res.CurrentRank = String.Format("{0}({1})",ranges[_currentRankIndex,0], _snake.Count);
 		res.NextRank = (posNext <= 11) ? String.Format("{0}{1}",ranges[posNext, 0], ranges[posNext, 1]) : String.Empty;
 		res.PrevRank = (posPrev != -1) ? String.Format("{0}{1}", ranges[posPrev, 0], ranges[posPrev, 1]) : String.Empty;

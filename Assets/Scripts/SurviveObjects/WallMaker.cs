@@ -49,6 +49,9 @@ namespace Assets.Scripts.SurviveObjects
 			lock (_lockForWallDelay)
 			{
 				_wallAddInterval = _deltaDelay < 1 ? 1 : _deltaDelay;
+				_wallAddInterval *= (1 - (_snake.SnakeBody.Count / 100f));
+				if (_wallAddInterval < 0.5)
+					_wallAddInterval = 0.5f;
 			}
 			if (!_coroutineIsStarted)
 			{

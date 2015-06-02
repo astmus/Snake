@@ -49,7 +49,7 @@ public class Number : MonoBehaviour {
 
     void OnAnimationComplete()
     {
-        Destroy(this.gameObject);
+        Destroy(gameObject);
         //Debug.Log("Animation complete");
     }
 	
