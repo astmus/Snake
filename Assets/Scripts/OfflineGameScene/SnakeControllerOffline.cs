@@ -15,7 +15,7 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
     public const string PLAYER_RANGE_KEY = "playerRange";
 
     private static IntRange _numberCounter = new IntRange(1, 2);
-	private int _currentRankIndex = -1;	
+	private int _currentRankIndex = 0;	
     public TextMesh PointsLabel;
     int _playerNumber;
 	float speed;
@@ -231,8 +231,7 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
                 //    ResetSnake(false);
                 break;
             case SnakeTags.BrickWall:
-				speed -= GameSettings.Instance.SurviveModeSpeedIncrease * 1.5f;
-				print(speed);
+				speed -= GameSettings.Instance.SurviveModeSpeedIncrease;				
 				PlayColideWithWallSound();
 				UpdateUserHUD();
 				if (speed < _minimalSpeed)
@@ -256,7 +255,7 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
 		SnakeBodySpan body = colidedBodyPart.GetComponent<SnakeBodySpan>();		
 		_currentRankIndex = GetRankPosition();		
 		int position = _snake.IndexOf(body);
-		float speedDecrease = ((_snake.Count - 1) - position) * (GameSettings.Instance.SurviveModeSpeedIncrease);
+		float speedDecrease = ((_snake.Count - 1) - position) * (GameSettings.Instance.SurviveModeSpeedIncrease * 0.5f);
 		speed -= speedDecrease;
 		RemoveBody(1.5f, position);		
 		UpdateUserHUD();
@@ -267,10 +266,10 @@ public class SnakeControllerOffline : MonoBehaviour, ISnakePart
 		GameObject lightObj = GameObject.Find("PolyLightning");
 		if (lightObj == null) return; // возможно играют в классическую змейку тогда объекта полимолния не будет в сцене
 		PolyLightning ligth = lightObj.GetComponent<PolyLightning>();
-		int countOfDestroyWalls = (_snake.Count / 25) + 1;
+		int countOfDestroyWalls = (_snake.Count / 24) + 1;
 		GameObject [] brickWalls = GameObject.FindGameObjectsWithTag(SnakeTags.BrickWall);
-		if (brickWalls == null || brickWalls.Length == 0) return; // вдруг нету еще стен или они все разбиты, в этой жизни возможно все!
-		if (countOfDestroyWalls > brickWalls.Length) // и даже момент когда нету столко стен сколько нам хотелось бы вхерачить молнией :)
+		if (brickWalls == null || brickWalls.Length == 0) return; //вдруг нету еще стен или они все разбиты, в этой жизни возможно все!
+		if (countOfDestroyWalls > brickWalls.Length) //и даже момент когда нету столко стен сколько нам хотелось бы вхерачить молнией :)
 			countOfDestroyWalls = brickWalls.Length;
 		int wallPosition = UnityEngine.Random.Range(0, brickWalls.Length - countOfDestroyWalls); //ну а если есть то херачим по порядочку в котором они сгенерились
 		for (int i = 0; i < countOfDestroyWalls; ++i)

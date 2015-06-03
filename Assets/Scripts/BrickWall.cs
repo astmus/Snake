@@ -26,13 +26,14 @@ public class BrickWall : MonoBehaviour {
 		if (CountDownTime > 0)
 		{
 			CountDownTime -= Time.deltaTime;
+			_countDownLabel.Text = Math.Round(CountDownTime, 2).ToString();
 			if (CountDownTime < 0)
 			{
-				_countDownLabel.Text = "0";
-				_countDownLabel.IsAnimationAllowed = true;				
+				//_countDownLabel.Text = "0";
+				_countDownLabel.IsAnimationAllowed = true;
 			}
-			else
-				_countDownLabel.Text = Math.Round(CountDownTime, 2).ToString();
+			//else
+			//	_countDownLabel.Text = Math.Round(CountDownTime, 2).ToString();
 		}
     }
 

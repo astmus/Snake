@@ -102,9 +102,9 @@ public class OfflineFruit : MonoBehaviour {
         _points = (int)(10 * Vector3.Distance(Vector3.zero, _newPos)) * (int)GameSettings.Instance.DifficultOfCurrentGame;
         transform.position = _newPos;
 		if (FruitRepositionedTo != null)
-			FruitRepositionedTo(_newPos);		
-		
-        this.GetComponent<SpriteRenderer>().sprite = _spriteCollection[Random.Range(0, 6)];
+			FruitRepositionedTo(_newPos);
+
+		this.GetComponent<SpriteRenderer>().sprite = _spriteCollection[Random.Range(0, _spriteCollection.Length)];
     }
 
 	
