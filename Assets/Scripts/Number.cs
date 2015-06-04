@@ -4,7 +4,9 @@ using System.Collections;
 public class Number : MonoBehaviour {
     static public Vector3 amountSize;
     public Vector3 PointLabelPosition { get; set; }
+	float Duration { get; set; }
 	private bool _isAnimationAllowed = true;
+
 	public bool IsAnimationAllowed
 	{
 		get { return _isAnimationAllowed; }
@@ -29,6 +31,7 @@ public class Number : MonoBehaviour {
     }
 	void Start () {   
         //iTween.FadeTo(gameObject, iTween.Hash("alpha", 0, "time", .5));
+		Duration = 0.8f;
 		AnimateNumber();
 	}
 
@@ -47,9 +50,12 @@ public class Number : MonoBehaviour {
         iTween.ColorTo(gameObject, iTween.Hash("color", new Color(200, 0, 0, 0), "time", 1f, "oncomplete", "OnAnimationComplete"));
     }*/
 
-    void OnAnimationComplete()
+    void FixedUpdate()
     {
-        Destroy(gameObject);
+		if (_isAnimationAllowed)
+			Duration -= Time.deltaTime;
+		if (Duration < 0)
+			Destroy(gameObject);
         //Debug.Log("Animation complete");
     }
 	
